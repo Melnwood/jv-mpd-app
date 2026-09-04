@@ -59,18 +59,18 @@ async function buildPayout(){
   // staff in the current 2025-26 grant cycle, plus anyone flagged Support-only
   const staff = await listAll(T_STAFF, [F.name,F.country,F.cycle,F.start,F.month,F.salary,F.max,F.acct,F.paid,F.curPay,F.curSub,F.funding,F.status]);
   const cohort = staff.filter(r=>{
-    const c = r.cellValuesByFieldId||{}; const cy = sel(c[F.cycle]);
+    const c = r.fields||{}; const cy = sel(c[F.cycle]);
     return cy==="2025-26" || sel(c[F.funding])==="Support-only";
   });
   // all donors grouped by staff record id
   const donors = await listAll(T_DONORS, [D.name,D.amt,D.freq,D.dstatus,D.stafflink]);
   const byStaff = {};
   for(const d of donors){
-    const c=d.cellValuesByFieldId||{}; const links=c[D.stafflink]||[];
+    const c=d.fields||{}; const links=c[D.stafflink]||[];
     for(const sid of links){ (byStaff[sid]=byStaff[sid]||[]).push(c); }
   }
   return cohort.map(r=>{
-    const c=r.cellValuesByFieldId||{};
+    const c=r.fields||{};
     const mo = Math.max(1, Number(c[F.month])||1);
     const sal = Number(c[F.salary])||0;
     const fac = FACTOR[Math.min(11,mo-1)];
@@ -104,18 +104,18 @@ async function buildGrantFund(){
     listAll(T_STAFF, [F.name,F.cycle,F.paid,F.max,F.month]),
   ]);
   const byCycle={};
-  for(const r of staff){ const c=r.cellValuesByFieldId||{}; const cy=sel(c[F.cycle]); if(!cy) continue;
+  for(const r of staff){ const c=r.fields||{}; const cy=sel(c[F.cycle]); if(!cy) continue;
     const paid=Math.round(Number(c[F.paid])||0), max=Number(c[F.max])||0, mo=Number(c[F.month])||0;
     const status=((max>0&&paid>=max-1)||mo>12)?"done":"on";
     (byCycle[cy]=byCycle[cy]||[]).push([(c[F.name]||"").trim(), paid, status]);
   }
-  const cycles=budgets.map(r=>{ const c=r.cellValuesByFieldId||{}; const cy=sel(c[G.name]);
+  const cycles=budgets.map(r=>{ const c=r.fields||{}; const cy=sel(c[G.name]);
     return { cy, dep:Number(c[G.dep])||0, paid:Math.round(Number(c[G.paid])||0), fees:Number(c[G.fees])||0,
       wa:Number(c[G.wa])||0, date:fmtDate(c[G.date]), src:(c[G.src]||""), ppl:(byCycle[cy]||[]).sort((a,b)=>b[1]-a[1]) };
   }).sort((a,b)=>(b.dep)-(a.dep));
   if(cycles.length) cycles[0].active=true;
   let spoken=0;
-  for(const r of staff){ const c=r.cellValuesByFieldId||{}; const paid=Number(c[F.paid])||0, max=Number(c[F.max])||0, mo=Number(c[F.month])||0;
+  for(const r of staff){ const c=r.fields||{}; const paid=Number(c[F.paid])||0, max=Number(c[F.max])||0, mo=Number(c[F.month])||0;
     if(max>0 && !((paid>=max-1)||mo>12)) spoken+=Math.max(0,max-paid); }
   return { cycles, spoken:Math.round(spoken) };
 }
@@ -124,7 +124,7 @@ async function buildMessages(){
   const rows=await listAll(T_MSG, [M.coach,M.from,M.text]);
   rows.sort((a,b)=>Date.parse(a.createdTime)-Date.parse(b.createdTime));
   const out={};
-  for(const r of rows){ const c=r.cellValuesByFieldId||{}; const coach=(c[M.coach]||"").trim(); if(!coach) continue;
+  for(const r of rows){ const c=r.fields||{}; const coach=(c[M.coach]||"").trim(); if(!coach) continue;
     const from = sel(c[M.from])==="Director"?"dir":"coach";
     const t = new Date(r.createdTime).toLocaleString('en-US',{weekday:'short',hour:'numeric',minute:'2-digit'});
     (out[coach]=out[coach]||[]).push({from, text:c[M.text]||"", t});
@@ -143,16 +143,16 @@ async function buildEmails(name){
   const r=await fetch(u,{headers:H});
   if(!r.ok) throw new Error(`Airtable emails ${r.status}: ${await r.text()}`);
   const j=await r.json();
-  return j.records.map(rec=>{ const c=rec.cellValuesByFieldId||{};
+  return j.records.map(rec=>{ const c=rec.fields||{};
     return { date:c[E.date]||"", subject:c[E.subject]||"", to:c[E.to]||"", cc:c[E.cc]||"", sent: !!c[E.sent] }; });
 }
 
 async function buildApprovals(){
   const staff = await listAll(T_STAFF, [F.name,F.country,F.start,F.salary,F.acct,
     A.pref,A.budget,A.email,A.age,A.coach,A.coachEmail,A.uplink,A.uplinkEmail,A.lead,A.leadEmail,A.onbNotes,A.onbDate,A.melLink,A.melAppr,A.dirAppr]);
-  return staff.filter(r=>{ const c=r.cellValuesByFieldId||{};
+  return staff.filter(r=>{ const c=r.fields||{};
       return sel(c[A.dirAppr])==="Approved" && sel(c[A.melAppr])!=="Approved"; })
-    .map(r=>{ const c=r.cellValuesByFieldId||{};
+    .map(r=>{ const c=r.fields||{};
       return { id:r.id, n:(c[F.name]||"").trim(), also:"", co:sel(c[F.country])||"",
         age:Number(c[A.age])||"", budget:Number(c[A.budget])||0, salary:Number(c[F.salary])||0,
         cedarstone:(c[F.acct]||"").replace(/[^0-9]/g,""), start:fmtDate(c[F.start]||c[A.pref]), met:fmtDate(c[A.onbDate]),
@@ -177,7 +177,7 @@ export default async (req) => {
       if(action==="messages") return json({messages: await buildMessages()});
       if(action==="emails") return json({emails: await buildEmails(url.searchParams.get("staff"))});
       if(action==="staff"){ const rows=await listAll(T_STAFF,[F.name]);
-        const names=[...new Set(rows.map(r=>((r.cellValuesByFieldId||{})[F.name]||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+        const names=[...new Set(rows.map(r=>((r.fields||{})[F.name]||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
         return json({staff:names}); }
       return json({ok:true, hint:"?action=payout|grantfund|messages|emails|staff, or POST {id,funding?,payout?} / {message:{coach,from,text}}"});
     }
