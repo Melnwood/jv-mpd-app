@@ -34,6 +34,21 @@ const A = { pref:"fld4zG96Q7fJ8667g", budget:"fldERasO2urJRKhwe", email:"fldmbtt
   lead:"fldeKeyhBKCQZLq1j", leadEmail:"fldUEqhu1Y5z5qulY", onbNotes:"fldZ2VWzRfi8vWsCE", onbDate:"flduitgP9yAPno6mT",
   melLink:"fld9UYikghOY3rldi", melAppr:"fld3L6c7XC7fd44fQ", dirAppr:"fldGeaBDzLfzC5Ms8" };
 const first1 = v => Array.isArray(v) ? (v[0]||"") : (v||"");
+const T_MEET = "tbl3K9aK8sEfFNRrc";
+const MT = { staff:"fld33nlmgq6Thxs55", coach:"fldUmJEySFox5lqZd", date:"fldTPvH6C7V0v4lMX", notes:"fldsq0SXxGgTL8KVu" };
+
+// weekly MPD updates — the funnel the "Who to reach" diagnosis is built from
+const T_UPD = "tbllEWxhxxmvEdbKa";
+const U = { name:"fldQ1YrcYTNYPGUbA", asks:"fldjt72R8YzSY7Rqb", mtgs:"fldJuVlQyjIxLdD42",
+  partners:"fldgG3I4PmkjABpvL", hours:"fldZMv04zpxKIA1BZ", coachMtg:"fldfVK5Fqi7Ldlbpt",
+  comments:"fldXrlGdy9NaP2BCk" };
+const FREQ = ["fldWZG2uMRN9VPktA","fldue8vV2uSTEXljt","fldS64TFu35W4bd4w","fldGsTeZMRE7MKQhW",
+  "fldgTxhzQUALZj0eW","fldV9PRyqZQFYrBd8","fldsXiCemS6IlsZg4","fldXPbngnb7eaIanV","fldG66SHyXF925998",
+  "fldFR84P04Fiz1Obo","fldSqDwmlqqveYltc","fldjA21OiUkgtMunJ","fldgRCU7Ol0rggzJW","fldgHxED4hAjcRN1T",
+  "fldd4xNwCffiYEM4E","fld2afmIBXPdv2Svu","fldkhCaQfQGlh3BrM","fldpdDbh1kmtZZsGS","fldugmHEAfSZEDy1W","fldKvrCrHmvxE1vb9"];
+// staff funding/context for the care view
+const C = { coach:"fldRPbkFFaR0YW9E8", month:"fldhNcawK5r08JcdR", weeks:"fldMe0SnURsO2hIiR",
+  pct:"fldd4lIlxysqlxLLA" };
 
 const FACTOR = [100,100,90,80,70,60,50,40,30,20,10,0];
 const H = { Authorization:`Bearer ${process.env.AIRTABLE_TOKEN}`, "Content-Type":"application/json" };
@@ -166,6 +181,50 @@ async function buildApprovals(){
     });
 }
 
+// Per-coach roster of their staff with a trailing-6-week funnel from the weekly MPD updates.
+// Metrics only — the app turns them into the plain-language diagnosis (single source of truth).
+async function buildCare(){
+  const WINDOW_MS = 42*864e5;
+  const now = Date.now();
+  const [staff, updates] = await Promise.all([
+    listAll(T_STAFF, [F.name,F.country,F.cycle,F.funding,F.status,F.month,F.max,F.paid,C.coach,C.weeks,C.pct]),
+    listAll(T_UPD, [U.name,U.asks,U.mtgs,U.partners,U.hours,U.coachMtg,U.comments,...FREQ]),
+  ]);
+  const cohort = staff.filter(r=>{ const c=r.fields||{}; const cy=sel(c[F.cycle]);
+    // active fundraisers only: in the current grant cycle (or support-only), still inside the window
+    const paid=Number(c[F.paid])||0, max=Number(c[F.max])||0, mo=Number(c[F.month])||0;
+    const done = (max>0 && paid>=max-1) || mo>12;
+    return (cy==="2025-26" || sel(c[F.funding])==="Support-only") && !done && sel(c[F.status])!=="Finished";
+  });
+  const byStaff={};
+  for(const u of updates){ const c=u.fields||{}; const link=c[U.name]||[]; const sid=link[0]; if(!sid) continue;
+    (byStaff[sid]=byStaff[sid]||[]).push({t:Date.parse(u.createdTime)||0, c}); }
+  const people = cohort.map(r=>{
+    const c=r.fields||{};
+    const ups=(byStaff[r.id]||[]).sort((a,b)=>b.t-a.t);
+    const win = ups.filter(x=> now-x.t <= WINDOW_MS);
+    let asks=0,mtgs=0,yes=0,monthly=0,onetime=0,hours=0,coachMet=0;
+    for(const x of win){ const u=x.c;
+      asks+=Number(u[U.asks])||0; mtgs+=Number(u[U.mtgs])||0;
+      yes+=Number(u[U.partners])||0; hours+=Number(u[U.hours])||0;
+      if(sel(u[U.coachMtg])==="Yes") coachMet++;
+      for(const f of FREQ){ const v=sel(u[f]); if(!v) continue;
+        if(/month/i.test(v)) monthly++; else if(/one/i.test(v)) onetime++; } }
+    let note=""; for(const x of ups){ const t=(x.c[U.comments]||"").trim(); if(t){ note=t; break; } }
+    const lastT=ups[0]?.t||0, daysSince = lastT? Math.floor((now-lastT)/864e5) : 999;
+    let pct=Number(c[C.pct])||0; if(pct>1.5) pct=pct/100;
+    return { id:r.id, n:(c[F.name]||"").trim(), co:sel(c[F.country])||"", coach:first1(c[C.coach])||"—",
+      mo:Number(c[F.month])||0, wk:Math.round(Number(c[C.weeks])||0), pct:Math.round(pct*100)/100,
+      ft:sel(c[F.funding])||"Grant", ps:sel(c[F.status])||"",
+      asks, mtgs, yes, monthly, onetime, hours:Math.round(hours), weeks:win.length, coachMet, daysSince, note };
+  });
+  const coaches={};
+  for(const p of people){ (coaches[p.coach]=coaches[p.coach]||[]).push(p); }
+  return Object.entries(coaches)
+    .map(([coach,list])=>({coach, staff:list.sort((a,b)=>a.n.localeCompare(b.n))}))
+    .sort((a,b)=>a.coach.localeCompare(b.coach));
+}
+
 export default async (req) => {
   try{
     if(!process.env.AIRTABLE_TOKEN) return json({error:"AIRTABLE_TOKEN not set on the site."},500);
@@ -175,14 +234,29 @@ export default async (req) => {
       if(action==="approvals") return json({approvals: await buildApprovals()});
       if(action==="grantfund") return json(await buildGrantFund());
       if(action==="messages") return json({messages: await buildMessages()});
+      if(action==="care") return json({care: await buildCare()});
       if(action==="emails") return json({emails: await buildEmails(url.searchParams.get("staff"))});
       if(action==="staff"){ const rows=await listAll(T_STAFF,[F.name]);
         const names=[...new Set(rows.map(r=>((r.fields||{})[F.name]||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
         return json({staff:names}); }
+      if(action==="meetings"){ const staff=url.searchParams.get("staff");
+        const rows=await listAll(T_MEET,[MT.staff,MT.coach,MT.date,MT.notes]);
+        const list=rows.map(r=>r.fields||{}).filter(c=>!staff || (c[MT.staff]||"")===staff)
+          .map(c=>({date:c[MT.date]||"", coach:c[MT.coach]||"", notes:c[MT.notes]||""}))
+          .sort((a,b)=>Date.parse(b.date||0)-Date.parse(a.date||0));
+        return json({meetings:list}); }
       return json({ok:true, hint:"?action=payout|grantfund|messages|emails|staff, or POST {id,funding?,payout?} / {message:{coach,from,text}}"});
     }
     if(req.method==="POST"){
       const b = await req.json();
+      // log a coaching meeting
+      if(b.meeting){
+        const m=b.meeting;
+        const r=await fetch(`https://api.airtable.com/v0/${BASE}/${T_MEET}`, { method:"POST", headers:H,
+          body: JSON.stringify({records:[{fields:{[MT.staff]:m.staff||"", [MT.coach]:m.coach||"", [MT.date]:m.date||"", [MT.notes]:m.notes||""}}]}) });
+        if(!r.ok) return json({error:`Airtable meeting ${r.status}: ${await r.text()}`},502);
+        return json({ok:true});
+      }
       // append a coach<->director message
       if(b.message){
         const m=b.message;

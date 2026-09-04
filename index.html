@@ -219,6 +219,63 @@
   .composer button{font:inherit;font-weight:700;font-size:13.5px;color:#fff;background:var(--pine);border:none;border-radius:13px;padding:11px 18px;cursor:pointer}
   .whoami{font-size:11px;color:var(--muted);margin-top:7px;text-align:right}
 
+  /* ===== coaching meetings ===== */
+  .cm-form{margin-top:12px;display:flex;flex-direction:column;gap:11px}
+  .cm-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .cm-top label{font-size:12.5px;font-weight:600;color:var(--ink-2)}
+  .cm-top input[type=date]{font:inherit;font-size:13.5px;background:var(--card-2);border:1.5px solid var(--line);border-radius:12px;padding:9px 13px;color:var(--ink)}
+  .cm-top input[type=date]:focus{border-color:var(--pine);outline:none}
+  #cm-notes{width:100%;font:inherit;font-size:13.5px;line-height:1.5;background:var(--card-2);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;color:var(--ink);min-height:88px;resize:vertical}
+  #cm-notes:focus{border-color:var(--pine);background:var(--card);outline:none}
+  .cm-form .btn-primary{align-self:flex-start;display:inline-flex;align-items:center;gap:7px}
+  .cm-hist{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .cm-item{background:var(--card-2);border:1px solid var(--line);border-left:3px solid var(--pine);border-radius:0 13px 13px 0;padding:12px 15px}
+  .cm-d{font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--pine-deep);text-transform:uppercase}
+  .cm-n{margin-top:6px;font-size:13.5px;line-height:1.55;color:var(--ink);white-space:normal}
+  .cm-msg{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;padding:14px;background:var(--card-2);border:1px dashed var(--line);border-radius:13px}
+  .cm-msg svg{flex:none;color:var(--muted)}
+
+  /* ===== who to reach — coach roster + diagnosis ===== */
+  .cr-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+  .cr-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(24,34,60,.04)}
+  .cr-wrap.open{border-color:color-mix(in srgb,var(--pine) 40%,var(--line));box-shadow:0 6px 22px rgba(24,34,60,.09)}
+  .cr-row{width:100%;display:flex;align-items:center;gap:13px;padding:14px 16px;background:none;border:none;cursor:pointer;text-align:left;font:inherit;color:inherit}
+  .cr-av{width:40px;height:40px;flex:none;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:16px;color:#fff;font-family:var(--serif);background:linear-gradient(135deg,var(--honey),var(--honey-deep))}
+  .cr-in{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+  .cr-n{font-weight:700;font-size:15px;display:flex;align-items:baseline;gap:8px}
+  .cr-n small{font-weight:500;font-size:12px;color:var(--muted)}
+  .cr-load{display:flex;height:6px;border-radius:6px;overflow:hidden;background:var(--card-2);gap:1.5px}
+  .cr-load span{display:block;height:100%}
+  .cr-sub{font-size:12.5px;color:var(--ink-2)}
+  .cr-sub b{font-weight:700}.cr-crit{color:var(--flame)}.cr-warn{color:var(--honey-deep)}.cr-good{color:var(--pine-deep)}
+  .cr-chev{flex:none;color:var(--muted);transition:transform .18s}
+  .cr-wrap.open .cr-chev{transform:rotate(180deg)}
+  .cr-body{padding:4px 14px 14px;display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line)}
+  .cr-clear{font:inherit;font-size:12.5px;font-weight:600;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:6px 11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+
+  .cx-card{background:var(--card-2);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:14px;padding:14px 16px;margin-top:12px}
+  .cx-card:first-child{margin-top:8px}
+  .cx-crit{border-left-color:var(--flame)}.cx-warn{border-left-color:var(--honey-deep)}.cx-good{border-left-color:var(--pine)}
+  .cx-head{display:flex;align-items:center;gap:11px}
+  .cx-head .av{width:38px;height:38px;flex:none;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:13.5px;color:#fff;font-family:var(--serif)}
+  .cx-who{flex:1;min-width:0}
+  .cx-who b{font-size:14.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cx-who span{font-size:12px;color:var(--muted)}
+  .cx-tag{flex:none;font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap}
+  .cx-t-crit{background:color-mix(in srgb,var(--flame) 15%,transparent);color:var(--flame)}
+  .cx-t-warn{background:var(--honey-soft);color:var(--honey-deep)}
+  .cx-t-good{background:var(--pine-soft);color:var(--pine-deep)}
+  .cx-help{font-size:13.5px;line-height:1.5;color:var(--ink);margin-top:10px}
+  .fn-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:12px}
+  .fn-c{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center}
+  .fn-c b{display:block;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .fn-c span{font-size:10px;color:var(--muted);letter-spacing:.01em}
+  .fn-c.wk b{color:var(--ink-2)}
+  .cx-note{display:flex;gap:7px;margin-top:11px;font-size:12.5px;line-height:1.5;color:var(--ink-2);font-style:italic}
+  .cx-note svg{flex:none;margin-top:2px;color:var(--muted)}
+  .cx-foot{margin-top:10px;font-size:11.5px;color:var(--muted)}
+  @media(max-width:560px){.fn-strip{grid-template-columns:repeat(3,1fr)}}
+
   /* ===== leader/coach/director shared ===== */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:14px}
   .stat-c{padding:16px 18px}
@@ -411,20 +468,21 @@
   .cf-open.on{background:var(--honey-deep);color:#fff;border-color:var(--honey-deep)}
   @media(max-width:760px){.cread{display:none}}
   /* director · emails sent */
-  .em-search{width:100%;max-width:340px;font:inherit;font-size:13.5px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;margin:6px 0 12px;box-shadow:var(--shadow-soft)}
+  .em-search{width:100%;max-width:340px;font:inherit;font-size:13.5px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;margin:6px 0 14px;box-shadow:var(--shadow-soft)}
   .em-search:focus{outline:none;border-color:var(--pine)}
-  .em-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:0;max-height:210px;overflow:auto}
-  .em-chip{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:12px;font-weight:600;color:var(--ink-2);background:var(--card);border:1.5px solid var(--line);border-radius:100px;padding:6px 12px 6px 7px;cursor:pointer}
-  .em-chip>span:first-child,.em-chip{}
-  .em-chip span{font-weight:600}
-  .em-chip:hover{border-color:var(--honey)}
-  .em-chip.on{background:var(--pine);border-color:var(--pine);color:#fff}
-  .em-chip::first-letter{}
-  .em-empty{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:var(--muted);font-size:13px;padding:26px 16px;line-height:1.5}
-  .em-empty svg{color:var(--honey-deep)}
-  .em-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1.5px solid var(--line);padding-bottom:10px;margin-bottom:4px}
-  .em-head b{font-family:var(--serif);font-size:16px}.em-head span{font-size:12px;color:var(--muted);font-weight:600}
-  .em-list{max-height:none}
+  .em-sec{display:flex;align-items:baseline;gap:9px;margin:0 0 9px}.em-sec2{margin-top:22px}
+  .em-sec-h{font-family:var(--serif);font-size:15px;font-weight:600}
+  .em-accs{display:flex;flex-direction:column;gap:7px}
+  .em-acc{background:var(--card);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow-soft);overflow:hidden}
+  .em-acc-h{width:100%;display:flex;align-items:center;gap:11px;padding:11px 14px;background:none;border:none;cursor:pointer;text-align:left;color:inherit;font:inherit}
+  .av2{width:31px;height:31px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;font-family:var(--serif);background:linear-gradient(135deg,var(--pine),var(--pine-deep))}
+  .em-acc-n{flex:1;min-width:0;font-size:14px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .em-cnt{flex:none;font-size:11px;font-weight:700;color:var(--pine-deep);background:var(--pine-soft);border-radius:100px;padding:2px 9px}
+  .em-chev{flex:none;color:var(--muted);display:flex;transition:.2s}.em-acc.open .em-chev{transform:rotate(90deg)}
+  .em-acc-b{padding:2px 15px 14px;border-top:1px solid var(--line-soft)}
+  .em-b-msg{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);padding:12px 2px}.em-b-msg svg{color:var(--honey-deep);flex:none}
+  .em-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px 0 8px;margin-bottom:2px}
+  .em-head b{font-family:var(--serif);font-size:15px}.em-head span{font-size:12px;color:var(--muted);font-weight:600}
   .em-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-soft)}
   .em-row:last-child{border-bottom:none}
   .em-date{flex:none;width:104px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:1px}
@@ -488,6 +546,86 @@
     .pp-sum td{border-top:2px solid #333;border-bottom:none;font-weight:700;padding-top:11px}
     .pp-foot{margin-top:16px;font-size:10.5px;color:#666;border-top:1px solid #ccc;padding-top:8px}
   }
+
+  /* ===== Sandbox Kit — feedback pencil + Notes overlay (self-contained tokens) ===== */
+  :root{ --sb-ink:#1b2230; --sb-ink2:#525f78; --sb-card:#ffffff; --sb-card2:#f3f6fa; --sb-line:#e3e8f0;
+    --sb-muted:#8592a6; --sb-accent:#10a173; --sb-accentDeep:#0a7f58; --sb-honey:#cf8309; --sb-flame:#f1554c;
+    --sb-shadow:0 16px 44px rgba(24,34,60,.20); }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --sb-ink:#e8edf5; --sb-ink2:#aeb9cc;
+    --sb-card:#1a1f2a; --sb-card2:#212734; --sb-line:#2c3444; --sb-muted:#8695ab; --sb-accent:#2ed49b; --sb-accentDeep:#57e2b0; } }
+  #sb-bot{ position:fixed; right:18px; bottom:18px; z-index:2147483000; font-family:'Figtree',system-ui,-apple-system,sans-serif; }
+  .sb-fab{ position:relative; width:52px; height:52px; border-radius:50%; border:none; cursor:pointer; color:#fff;
+    background:linear-gradient(140deg,var(--sb-accent),var(--sb-honey)); box-shadow:var(--sb-shadow); display:grid; place-items:center; }
+  .sb-fab svg{ width:22px; height:22px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .sb-badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 5px; border-radius:10px;
+    background:var(--sb-flame); color:#fff; font-size:11px; font-weight:800; display:grid; place-items:center; border:2px solid var(--sb-card); }
+  .sb-panel{ position:absolute; right:0; bottom:64px; width:336px; max-width:calc(100vw - 28px); max-height:80vh; overflow:auto;
+    background:var(--sb-card); color:var(--sb-ink); border:1px solid var(--sb-line); border-radius:18px; box-shadow:var(--sb-shadow);
+    padding:15px 16px; font-size:13.5px; line-height:1.5; }
+  .sb-h{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:11px; }
+  .sb-h b{ font-size:14.5px; font-weight:700; }
+  .sb-x{ background:none; border:none; color:var(--sb-muted); cursor:pointer; font-size:19px; line-height:1; padding:2px 4px; }
+  .sb-stamp{ font-size:11px; color:var(--sb-muted); margin:-6px 0 11px; }
+  .sb-stale{ background:color-mix(in srgb,var(--sb-honey) 15%,transparent); color:var(--sb-honey); border:1px solid color-mix(in srgb,var(--sb-honey) 35%,transparent);
+    border-radius:10px; padding:8px 10px; font-size:12px; font-weight:600; margin-bottom:11px; }
+  .sb-local{ background:var(--sb-card2); color:var(--sb-ink2); border:1px dashed var(--sb-line); border-radius:10px; padding:8px 10px; font-size:12px; margin-bottom:11px; }
+  .sb-on{ font-size:11.5px; color:var(--sb-muted); margin-bottom:8px; }
+  .sb-on b{ color:var(--sb-ink2); font-weight:700; }
+  .sb-ta{ width:100%; font:inherit; font-size:13.5px; background:var(--sb-card2); border:1.5px solid var(--sb-line); border-radius:12px;
+    padding:11px 12px; color:var(--sb-ink); min-height:78px; resize:vertical; }
+  .sb-ta:focus{ outline:none; border-color:var(--sb-accent); }
+  .sb-row{ display:flex; gap:8px; align-items:center; margin-top:9px; }
+  .sb-attach{ flex:1; display:flex; align-items:center; gap:7px; justify-content:center; font:inherit; font-size:12.5px; font-weight:600;
+    color:var(--sb-ink2); background:var(--sb-card2); border:1.5px solid var(--sb-line); border-radius:11px; padding:9px; cursor:pointer; }
+  .sb-attach svg{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .sb-log{ flex:1; font:inherit; font-size:13.5px; font-weight:700; color:#fff; background:var(--sb-accent); border:none; border-radius:11px; padding:10px; cursor:pointer; }
+  .sb-log:disabled{ opacity:.5; cursor:default; }
+  .sb-thumb{ position:relative; margin-top:9px; }
+  .sb-thumb img{ width:100%; max-height:130px; object-fit:cover; border-radius:10px; border:1px solid var(--sb-line); display:block; }
+  .sb-thumb .sb-rm{ position:absolute; top:6px; right:6px; width:24px; height:24px; border-radius:50%; border:none; background:rgba(15,20,28,.72); color:#fff; cursor:pointer; font-size:15px; line-height:1; }
+  .sb-err{ background:color-mix(in srgb,var(--sb-flame) 12%,transparent); color:var(--sb-flame); border:1px solid color-mix(in srgb,var(--sb-flame) 35%,transparent);
+    border-radius:10px; padding:8px 10px; font-size:12.5px; font-weight:600; margin-top:9px; }
+  .sb-note-say{ font-size:12.5px; color:var(--sb-accentDeep); font-weight:600; margin-top:9px; }
+  .sb-sep{ margin:13px 0 9px; border-top:1px solid var(--sb-line); }
+  .sb-lab{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--sb-muted); margin-bottom:7px; display:flex; justify-content:space-between; align-items:center; }
+  .sb-all{ background:none; border:none; color:var(--sb-accentDeep); font:inherit; font-size:11.5px; font-weight:700; cursor:pointer; text-transform:none; letter-spacing:0; }
+  .sb-item{ display:flex; gap:9px; align-items:flex-start; padding:8px 0; border-top:1px solid var(--sb-line); }
+  .sb-item:first-of-type{ border-top:none; }
+  .sb-tick{ flex:none; width:20px; height:20px; border-radius:6px; border:1.5px solid var(--sb-line); background:var(--sb-card2); cursor:pointer; display:grid; place-items:center; padding:0; margin-top:1px; }
+  .sb-tick.on{ background:var(--sb-accent); border-color:var(--sb-accent); }
+  .sb-tick svg{ width:12px; height:12px; stroke:#fff; fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+  .sb-it-b{ flex:1; min-width:0; }
+  .sb-it-t{ font-size:12.5px; color:var(--sb-ink); overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .sb-it-t.done{ color:var(--sb-muted); text-decoration:line-through; }
+  .sb-it-m{ font-size:10.5px; color:var(--sb-muted); margin-top:2px; }
+  .sb-empty{ font-size:12.5px; color:var(--sb-muted); padding:10px 0; text-align:center; }
+  .sb-refresh{ background:none; border:1px solid var(--sb-line); color:var(--sb-ink2); border-radius:9px; font:inherit; font-size:12px; font-weight:600; padding:6px 11px; cursor:pointer; }
+  /* full-screen Notes overlay */
+  #sb-ovl{ position:fixed; inset:0; z-index:2147483001; background:rgba(18,21,29,.55); display:flex; justify-content:center; align-items:flex-start; padding:24px 14px; overflow:auto; font-family:'Figtree',system-ui,sans-serif; }
+  .sb-sheet{ background:var(--sb-card2); color:var(--sb-ink); width:100%; max-width:820px; border-radius:18px; box-shadow:var(--sb-shadow); padding:20px; margin:auto; }
+  .sb-sheet-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .sb-sheet-h h2{ font-family:'Fraunces',Georgia,serif; font-size:21px; font-weight:600; }
+  .sb-sheet-sub{ font-size:12.5px; color:var(--sb-muted); margin-bottom:16px; }
+  .sb-card{ background:var(--sb-card); border:1px solid var(--sb-line); border-left:4px solid var(--sb-line); border-radius:14px; padding:14px 16px; margin-bottom:12px; }
+  .sb-card.open{ border-left-color:var(--sb-flame); }
+  .sb-card.done{ border-left-color:var(--sb-accent); opacity:.9; }
+  .sb-c-top{ display:flex; align-items:center; gap:9px; }
+  .sb-c-st{ flex:none; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; padding:3px 9px; border-radius:999px; }
+  .sb-c-st.open{ background:color-mix(in srgb,var(--sb-flame) 14%,transparent); color:var(--sb-flame); }
+  .sb-c-st.done{ background:color-mix(in srgb,var(--sb-accent) 16%,transparent); color:var(--sb-accentDeep); }
+  .sb-c-meta{ flex:1; min-width:0; font-size:11.5px; color:var(--sb-muted); }
+  .sb-c-meta b{ color:var(--sb-ink); font-weight:700; }
+  .sb-c-note{ font-size:14px; line-height:1.5; color:var(--sb-ink); margin-top:9px; white-space:pre-wrap; word-break:break-word; }
+  .sb-c-ctx{ font-size:11px; color:var(--sb-muted); margin-top:7px; }
+  .sb-fig{ display:flex; gap:12px; margin-top:11px; flex-wrap:wrap; }
+  .sb-fig figure{ flex:1; min-width:180px; margin:0; }
+  .sb-fig figcaption{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--sb-muted); margin-bottom:5px; }
+  .sb-fig img{ width:100%; border-radius:10px; border:1px solid var(--sb-line); display:block; }
+  .sb-c-fix{ margin-top:11px; background:var(--sb-card2); border-radius:10px; padding:10px 12px; font-size:13px; line-height:1.5; }
+  .sb-c-fix b{ color:var(--sb-accentDeep); }
+  .sb-c-actions{ display:flex; gap:8px; margin-top:11px; }
+  .sb-c-actions button{ font:inherit; font-size:12px; font-weight:600; border-radius:9px; padding:6px 11px; cursor:pointer; border:1px solid var(--sb-line); background:var(--sb-card); color:var(--sb-ink2); }
+  .sb-c-actions .sb-del.arm{ background:var(--sb-flame); color:#fff; border-color:var(--sb-flame); }
 </style>
 </head>
 <body>
@@ -511,6 +649,244 @@
 </div>
 
 <script>
+/* ================= Sandbox Kit — built from sandbox-kit/README.md spec =================
+   A feedback pencil (bottom-right, every screen) + a full Notes overlay. Notes save to the
+   dedicated Build Notes base via /api/notes. Self-contained: window.Sandbox.{init,notesHTML,openCount}. */
+(function(){
+  var cfg={ screen:function(){return 'Somewhere';}, rerender:function(){}, context:function(){return '';} };
+  var SEED=['Dave','Geri','Mel'];               // quick-pick testers; anyone can type their own
+  var notes=[], loaded=false, loadFailed=false;
+  var open=false, draft='', shot=null, err='', okMsg='';
+  var pageBuild=null, latestBuild=null, gate=false;
+  var LOCAL=!/^https?:$/.test(location.protocol); // file:/blob: copy can never reach /api
+  var root=null;
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function who(){ try{return localStorage.getItem('sb_who')||'';}catch(e){return '';} }
+  function setWho(n){ try{localStorage.setItem('sb_who',n);}catch(e){} }
+  function localId(){ return 'sb-'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+  function ago(iso){ var d=new Date(iso); if(isNaN(d))return ''; var s=(Date.now()-d.getTime())/1000;
+    if(s<60)return 'just now'; if(s<3600)return Math.floor(s/60)+'m ago'; if(s<86400)return Math.floor(s/3600)+'h ago';
+    return d.toLocaleDateString(undefined,{month:'short',day:'numeric'}); }
+  function net(){ return {'Content-Type':'application/json','X-Sandbox':'1'}; }
+  function build(){ return pageBuild? ('Build '+String(pageBuild).slice(0,7)) : (LOCAL?'Local copy':'Live'); }
+  var ICON_PENCIL='<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+  var ICON_CHECK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+  var ICON_CAM='<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+
+  function mount(){
+    root=document.getElementById('sandbox-bot');
+    if(!root){ root=document.createElement('div'); root.id='sandbox-bot'; document.body.appendChild(root); }
+    root.id='sb-bot';
+    paint();
+  }
+
+  async function boot(){
+    try{ var r=await fetch('/version.json',{headers:{'X-Sandbox':'1'}}); if(r.ok){ var j=await r.json(); pageBuild=j.ref||j.at||null; } }catch(e){}
+    await load();
+  }
+  async function load(){
+    if(LOCAL){ loaded=true; paint(); return; }
+    try{
+      var r=await fetch('/api/notes',{headers:net()});
+      if(!r.ok) throw new Error('load '+r.status);
+      var j=await r.json(); notes=Array.isArray(j.notes)?j.notes:[]; loaded=true; loadFailed=false;
+    }catch(e){ console.error('[sandbox] load failed', e); loadFailed=true; } // a failed load is not the tester's problem
+    paint(); repaintOverlay();
+  }
+  async function checkStale(){
+    if(LOCAL||!pageBuild) return;
+    try{ var r=await fetch('/version.json?ts='+Date.now(),{headers:{'X-Sandbox':'1'}});
+      if(r.ok){ var j=await r.json(); latestBuild=j.ref||j.at||null; paint(); } }catch(e){}
+  }
+
+  function shrink(file, cb){                    // never upload a retina grab — 1600px long edge, JPEG q82
+    var rd=new FileReader();
+    rd.onload=function(){ var img=new Image();
+      img.onload=function(){ var max=1600, w=img.width, h=img.height, sc=Math.min(1,max/Math.max(w,h));
+        var cw=Math.max(1,Math.round(w*sc)), ch=Math.max(1,Math.round(h*sc));
+        var c=document.createElement('canvas'); c.width=cw; c.height=ch;
+        c.getContext('2d').drawImage(img,0,0,cw,ch);
+        var url=c.toDataURL('image/jpeg',0.82);
+        cb({ name:(file.name||'screenshot').replace(/\.[^.]+$/,'')+'.jpg', type:'image/jpeg', data:url.split(',')[1], preview:url }); };
+      img.onerror=function(){ cb(null); }; img.src=rd.result; };
+    rd.onerror=function(){ cb(null); }; rd.readAsDataURL(file);
+  }
+
+  async function logIt(){
+    var text=(draft||'').trim();
+    if(!text){ err='Add a sentence about what happened.'; okMsg=''; paint(); return; }
+    if(LOCAL){ err="This is a local copy — notes only save on the deployed site."; paint(); return; }
+    var payload={ note:text, who:who()||'Unknown', screen:(cfg.screen()||'Somewhere'),
+      context:ctxLine(), localId:localId(), shots: shot? [{name:shot.name,type:shot.type,data:shot.data}] : [] };
+    var savingDraft=draft, savingShot=shot;        // hold in case the save fails
+    err=''; okMsg='Saving…'; paint();
+    try{
+      var r=await fetch('/api/notes',{method:'POST',headers:net(),body:JSON.stringify(payload)});
+      var j=await r.json().catch(function(){return {};});
+      if(!r.ok||j.error){ throw new Error(j.error||('save '+r.status)); }
+      draft=''; shot=null;                          // clear only on real success
+      okMsg = j.failed ? ('Saved — but '+j.failed+' image didn’t attach.') : 'Saved. Thank you!';
+      err='';
+      await load();
+      setTimeout(function(){ okMsg=''; paint(); }, 2600);
+    }catch(e){
+      console.error('[sandbox] save failed', e);
+      draft=savingDraft; shot=savingShot;           // never lose what they typed
+      okMsg=''; err='Could not save — your note is still here, try again.';
+      paint();
+    }
+  }
+  function ctxLine(){
+    var extra=''; try{ extra=cfg.context()||''; }catch(e){}
+    var vp=window.innerWidth+'×'+window.innerHeight;
+    return [extra, vp, build()].filter(Boolean).join(' · ');
+  }
+
+  async function tick(id, cur){
+    if(LOCAL) return;
+    var next = cur==='done'?'open':'done';
+    var n=find(id); if(n) n.state=next;            // optimistic
+    paint(); repaintOverlay();
+    try{ await fetch('/api/notes',{method:'PATCH',headers:net(),body:JSON.stringify({id:id,state:next})}); }
+    catch(e){ console.error('[sandbox] tick failed', e); }
+    load();
+  }
+  async function saveFix(id, text){
+    try{ await fetch('/api/notes',{method:'PATCH',headers:net(),body:JSON.stringify({id:id,fix:text})}); load(); }
+    catch(e){ console.error('[sandbox] fix failed', e); }
+  }
+  async function del(id){
+    try{ await fetch('/api/notes',{method:'DELETE',headers:net(),body:JSON.stringify({id:id})}); load(); }
+    catch(e){ console.error('[sandbox] delete failed', e); }
+  }
+  function find(id){ for(var i=0;i<notes.length;i++) if(notes[i].id===id) return notes[i]; return null; }
+  function openCount(){ var c=0; for(var i=0;i<notes.length;i++) if(notes[i].state!=='done') c++; return c; }
+
+  /* ---------- pencil + panel ---------- */
+  function paint(){
+    if(!root) return;
+    var badge = (!LOCAL && openCount()) ? '<span class="sb-badge">'+openCount()+'</span>' : '';
+    var html='<button class="sb-fab" id="sb-fab" title="Leave feedback">'+ICON_PENCIL+badge+'</button>';
+    if(open) html+=panel();
+    root.innerHTML=html;
+    document.getElementById('sb-fab').onclick=function(){ open=!open; err=''; okMsg=''; if(open){ checkStale(); } paint(); };
+    if(open) wire();
+  }
+  function panel(){
+    var stale = (!LOCAL && latestBuild && pageBuild && latestBuild!==pageBuild)
+      ? '<div class="sb-stale">This page is an older build. Refresh to see the latest before logging.</div>' : '';
+    var stamp='<div class="sb-stamp">'+esc(build())+'</div>';
+    var head='<div class="sb-h"><b>Feedback</b><button class="sb-x" id="sb-close">×</button></div>';
+    if(LOCAL){
+      return '<div class="sb-panel">'+head+stamp+'<div class="sb-local">This is a local copy of the app — notes can only be logged on the deployed site.</div></div>';
+    }
+    if(!who()||gate) return '<div class="sb-panel">'+head+stamp+gateHTML()+'</div>';
+    var form='<div class="sb-on">On <b>'+esc(cfg.screen()||'Somewhere')+'</b> · logging as '+esc(who())+' <button class="sb-x" id="sb-chg" style="font-size:12px;color:var(--sb-accentDeep)">change</button></div>'
+      +'<textarea class="sb-ta" id="sb-ta" placeholder="What felt wrong on this screen?"></textarea>'
+      +(shot?('<div class="sb-thumb"><img src="'+shot.preview+'" alt=""><button class="sb-rm" id="sb-rm">×</button></div>'):'')
+      +(err?('<div class="sb-err">'+esc(err)+'</div>'):'')
+      +(okMsg?('<div class="sb-note-say">'+esc(okMsg)+'</div>'):'')
+      +'<div class="sb-row"><label class="sb-attach">'+ICON_CAM+'<span>'+(shot?'Change photo':'Add screenshot')+'</span><input id="sb-file" type="file" accept="image/*" hidden></label>'
+      +'<button class="sb-log" id="sb-log">Log it</button></div>';
+    return '<div class="sb-panel">'+head+stale+stamp+form+recent()+'</div>';
+  }
+  function gateHTML(){
+    var chips=SEED.map(function(n){return '<button class="sb-attach" data-who="'+esc(n)+'" style="flex:0 0 auto;padding:8px 13px">'+esc(n)+'</button>';}).join('');
+    return '<div class="sb-on" style="margin-bottom:9px">Who are you? (so your notes are yours)</div>'
+      +'<div class="sb-row" style="flex-wrap:wrap;margin-top:0">'+chips+'</div>'
+      +'<input class="sb-ta" id="sb-who" style="min-height:0;margin-top:9px" placeholder="…or type your name">'
+      +'<div class="sb-row"><button class="sb-log" id="sb-who-go">Continue</button></div>';
+  }
+  function recent(){
+    var body;
+    if(!loaded && !loadFailed){ body='<div class="sb-empty">Loading…</div>'; }
+    else if(loadFailed){ body='<div class="sb-empty">Couldn’t load past notes. <button class="sb-refresh" id="sb-rl">Refresh</button></div>'; }
+    else if(!notes.length){ body='<div class="sb-empty">No notes yet — you’ll be the first.</div>'; }
+    else { body=notes.slice(0,6).map(function(n){
+      var done=n.state==='done';
+      return '<div class="sb-item"><button class="sb-tick '+(done?'on':'')+'" data-tick="'+n.id+'" data-st="'+esc(n.state)+'">'+(done?ICON_CHECK:'')+'</button>'
+        +'<div class="sb-it-b"><div class="sb-it-t '+(done?'done':'')+'">'+esc(n.note)+'</div>'
+        +'<div class="sb-it-m">'+esc(n.who||'—')+' · '+esc(n.screen||'—')+' · '+esc(ago(n.loggedAt))+'</div></div></div>';
+    }).join(''); }
+    return '<div class="sb-sep"></div><div class="sb-lab">Recent notes<button class="sb-all" id="sb-all">All notes →</button></div>'+body;
+  }
+  function wire(){
+    var q=function(id){return document.getElementById(id);};
+    if(q('sb-close')) q('sb-close').onclick=function(){ open=false; paint(); };
+    if(q('sb-chg')) q('sb-chg').onclick=function(){ gate=true; paint(); };
+    if(q('sb-ta')){ var ta=q('sb-ta'); ta.value=draft; ta.oninput=function(){ draft=ta.value; }; }
+    if(q('sb-log')) q('sb-log').onclick=logIt;
+    if(q('sb-file')) q('sb-file').onchange=function(e){ var f=e.target.files&&e.target.files[0]; if(!f) return;
+      shrink(f,function(s){ if(s){ shot=s; } else { err='Could not read that image.'; } paint(); }); };
+    if(q('sb-rm')) q('sb-rm').onclick=function(){ shot=null; paint(); };
+    if(q('sb-rl')) q('sb-rl').onclick=function(){ loadFailed=false; loaded=false; paint(); load(); };
+    if(q('sb-all')) q('sb-all').onclick=openNotes;
+    root.querySelectorAll('[data-tick]').forEach(function(b){ b.onclick=function(){ tick(b.getAttribute('data-tick'), b.getAttribute('data-st')); }; });
+    // name gate
+    root.querySelectorAll('[data-who]').forEach(function(b){ b.onclick=function(){ setWho(b.getAttribute('data-who')); gate=false; paint(); }; });
+    if(q('sb-who-go')) q('sb-who-go').onclick=function(){ var v=(q('sb-who').value||'').trim(); if(v){ setWho(v); gate=false; paint(); } };
+  }
+
+  /* ---------- full-screen Notes overlay ---------- */
+  function notesHTML(){
+    var openN=notes.filter(function(n){return n.state!=='done';});
+    var doneN=notes.filter(function(n){return n.state==='done';});
+    var head='<div class="sb-sheet-h"><h2>Sandbox notes</h2><button class="sb-x" id="sb-ovl-x" style="font-size:24px">×</button></div>'
+      +'<div class="sb-sheet-sub">'+openN.length+' open · '+doneN.length+' done · everything testers have logged</div>';
+    var body = (!notes.length)
+      ? '<div class="sb-empty">'+(loadFailed?'Couldn’t load notes. <button class="sb-refresh" id="sb-ovl-rl">Refresh</button>':'Nothing logged yet.')+'</div>'
+      : openN.concat(doneN).map(card).join('');
+    return '<div class="sb-sheet">'+head+body+'</div>';
+  }
+  function card(n){
+    var done=n.state==='done';
+    var shotImg = n.shots&&n.shots[0];
+    var fig='';
+    if(shotImg){
+      // for a visual fix, an after image committed to after/<id>.jpg shows beside the tester's shot; it removes itself if absent
+      fig='<div class="sb-fig"><figure><figcaption>What they saw</figcaption><img src="'+esc(shotImg)+'" alt=""></figure>'
+        +'<figure><figcaption>What it looks like now</figcaption><img src="after/'+esc(n.id)+'.jpg" alt="" onerror="this.closest(\'figure\').remove()"></figure></div>';
+    }
+    var fix = (done&&n.fix) ? '<div class="sb-c-fix"><b>Fixed.</b> '+esc(n.fix)+'</div>' : '';
+    return '<div class="sb-card '+(done?'done':'open')+'" data-id="'+n.id+'">'
+      +'<div class="sb-c-top"><span class="sb-c-st '+(done?'done':'open')+'">'+(done?'Done':'Open')+'</span>'
+      +'<div class="sb-c-meta"><b>'+esc(n.who||'—')+'</b> · '+esc(n.screen||'—')+' · '+esc(ago(n.loggedAt))+'</div></div>'
+      +'<div class="sb-c-note">'+esc(n.note)+'</div>'
+      +(n.context?('<div class="sb-c-ctx">'+esc(n.context)+'</div>'):'')
+      +fig+fix
+      +'<div class="sb-c-actions"><button data-otick="'+n.id+'" data-st="'+esc(n.state)+'">'+(done?'Reopen':'Mark done')+'</button>'
+      +'<button class="sb-del" data-del="'+n.id+'">Delete</button></div></div>';
+  }
+  function openNotes(){
+    var ov=document.getElementById('sb-ovl');
+    if(!ov){ ov=document.createElement('div'); ov.id='sb-ovl'; document.body.appendChild(ov); }
+    repaintOverlay(true);
+    if(!LOCAL){ loaded=false; load(); }
+  }
+  function repaintOverlay(force){
+    var ov=document.getElementById('sb-ovl'); if(!ov) return; if(!force && !ov.isConnected) return;
+    ov.innerHTML=notesHTML();
+    ov.onclick=function(e){ if(e.target===ov) closeOverlay(); };
+    var x=document.getElementById('sb-ovl-x'); if(x) x.onclick=closeOverlay;
+    var rl=document.getElementById('sb-ovl-rl'); if(rl) rl.onclick=function(){ loadFailed=false; loaded=false; load(); };
+    ov.querySelectorAll('[data-otick]').forEach(function(b){ b.onclick=function(){ tick(b.getAttribute('data-otick'), b.getAttribute('data-st')); }; });
+    ov.querySelectorAll('[data-del]').forEach(function(b){ b.onclick=function(){
+      if(b.classList.contains('arm')){ del(b.getAttribute('data-del')); }
+      else { b.classList.add('arm'); b.textContent='Really delete?'; }  // two clicks, second says something different
+    }; });
+  }
+  function closeOverlay(){ var ov=document.getElementById('sb-ovl'); if(ov) ov.remove(); }
+
+  window.Sandbox={
+    init:function(o){ o=o||{}; if(o.screen)cfg.screen=o.screen; if(o.rerender)cfg.rerender=o.rerender; if(o.context)cfg.context=o.context;
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){mount();boot();});
+      else { mount(); boot(); } },
+    notesHTML:notesHTML, openCount:openCount, refresh:load
+  };
+})();
+</script>
+<script>
 const S = [
   {n:"Ionut & Nicoleta Lerca", co:"Romania", coach:"Dominik", uplink:"Flaviu", lead:"Flaviu", risk:87, lvl:"High", pct:.075, tgt:4000, wk:8, mo:11, don2:0, sub:0, hw:100},
   {n:"Zuzana Belancová", co:"Slovakia", coach:"Lukáš", uplink:"Benjamín", lead:"Timotej", risk:82, lvl:"High", pct:.197, tgt:2760, wk:4, mo:12, don2:0, sub:0, hw:100},
@@ -526,6 +902,23 @@ const S = [
   {n:"Anna Dyka", co:"Ukraine", coach:"Yulia", uplink:"Olena", lead:"Oleksandr", risk:11, lvl:"Healthy", pct:.839, tgt:1650, wk:4, mo:12, don2:0, sub:2, hw:100},
 ];
 S.forEach(s=>{ s.moAmt=Math.round(s.pct*s.tgt); s.first=s.n.split(/[ &]/)[0]; });
+/* baked trailing ~6-week funnel from the weekly MPD updates — powers the "Who to reach" diagnosis
+   offline / in preview. Live site replaces this with the care endpoint. {asks,mtgs,yes,monthly,onetime,hours,weeks,coachMet,daysSince,note} */
+const FUNNEL={
+ "Ionut & Nicoleta Lerca":{asks:2,mtgs:2,yes:0,monthly:0,onetime:0,hours:16,weeks:5,coachMet:1,daysSince:6,note:"Busy season with the youth camp — I know I need to get back to real appointments."},
+ "Zuzana Belancová":{asks:0,mtgs:0,yes:0,monthly:0,onetime:0,hours:0,weeks:0,coachMet:0,daysSince:26,note:""},
+ "Matouš Krajník":{asks:9,mtgs:4,yes:2,monthly:0,onetime:2,hours:74,weeks:5,coachMet:1,daysSince:7,note:"Two people said yes but both preferred a one-time gift for now."},
+ "Kayla Śnieżek":{asks:11,mtgs:6,yes:4,monthly:3,onetime:1,hours:70,weeks:5,coachMet:2,daysSince:4,note:"Great week — three new monthly partners after the church presentation."},
+ "Danail Ventsislavov":{asks:1,mtgs:0,yes:0,monthly:0,onetime:0,hours:58,weeks:4,coachMet:0,daysSince:9,note:"Lots of ministry hours but I didn't make any real asks this week."},
+ "Capverde Alexandra":{asks:0,mtgs:0,yes:0,monthly:0,onetime:0,hours:4,weeks:3,coachMet:0,daysSince:8,note:"We were on vacation most of the month."},
+ "Adam Velebír":{asks:12,mtgs:5,yes:2,monthly:1,onetime:1,hours:38,weeks:4,coachMet:1,daysSince:6,note:"Asked a lot of people but not many are saying yes — not sure what's off."},
+ "Patryk Gąsior":{asks:2,mtgs:1,yes:0,monthly:0,onetime:0,hours:33,weeks:4,coachMet:0,daysSince:7,note:"Organizing the New Year youth conference took most of my time."},
+ "Vanesa Verčimáková":{asks:1,mtgs:0,yes:0,monthly:0,onetime:0,hours:8,weeks:3,coachMet:0,daysSince:11,note:"Serving the local church most days — little MPD time."},
+ "Ben Polgui":{asks:5,mtgs:3,yes:3,monthly:2,onetime:1,hours:52,weeks:4,coachMet:1,daysSince:5,note:"Two monthly partners this month — momentum is building."},
+ "Khrystyna Trush":{asks:7,mtgs:4,yes:4,monthly:1,onetime:3,hours:66,weeks:5,coachMet:1,daysSince:6,note:"A big one-time gift came in, but most yeses are one-time — few new monthly."},
+ "Anna Dyka":{asks:5,mtgs:3,yes:3,monthly:2,onetime:1,hours:44,weeks:4,coachMet:1,daysSince:5,note:"Close to fully funded — finishing the last asks and planning the handoff."},
+};
+S.forEach(s=>{ s.fn=FUNNEL[s.n]||{asks:0,mtgs:0,yes:0,monthly:0,onetime:0,hours:0,weeks:0,coachMet:0,daysSince:999,note:""}; });
 
 /* ---- grant money (live from Grant Budget 20/12 + Staff Members) ---- */
 const CYCLES=[ /* pool = paidStaff + fees + winter + unspent */
@@ -596,7 +989,7 @@ const coachThreads={
 let coachChat=null, coachOpen={};
 const initials=n=>n.split(/[ &]/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
 const tone=l=>l==="High"?"crit":l==="Watch"?"warn":"good";
-const warmLevel=l=>l==="High"?"Needs care":l==="Watch"?"Building":"Thriving";
+const warmLevel=l=>l==="High"?"Reach first":l==="Watch"?"Building":"Thriving";
 const money=v=>"$"+Math.round(v).toLocaleString();
 const toneColor=t=>t==="crit"?"var(--flame)":t==="warn"?"var(--honey)":"var(--pine)";
 
@@ -628,7 +1021,8 @@ function ic(name,size=18){return `<svg class="i" width="${size}" height="${size}
 
 const ROLES=[{id:"mel",icon:"inbox",label:"My desk"},{id:"staff",icon:"route",label:"Staff"},{id:"coach",icon:"compass",label:"Coach"},{id:"uplink",icon:"link",label:"Uplink"},{id:"leader",icon:"home",label:"Country Leader"},{id:"director",icon:"scope",label:"MPD Director"}];
 let role="mel",who=null,chatWith=null,staffTab="home",mpdRating=0,mpdCoachMtg="Yes",mpdSubmitted=false,donorRows=1,wordIdx=0,dirTab="care",grantFilter="all",deskOpen={},deskGrant={},melTab="approvals";
-let emailStaff=null,emailData=null,emailLoading=false,emailErr=false,emailAllStaff=null;
+let emailOpen={},emailCache={},emailAllStaff=null,meetLog={};
+let careData=null,careCoach=null;
 
 const MELQUEUE=[
   {n:"Stanislav Chlebek", also:"applying with his wife, Debbie", co:"Czech Republic", dob:"22 Mar 1996", age:30,
@@ -704,15 +1098,19 @@ let payoutOpen={}, payoutStatus={}, LIVE=false;
 async function loadLive(){
   const api='/.netlify/functions/airtable?action=';
   try{
-    const [pR,gR,mR]=await Promise.all([
+    const [pR,gR,mR,aR,cR]=await Promise.all([
       fetch(api+'payout').catch(()=>null),
       fetch(api+'grantfund').catch(()=>null),
-      fetch(api+'messages').catch(()=>null)
+      fetch(api+'messages').catch(()=>null),
+      fetch(api+'approvals').catch(()=>null),
+      fetch(api+'care').catch(()=>null)
     ]);
     let changed=false;
+    if(cR&&cR.ok){ const j=await cR.json(); if(Array.isArray(j.care)&&j.care.length){ careData=j.care; LIVE=true; changed=true; } }
     if(pR&&pR.ok){ const j=await pR.json(); if(Array.isArray(j.payout)&&j.payout.length){ PAYOUT.length=0; j.payout.forEach(p=>PAYOUT.push(p)); payoutStatus={}; LIVE=true; changed=true; } }
     if(gR&&gR.ok){ const j=await gR.json(); if(Array.isArray(j.cycles)&&j.cycles.length){ CYC.length=0; j.cycles.forEach(c=>CYC.push(c)); if(typeof j.spoken==='number'){ SPOKEN=j.spoken; FREE=Math.max(0,ACCOUNT-SPOKEN); } changed=true; } }
     if(mR&&mR.ok){ const j=await mR.json(); if(j.messages&&typeof j.messages==='object'){ Object.keys(coachThreads).forEach(k=>delete coachThreads[k]); Object.assign(coachThreads,j.messages); changed=true; } }
+    if(aR&&aR.ok){ const j=await aR.json(); if(Array.isArray(j.approvals)){ MELQUEUE.length=0; j.approvals.forEach(a=>MELQUEUE.push(a)); LIVE=true; changed=true; } }
     if(changed) render();
   }catch(e){ /* stay on baked snapshot */ }
 }
@@ -776,7 +1174,7 @@ function viewMel(){
     return `<section class="card pad" style="margin-top:16px">
       <div class="desk-top">
         <div><div class="eyebrow">Awaiting your approval</div>
-          <div class="desk-name">${p.n}</div><div class="desk-sub">${p.also} · ${p.co}</div></div>
+          <div class="desk-name">${p.n}</div><div class="desk-sub">${p.also?p.also+' · ':''}${p.co}</div></div>
         <div class="desk-badge"><span class="okpill">${ic('check',13)} Approved by Dave &amp; Geri</span><small>met ${p.met}</small></div>
       </div>
       <div class="deskfacts">
@@ -808,10 +1206,10 @@ function viewMel(){
         <div class="gs-warn2">No 2026-27 grant came in, so ${first} draws from the <b>${POOL.cycle}</b> grant. His record should be tagged ${POOL.cycle}, not 2026-27. (The fund still holds ${money(POOL.fundCash)} in rollover cash if needed.)</div>
       </div>
       <div class="desk-actions">
-        <a class="btn-primary" href="${p.approve}" target="_blank" rel="noopener">${ic('check',16)} Approve ${first}</a>
+        <button class="btn-primary" data-approve="${i}">${ic('check',16)} Approve ${first}</button>
         <a class="btn-ghost" href="${p.record}" target="_blank" rel="noopener">Open full application</a>
       </div>
-      <div class="desk-note">Approving records your yes in the base and starts the grant &amp; onboarding for an Oct 1 start. Nothing is sent until you click.</div>
+      <div class="desk-note">Approving records your yes in the base, sets their grant cap, and starts onboarding${LIVE?'':' (demo — connect live to record it)'}.</div>
     </section>`;
   }).join("");
   return mnav+head+pool+cards;
@@ -915,26 +1313,59 @@ function staffHw(s){
 }
 
 /* ===== COACH ===== */
+function coachMeetings(name){
+  const log=meetLog[name]; let hist;
+  if(!LIVE) hist=`<div class="cm-msg">${ic('info',15)} Saved meetings appear here on the deployed site.</div>`;
+  else if(log===undefined||log==='loading') hist=`<div class="cm-msg">${ic('clock',15)} Loading past meetings…</div>`;
+  else if(Array.isArray(log)&&log.length) hist=log.map(m=>`<div class="cm-item"><div class="cm-d">${fmtEmailDate(m.date)}${m.coach?` · ${m.coach}`:''}</div><div class="cm-n">${(m.notes||'').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div></div>`).join("");
+  else hist=`<div class="cm-msg">No meetings logged yet — add the first one above.</div>`;
+  const today=new Date().toISOString().slice(0,10);
+  return `<div class="cm-form">
+      <div class="cm-top"><label>Meeting date</label><input type="date" id="cm-date" value="${today}"></div>
+      <textarea id="cm-notes" placeholder="What did you talk about? Wins, struggles, next steps, prayer requests…"></textarea>
+      <button class="btn-primary" id="cm-save">${ic('check',15)} Save meeting</button>
+    </div>
+    <div class="cm-hist">${hist}</div>`;
+}
+function coachDirPanel(coach){
+  const th=coachThreads[coach]||[];
+  const body=th.length?th.map(m=>{const mine=m.from==="coach";return `<div class="bub ${mine?'me':'them'}">${m.text}<span class="t">${m.t}</span></div>`;}).join("")
+    :`<div class="empty-chat">No messages with the directors yet.<br>Reach out — they're here to help you carry your people.</div>`;
+  return `<div class="chat"><div class="chat-h"><div class="av" style="background:linear-gradient(135deg,var(--honey),var(--honey-deep))">DG</div><div class="nm">Dave &amp; Geri<small>MPD directors</small></div></div>
+    <div class="msgs" id="cdmsgs">${body}</div>
+    <div class="composer"><input id="cdmi" placeholder="Message the directors…" autocomplete="off"><button id="cdsend">Send</button></div>
+    <div class="whoami">as ${coach} · MPD coach</div></div>`;
+}
 function viewCoach(){
-  const mine=S.filter(s=>s.coach===who).sort((a,b)=>b.risk-a.risk);
+  const mine=S.filter(s=>s.coach===who).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]);
   if(!chatWith||!mine.find(s=>s.n===chatWith))chatWith=mine[0]?.n;
-  const need=mine.filter(s=>s.lvl==="High").length,quiet=mine.filter(s=>s.sub===0).length,sel=S.find(s=>s.n===chatWith);
+  const dxs=mine.map(sDx);
+  const first=dxs.filter(d=>d.tone==='crit').length, ask=dxs.filter(d=>d.tone==='warn').length, track=dxs.filter(d=>d.tone==='good').length;
+  const sel=S.find(s=>s.n===chatWith);
   return `<div style="margin-bottom:4px"><div class="eyebrow">Coaching ${who}'s people</div><h2 style="font-size:19px">${mine.length} staff you're walking with</h2></div>
   <section class="grid stats" style="margin-top:14px">
-    <div class="card stat-c"><div class="l">Could use extra care</div><div class="v" style="color:${need?'var(--flame)':'var(--pine-deep)'}">${need}</div><div class="f">let's reach out first</div></div>
-    <div class="card stat-c"><div class="l">Haven't shared this week</div><div class="v">${quiet}</div><div class="f">a gentle nudge helps</div></div>
-    <div class="card stat-c"><div class="l">Average funded</div><div class="v">${Math.round(mine.reduce((a,s)=>a+s.pct,0)/mine.length*100)}<small>%</small></div><div class="f">across your people</div></div>
+    <div class="card stat-c"><div class="l">Reach first</div><div class="v" style="color:${first?'var(--flame)':'var(--pine-deep)'}">${first}</div><div class="f">quiet or out of time</div></div>
+    <div class="card stat-c"><div class="l">Coach the ask</div><div class="v" style="color:${ask?'var(--honey-deep)':'var(--ink)'}">${ask}</div><div class="f">asks, conversion or monthly</div></div>
+    <div class="card stat-c"><div class="l">In rhythm</div><div class="v" style="color:var(--pine-deep)">${track}</div><div class="f">asking &amp; converting</div></div>
   </section>
   <section class="grid two-b">
     <div class="card pad"><div class="sec-head"><div><div class="eyebrow">Sorted by who to reach first</div><h2>My people</h2></div></div>
-      <div class="plist">${mine.map(s=>{const un=(threads[s.n]||[]).slice(-1)[0],unread=un&&un.from==="staff";
-        return `<div class="prow ${s.n===chatWith?'sel':''}" data-chat-n="${s.n}"><div class="face t-${tone(s.lvl)}">${initials(s.n)}${unread?`<span class="ping"></span>`:""}</div>
-        <div class="pin"><div class="pn">${s.n}</div><div class="pm">${Math.round(s.pct*100)}% funded · ${s.wk} weeks of grant left</div>
-          <div class="flags"><span class="fl ${s.sub>0?'ok':'no'}">${s.sub>0?ic('check',13)+' shared this week':ic('pencil',13)+' update due'}</span><span class="fl hw">${ic('list',13)} ${s.hw}%</span></div></div>
-        <div class="pr"><span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span></div></div>`;}).join("")}</div></div>
+      <div class="plist">${mine.map(s=>{const un=(threads[s.n]||[]).slice(-1)[0],unread=un&&un.from==="staff";const dx=sDx(s);
+        return `<div class="prow ${s.n===chatWith?'sel':''}" data-chat-n="${s.n}"><div class="face t-${dx.tone}">${initials(s.n)}${unread?`<span class="ping"></span>`:""}</div>
+        <div class="pin"><div class="pn">${s.n}</div><div class="pm">${dx.help}</div>
+          <div class="flags"><span class="fl">${ic('scope',13)} ${s.fn.weeks?s.fn.asks+' asks · '+s.fn.monthly+' monthly':'no recent update'}</span><span class="fl">${ic('coins',13)} ${Math.round(s.pct*100)}%</span></div></div>
+        <div class="pr"><span class="lvl lc-${dx.tone}">${dx.label}</span></div></div>`;}).join("")}</div></div>
     <div class="card pad" id="chatcard">${sel?chatPanel(sel,"coach"):`<div class="empty-chat">No one assigned yet.</div>`}</div>
   </section>
-  <div class="hint">${ic('info',16)} Same funding, weeks and homework the staff see — plus a warm read on who needs you first (<b>${warmLevel("High")}</b>, not "high risk"). The person who hasn't shared in a while is usually the one to call, not scold.</div>`;
+  ${sel?`<section class="card pad" id="coachmeetcard" style="margin-top:16px">
+    <div class="sec-head"><div><div class="eyebrow">Coaching meetings</div><h2>Meetings with ${sel.n}</h2></div><span class="note">log the date &amp; notes — kept so you and the directors can look back</span></div>
+    ${coachMeetings(sel.n)}
+  </section>`:''}
+  <section class="card pad" id="coachdircard" style="margin-top:16px">
+    <div class="sec-head"><div><div class="eyebrow">Your line to leadership</div><h2>Message Dave &amp; Geri</h2></div><span class="note">reach the directors directly — questions, wins, or a staff person you're worried about</span></div>
+    ${coachDirPanel(who)}
+  </section>
+  <div class="hint">${ic('info',16)} Each person's read comes from their own weekly updates — how many they're asking, how many say yes, and whether the yeses are monthly — so it's the one specific thing to work on, not a vague "needs care." Reach the quiet ones as friends first.</div>`;
 }
 
 /* ===== UPLINK ===== */
@@ -943,7 +1374,7 @@ function viewUplink(){
   return `<div style="margin-bottom:4px"><div class="eyebrow">${who}'s people</div><h2 style="font-size:19px">Walking alongside ${mine.length} on the journey</h2></div>
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">Thriving</div><div class="v" style="color:var(--pine-deep)">${mine.filter(s=>s.lvl==="Healthy").length}<small>/${mine.length}</small></div><div class="f">funded & steady</div></div>
-    <div class="card stat-c"><div class="l">Could use care</div><div class="v" style="color:${mine.filter(s=>s.lvl==="High").length?'var(--flame)':'var(--ink)'}">${mine.filter(s=>s.lvl==="High").length}</div><div class="f">worth a personal call</div></div>
+    <div class="card stat-c"><div class="l">Worth a call</div><div class="v" style="color:${mine.filter(s=>sDx(s).tone==='crit').length?'var(--flame)':'var(--ink)'}">${mine.filter(s=>sDx(s).tone==='crit').length}</div><div class="f">quiet or struggling</div></div>
     <div class="card stat-c"><div class="l">Average funded</div><div class="v">${Math.round(mine.reduce((a,s)=>a+s.pct,0)/mine.length*100)}<small>%</small></div><div class="f">of monthly goal</div></div>
   </section>
   <section class="card pad"><div class="sec-head"><div><div class="eyebrow">The trajectory, not the mechanics</div><h2>How my people are really doing</h2></div></div>
@@ -958,23 +1389,19 @@ function viewUplink(){
 
 /* ===== COUNTRY LEADER ===== */
 function viewLeader(){
-  const mine=S.filter(s=>s.co===who).sort((a,b)=>b.risk-a.risk),lead=mine[0]?.lead||"—";
+  const mine=S.filter(s=>s.co===who).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]),lead=mine[0]?.lead||"—";
   return `<div style="margin-bottom:4px"><div class="eyebrow">${who} · led by ${lead}</div><h2 style="font-size:19px">Our team's support raising</h2></div>
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">On the journey</div><div class="v">${mine.length}</div><div class="f">active in ${who}</div></div>
     <div class="card stat-c"><div class="l">Average funded</div><div class="v">${Math.round(mine.reduce((a,s)=>a+s.pct,0)/mine.length*100)}<small>%</small></div><div class="f">of monthly goal</div></div>
-    <div class="card stat-c"><div class="l">Need care first</div><div class="v" style="color:${mine.filter(s=>s.lvl==="High").length?'var(--flame)':'var(--pine-deep)'}">${mine.filter(s=>s.lvl==="High").length}</div><div class="f">worth your time this week</div></div>
+    <div class="card stat-c"><div class="l">Reach first</div><div class="v" style="color:${mine.filter(s=>sDx(s).tone==='crit').length?'var(--flame)':'var(--pine-deep)'}">${mine.filter(s=>sDx(s).tone==='crit').length}</div><div class="f">quiet or out of time</div></div>
     <div class="card stat-c"><div class="l">Secured monthly</div><div class="v" style="font-size:22px">${money(mine.reduce((a,s)=>a+s.moAmt,0))}</div><div class="f">of ${money(mine.reduce((a,s)=>a+s.tgt,0))}</div></div>
   </section>
   <section class="card pad"><div class="sec-head"><div><div class="eyebrow">Sorted by who needs you most</div><h2>My people & a next step for each</h2></div></div>
-    <div class="plist">${mine.map(s=>{let act;
-      if(s.pct>=.75)act="Nearly home — celebrate them and free them for ministry.";
-      else if(s.sub===0&&s.don2===0)act="Gone quiet — a warm personal check-in matters more than tips right now.";
-      else if(s.wk<=12&&s.pct<.35)act=`Tight window (~${s.wk} wks) — sit with ${s.coach} and make a simple 2-week plan.`;
-      else act="Building steadily — protect their appointment rhythm.";
-      return `<div class="prow"><div class="face t-${tone(s.lvl)}">${initials(s.n)}</div>
-        <div class="pin"><div class="pn">${s.n}</div><div class="pm">${act}</div><div class="thermo-mini"><i style="width:${Math.min(100,s.pct*100)}%;background:${toneColor(tone(s.lvl))}"></i></div></div>
-        <div class="pr"><span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span><small>${Math.round(s.pct*100)}% · coach ${s.coach}</small></div></div>`;}).join("")}</div>
+    <div class="plist">${mine.map(s=>{const dx=sDx(s);
+      return `<div class="prow"><div class="face t-${dx.tone}">${initials(s.n)}</div>
+        <div class="pin"><div class="pn">${s.n}</div><div class="pm"><b>${dx.label}.</b> ${dx.help}</div><div class="thermo-mini"><i style="width:${Math.min(100,s.pct*100)}%;background:${dxCol[dx.tone]}"></i></div></div>
+        <div class="pr"><span class="lvl lc-${dx.tone}">${dx.label}</span><small>${Math.round(s.pct*100)}% · coach ${s.coach}</small></div></div>`;}).join("")}</div>
   </section>`;
 }
 
@@ -983,27 +1410,102 @@ function viewDirector(){
   const nav=`<div class="subnav"><button class="sn ${dirTab==='care'?'on':''}" data-d="care">${ic('users',16)} Who to reach</button><button class="sn ${dirTab==='coaches'?'on':''}" data-d="coaches">${ic('compass',16)} Coaches</button><button class="sn ${dirTab==='payout'?'on':''}" data-d="payout">${ic('coins',16)} Monthly payout</button><button class="sn ${dirTab==='emails'?'on':''}" data-d="emails">${ic('message',16)} Emails sent</button><button class="sn ${dirTab==='grants'?'on':''}" data-d="grants">${ic('scope',16)} Grant fund</button></div>`;
   return nav + (dirTab==='care'?dirCare():dirTab==='coaches'?dirCoaches():dirTab==='payout'?payoutView():dirTab==='emails'?dirEmails():fundView());
 }
+/* ---- the diagnosis: what specific help does this person need, from their weekly-update funnel ---- */
+function diagnose(p){
+  const wkN=p.weeks||0;
+  const asksWk=wkN?p.asks/wkN:0;
+  const yesTot=(p.monthly+p.onetime)||p.yes||0;
+  const conv=p.asks?yesTot/p.asks:0;
+  const mShare=(p.monthly+p.onetime)?p.monthly/(p.monthly+p.onetime):0;
+  const avgHrs=wkN?p.hours/wkN:0;
+  if(p.daysSince>21||wkN===0)
+    return {code:'quiet',tone:'crit',label:'Gone quiet',
+      help:`No weekly update in ${p.daysSince>900?'a long while':p.daysSince+' days'}. Reach out as a friend first — rebuild the rhythm before any technique.`};
+  if(avgHrs>0&&avgHrs<6&&asksWk<1.5)
+    return {code:'time',tone:'crit',label:'Not enough MPD time',
+      help:`About ${Math.round(avgHrs)}h a week on MPD lately — the calendar is the bottleneck, not the skill. Help them block real appointment time.`};
+  if(p.asks<4&&asksWk<1)
+    return {code:'asks',tone:'warn',label:'The pipeline is thin',
+      help:`Only ${p.asks} clear ask${p.asks===1?'':'s'} in ${wkN} week${wkN===1?'':'s'}. The work is happening but the invitation isn't — help them fill the calendar and actually ask.`};
+  if(conv<0.25)
+    return {code:'convert',tone:'warn',label:"The ask isn't landing",
+      help:`${p.asks} asks but ${yesTot} yes${yesTot===1?'':'es'}. The ask itself needs work — practice the vision, the story, and naming a specific monthly amount.`};
+  if(mShare<0.4&&(p.monthly+p.onetime)>0)
+    return {code:'monthly',tone:'warn',label:'Yeses, but one-time',
+      help:`People are saying yes — mostly one-time gifts. Coach the recurring monthly ask; that's what builds a stable base and earns the match.`};
+  return {code:'track',tone:'good',label:'Rhythm is working',
+    help:`${p.asks} asks → ${p.monthly} monthly partner${p.monthly===1?'':'s'} in ${wkN} weeks. Affirm it and keep the tempo — this is the pattern that finishes.`};
+}
+const DXO={crit:0,warn:1,good:2};
+const dxCol={crit:'var(--flame)',warn:'var(--honey-deep)',good:'var(--pine)'};
+/* diagnose a baked S row via its funnel */
+function sFn(s){ return {mo:s.mo,pct:s.pct,wk:s.wk,asks:s.fn.asks,mtgs:s.fn.mtgs,yes:s.fn.yes,
+  monthly:s.fn.monthly,onetime:s.fn.onetime,hours:s.fn.hours,weeks:s.fn.weeks,coachMet:s.fn.coachMet,daysSince:s.fn.daysSince}; }
+function sDx(s){ return diagnose(sFn(s)); }
+/* baked S -> the same {coach, staff:[person]} shape the live care endpoint returns */
+function bakedCare(){
+  const g={};
+  S.forEach(s=>{ const p={n:s.n,co:s.co,coach:s.coach,mo:s.mo,wk:s.wk,pct:s.pct,ft:'Grant',ps:'',
+    asks:s.fn.asks,mtgs:s.fn.mtgs,yes:s.fn.yes,monthly:s.fn.monthly,onetime:s.fn.onetime,
+    hours:s.fn.hours,weeks:s.fn.weeks,coachMet:s.fn.coachMet,daysSince:s.fn.daysSince,note:s.fn.note};
+    (g[s.coach]=g[s.coach]||[]).push(p); });
+  return Object.entries(g).map(([coach,staff])=>({coach,staff:staff.sort((a,b)=>a.n.localeCompare(b.n))}))
+    .sort((a,b)=>a.coach.localeCompare(b.coach));
+}
+function careGroups(){ return (careData&&careData.length)?careData:bakedCare(); }
+function fnStat(p){
+  const cells=[['Asks',p.asks],['Meetings',p.mtgs],['Yeses',p.yes],['Monthly',p.monthly],['Hours',p.hours]];
+  return `<div class="fn-strip">${cells.map(([l,v])=>`<div class="fn-c"><b>${p.weeks?v:'—'}</b><span>${l}</span></div>`).join("")}<div class="fn-c wk"><b>${p.weeks||0}</b><span>weeks in</span></div></div>`;
+}
+function careStaffCard(p){
+  const dx=diagnose(p);
+  return `<div class="cx-card cx-${dx.tone}">
+    <div class="cx-head"><span class="av t-${dx.tone==='good'?'good':dx.tone==='warn'?'warn':'crit'}">${initials(p.n)}</span>
+      <div class="cx-who"><b>${p.n}</b><span>${p.co} &middot; month ${p.mo||'—'} &middot; ${Math.round((p.pct||0)*100)}% funded</span></div>
+      <span class="cx-tag cx-t-${dx.tone}">${dx.label}</span></div>
+    <div class="cx-help">${dx.help}</div>
+    ${fnStat(p)}
+    ${p.note?`<div class="cx-note">${ic('message',13)} <span>“${(p.note||'').replace(/</g,'&lt;').slice(0,240)}”</span></div>`:''}
+    <div class="cx-foot">${p.daysSince>900?'No update logged yet':`Last update ${p.daysSince===0?'today':p.daysSince+' day'+(p.daysSince===1?'':'s')+' ago'}`}${p.coachMet?` &middot; met their coach ${p.coachMet}× recently`:''}</div>
+  </div>`;
+}
 function dirCare(){
-  const all=[...S].sort((a,b)=>b.risk-a.risk),need=all.filter(s=>s.lvl==="High").length,quiet=all.filter(s=>s.sub===0).length;
-  const coaches={};S.forEach(s=>(coaches[s.coach]=coaches[s.coach]||[]).push(s));
-  const order=Object.entries(coaches).sort((a,b)=>b[1].filter(s=>s.lvl==="High").length-a[1].filter(s=>s.lvl==="High").length||b[1].length-a[1].length);
-  return `<div style="margin-bottom:4px"><div class="eyebrow">Dave & Geri · the whole cohort</div><h2 style="font-size:19px">Where to spend our care this week</h2></div>
+  const groups=careGroups();
+  const all=groups.flatMap(g=>g.staff.map(p=>({...p,coach:g.coach,dx:diagnose(p)})));
+  const nQuiet=all.filter(p=>p.dx.code==='quiet').length;
+  const nAsk=all.filter(p=>['time','asks','convert','monthly'].includes(p.dx.code)).length;
+  const nTrack=all.filter(p=>p.dx.code==='track').length;
+  if(careCoach&&!groups.find(g=>g.coach===careCoach)) careCoach=null;
+  const roster=groups.map(g=>{
+    const dxs=g.staff.map(diagnose);
+    const c=dxs.filter(d=>d.tone==='crit').length,w=dxs.filter(d=>d.tone==='warn').length,gd=dxs.filter(d=>d.tone==='good').length;
+    const segs=dxs.slice().sort((a,b)=>DXO[a.tone]-DXO[b.tone]).map(d=>`<span style="width:${100/dxs.length}%;background:${dxCol[d.tone]}"></span>`).join("");
+    const worst=g.staff.map(p=>({p,d:diagnose(p)})).sort((a,b)=>DXO[a.d.tone]-DXO[b.d.tone])[0];
+    const head=c?`${c} need${c===1?'s':''} attention`:w?`${w} to coach on the ask`:'All in rhythm';
+    const sub=worst&&worst.d.tone!=='good'?`${worst.p.first||worst.p.n.split(/[ &]/)[0]}: ${worst.d.label.toLowerCase()}`:'Steady across the board';
+    const open=careCoach===g.coach;
+    return `<div class="cr-wrap ${open?'open':''}">
+      <button class="cr-row" data-care-coach="${g.coach}">
+        <span class="cr-av">${g.coach[0]}</span>
+        <span class="cr-in"><span class="cr-n">${g.coach}<small>${g.staff.length} staff</small></span>
+          <span class="cr-load">${segs}</span>
+          <span class="cr-sub"><b class="cr-${c?'crit':w?'warn':'good'}">${head}</b> &middot; ${sub}</span></span>
+        <span class="cr-chev">${ic('chevron',16)}</span>
+      </button>
+      ${open?`<div class="cr-body">${g.staff.map(careStaffCard).join("")}</div>`:''}
+    </div>`;
+  }).join("");
+  return `<div style="margin-bottom:4px"><div class="eyebrow">Dave & Geri · every coach, every person</div><h2 style="font-size:19px">Who to reach — and exactly why</h2>
+    <div class="said" style="margin-top:6px;max-width:64ch">Open a coach to see each of their people with a specific read from the weekly updates — how many they're asking, how many are saying yes, and whether the yeses are monthly. Not a vague “needs care”, but the one thing to work on.</div></div>
   <section class="grid stats" style="margin-top:14px">
-    <div class="card stat-c"><div class="l">Need care first</div><div class="v" style="color:var(--flame)">${need}</div><div class="f">of ${S.length} staff</div></div>
-    <div class="card stat-c"><div class="l">Quiet this week</div><div class="v" style="color:${quiet>4?'var(--flame)':'var(--ink)'}">${quiet}</div><div class="f">haven't shared an update</div></div>
-    <div class="card stat-c"><div class="l">Coaches carrying them</div><div class="v">${Object.keys(coaches).length}</div><div class="f">across the cohort</div></div>
-    <div class="card stat-c"><div class="l">Cohort funded</div><div class="v">${Math.round(S.reduce((a,s)=>a+s.pct,0)/S.length*100)}<small>%</small></div><div class="f">on average</div></div>
+    <div class="card stat-c"><div class="l">Gone quiet</div><div class="v" style="color:${nQuiet?'var(--flame)':'var(--pine-deep)'}">${nQuiet}</div><div class="f">no recent update</div></div>
+    <div class="card stat-c"><div class="l">Coaching the ask</div><div class="v" style="color:var(--honey-deep)">${nAsk}</div><div class="f">asks, conversion or monthly</div></div>
+    <div class="card stat-c"><div class="l">In rhythm</div><div class="v" style="color:var(--pine-deep)">${nTrack}</div><div class="f">asking &amp; converting to monthly</div></div>
+    <div class="card stat-c"><div class="l">Active fundraisers</div><div class="v">${all.length}</div><div class="f">across ${groups.length} coaches</div></div>
   </section>
-  <section class="grid two-b">
-    <div class="card pad"><div class="sec-head"><div><div class="eyebrow">A short, kind list</div><h2>Reach out this week</h2></div></div>
-      <div class="plist">${all.slice(0,6).map(s=>{let why=s.sub===0&&s.don2===0?"Gone quiet — no update, no new partners":s.wk<=12?`~${s.wk} weeks left at ${Math.round(s.pct*100)}%`:`${Math.round(s.pct*100)}% funded, momentum easing`;
-        return `<div class="prow"><div class="face t-${tone(s.lvl)}">${initials(s.n)}</div><div class="pin"><div class="pn">${s.n}</div><div class="pm">${why}</div></div><div class="pr"><span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span><small>coach ${s.coach}</small></div></div>`;}).join("")}</div></div>
-    <div class="card pad"><div class="sec-head"><div><div class="eyebrow">Is anyone carrying too much?</div><h2>Coaching load</h2></div></div>
-      <div class="plist">${order.map(([c,list])=>{const h=list.filter(s=>s.lvl==="High").length,w=list.filter(s=>s.lvl==="Watch").length,g=list.filter(s=>s.lvl==="Healthy").length;
-        const segs=[...Array(h).fill('crit'),...Array(w).fill('warn'),...Array(g).fill('good')].map(x=>`<span style="width:${100/list.length}%;background:${toneColor(x)}"></span>`).join("");
-        return `<div class="prow" style="cursor:default"><div class="face" style="background:linear-gradient(135deg,var(--honey),var(--honey-deep))">${c[0]}</div><div class="pin"><div class="pn">${c}</div><div class="pm">${list.length} staff${h?` · ${h} needing care`:""}</div><div class="load">${segs}</div></div></div>`;}).join("")}</div></div>
-  </section>
-  <div class="callout">${ic('info',16)} <b>First move:</b> ${quiet} of ${S.length} staff haven't shared this week. Reviving the rhythm — a warm nudge, not a report request — comes before any coaching on technique. People share when they feel cared for.</div>`;
+  <div class="sec-head" style="margin-top:16px"><div><div class="eyebrow">Tap a coach to open their people</div><h2 style="font-size:17px">Coaches</h2></div>${careCoach?`<button class="cr-clear" data-care-coach="">${ic('chevron',13)} Collapse</button>`:''}</div>
+  <div class="cr-list">${roster}</div>
+  <div class="pay-foot" style="margin-top:14px">Read from each person's weekly MPD updates over the last ~6 weeks: clear asks made, face-to-face meetings, new partners, and whether each new partner is <b>monthly</b> or one-time. The funding % is context, not the diagnosis — a well-funded person can still need help making the monthly ask.</div>`;
 }
 function dirGrants(){
   const paidYTD=GRANTS.reduce((a,g)=>a+g.paid,0)+GRANT_ADJ;
@@ -1245,20 +1747,18 @@ function wirePayout(scope){
 }
 
 /* ===== DIRECTOR · Coaches ===== */
-function coachFocus(s){ // what the coach is working on with this staff member
-  if(s.pct>=.75) return {t:"Finishing well",d:"Nearly funded — plan the last asks and the handoff to full ministry."};
-  if(s.sub===0 && s.don2===0) return {t:"Re-engaging",d:"Gone quiet — rebuilding the weekly rhythm before any technique."};
-  if(s.hw<70) return {t:"On the training",d:`Homework at ${s.hw}% — working the Foundations plan and namestorming.`};
-  if(s.wk<=12 && s.pct<.4) return {t:"Racing the window",d:`~${s.wk} wks left at ${Math.round(s.pct*100)}% — building a tight 2-week ask plan.`};
-  if(s.don2>0) return {t:"Building momentum",d:`${s.don2} new partner${s.don2>1?'s':''} lately — keeping the ask cadence up.`};
-  return {t:"Holding rhythm",d:"Steady — protecting the appointment cadence week to week."};
-}
-function coachRead(list){ // director's read on how this coach is doing
-  const h=list.filter(s=>s.lvl==="High").length, quiet=list.filter(s=>s.sub===0).length;
-  if(h>=2) return {tone:"crit",t:`Carrying a heavy load — ${h} of ${list.length} need care`,d:"Worth a check-in; help them triage who to reach first."};
-  if(h===1) return {tone:"warn",t:`One person needs extra care`,d:quiet?`Also ${quiet} quiet this week — a nudge from you helps.`:"Otherwise steady."};
-  if(quiet>=2) return {tone:"warn",t:`${quiet} quiet this week`,d:"Rhythm is slipping — encourage a warm re-engage."};
-  return {tone:"good",t:"Steady and healthy",d:"People are in rhythm — affirm and protect what's working."};
+function coachFocus(s){ const dx=sDx(s); return {t:dx.label, d:dx.help}; } // the one thing to work on, from the funnel
+function coachRead(list){ // director's read on a coach — summarized from each person's diagnosis
+  const dxs=list.map(sDx);
+  const crit=dxs.filter(d=>d.tone==='crit'), warn=dxs.filter(d=>d.tone==='warn'), good=dxs.filter(d=>d.tone==='good').length;
+  const names=(codes)=>list.filter(s=>codes.includes(sDx(s).code)).map(s=>s.first||s.n.split(/[ &]/)[0]);
+  if(crit.length){ const q=names(['quiet']), t=names(['time']);
+    const bits=[]; if(q.length) bits.push(`${q.join(' & ')} gone quiet`); if(t.length) bits.push(`${t.join(' & ')} short on MPD time`);
+    return {tone:"crit", t:`${crit.length} need${crit.length===1?'s':''} you first`, d:`${bits.join('; ')||'Worth reaching out this week'}. Help ${crit.length===1?'them':'each'} restart before technique.`}; }
+  if(warn.length>=2) return {tone:"warn", t:`${warn.length} to coach on the ask`, d:`${names(['asks','convert','monthly']).slice(0,3).join(', ')} — working asks, conversion or the monthly invitation.`};
+  if(warn.length===1){ const w=list.find(s=>sDx(s).tone==='warn'), d=sDx(w);
+    return {tone:"warn", t:`${w.first||w.n.split(/[ &]/)[0]}: ${d.label.toLowerCase()}`, d:d.help}; }
+  return {tone:"good", t:"Everyone in rhythm", d:`${good} ${good===1?'person is':'people are'} asking and converting to monthly — affirm and protect it.`};
 }
 function dirCoachChat(coach){
   const th=coachThreads[coach]||[];
@@ -1277,16 +1777,15 @@ function dirCoaches(){
   const totalStaff=S.length;
   const cards=entries.map(([c,list,read],i)=>{
     const open=coachOpen[i];
-    const h=list.filter(s=>s.lvl==="High").length,w=list.filter(s=>s.lvl==="Watch").length,g=list.filter(s=>s.lvl==="Healthy").length;
-    const segs=[...Array(h).fill('crit'),...Array(w).fill('warn'),...Array(g).fill('good')].map(x=>`<span style="width:${100/list.length}%;background:${toneColor(x)}"></span>`).join("");
+    const segs=list.map(sDx).sort((a,b)=>DXO[a.tone]-DXO[b.tone]).map(d=>`<span style="width:${100/list.length}%;background:${dxCol[d.tone]}"></span>`).join("");
     const avg=Math.round(list.reduce((a,s)=>a+s.pct,0)/list.length*100);
-    const quiet=list.filter(s=>s.sub===0).length;
-    const staffRows=list.sort((a,b)=>b.risk-a.risk).map(s=>{const f=coachFocus(s);
-      return `<div class="cf-row"><div class="face t-${tone(s.lvl)}" style="width:34px;height:34px;font-size:12.5px">${initials(s.n)}</div>
+    const quiet=list.filter(s=>sDx(s).code==='quiet').length;
+    const staffRows=list.slice().sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]).map(s=>{const dx=sDx(s);
+      return `<div class="cf-row"><div class="face t-${dx.tone}" style="width:34px;height:34px;font-size:12.5px">${initials(s.n)}</div>
         <div class="cf-in"><div class="cf-n">${s.n} <span class="cf-mo">mo ${s.mo}/12</span></div>
-          <div class="cf-work"><b>${f.t}:</b> ${f.d}</div>
-          <div class="flags"><span class="fl ${s.sub>0?'ok':'no'}">${s.sub>0?ic('check',12)+' shared':ic('pencil',12)+' update due'}</span><span class="fl hw">${ic('list',12)} hw ${s.hw}%</span><span class="fl">${ic('coins',12)} ${Math.round(s.pct*100)}%</span></div></div>
-        <span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span></div>`;}).join("");
+          <div class="cf-work">${dx.help}</div>
+          <div class="flags"><span class="fl">${ic('scope',12)} ${s.fn.weeks?s.fn.asks+' asks':'no updates'}</span><span class="fl">${ic('gift',12)} ${s.fn.monthly} monthly</span><span class="fl">${ic('coins',12)} ${Math.round(s.pct*100)}% funded</span></div></div>
+        <span class="lvl lc-${dx.tone}">${dx.label}</span></div>`;}).join("");
     return `<div class="ccard ${open?'open':''}">
       <button class="chead" data-coach="${i}">
         <span class="face" style="width:40px;height:40px;background:linear-gradient(135deg,var(--honey),var(--honey-deep))">${c[0]}</span>
@@ -1317,7 +1816,7 @@ function dirCoaches(){
     <div class="ccard-wrap">${cards}</div>
     <div class="card pad" id="coachchatcard">${sel?dirCoachChat(sel):`<div class="empty-chat">Pick a coach to open a conversation.</div>`}</div>
   </section>
-  <div class="callout">${ic('heart',16)} Directors care for the cohort <b>through</b> the coaches. When a coach is carrying two or three who need care at once, the most useful thing you can do is lighten their triage and remind them they're not alone.</div>`;
+  <div class="callout">${ic('heart',16)} Directors care for the cohort <b>through</b> the coaches. Each person's read comes straight from their weekly updates — asks made, yeses, and whether they're monthly — so you and the coach can name the one thing to work on instead of a vague "needs care."</div>`;
 }
 function wireCoaches(scope){
   scope.querySelectorAll("[data-coach]").forEach(b=>b.onclick=()=>{coachOpen[b.dataset.coach]=!coachOpen[b.dataset.coach];render();});
@@ -1333,43 +1832,58 @@ function wireCoaches(scope){
 
 /* ===== DIRECTOR · Emails sent ===== */
 function fmtEmailDate(s){const d=Date.parse(s);return d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):s;}
-function dirEmails(){
-  const names=(emailAllStaff&&emailAllStaff.length?emailAllStaff:[...new Set(PAYOUT.map(p=>p.n))]).slice().sort((a,b)=>a.localeCompare(b));
-  const search=`<input id="em-search" class="em-search" placeholder="Search all staff by name…" autocomplete="off">`;
-  const chips=names.map(n=>`<button class="em-chip ${emailStaff===n?'on':''}" data-emstaff="${n}" data-emname="${n.toLowerCase()}">${initials(n)} <span>${n}</span></button>`).join("");
-  let panel;
-  if(!emailStaff) panel=`<div class="em-empty">${ic('message',20)}<div>Pick a staff person to see every email the system sent about them — to whom, and confirmation it went out.</div></div>`;
-  else if(!LIVE) panel=`<div class="em-empty">${ic('info',20)}<div>The email log reads live from Airtable — it appears here once the app is opened on the deployed site (jv-mpd-app.netlify.app), not the local file.</div></div>`;
-  else if(emailLoading) panel=`<div class="em-empty">${ic('clock',20)}<div>Loading ${emailStaff}'s email history…</div></div>`;
-  else if(emailErr) panel=`<div class="em-empty">${ic('info',20)}<div>Couldn't load the email log just now. Try again.</div></div>`;
-  else if(!emailData||!emailData.length) panel=`<div class="em-empty">${ic('info',20)}<div>No emails logged for ${emailStaff} yet.</div></div>`;
-  else{
-    const sent=emailData.filter(e=>e.sent).length;
-    const rows=emailData.map(e=>`<div class="em-row">
-      <span class="em-date">${fmtEmailDate(e.date)}</span>
-      <span class="em-main"><span class="em-subj">${e.subject||'(no subject)'}</span><span class="em-to">to ${e.to||'—'}${e.cc?` · cc ${e.cc}`:''}</span></span>
-      <span class="em-sent ${e.sent?'yes':'no'}">${e.sent?ic('check',13)+' sent':'not sent'}</span></div>`).join("");
-    panel=`<div class="em-head"><b>${emailStaff}</b><span>${emailData.length} emails · ${sent} confirmed sent</span></div><div class="em-list">${rows}</div>`;
+function emailAccordion(name){
+  const open=emailOpen[name], cache=emailCache[name];
+  const badge = Array.isArray(cache) ? `<span class="em-cnt">${cache.length}</span>` : "";
+  let body="";
+  if(open){
+    if(!LIVE) body=`<div class="em-b-msg">${ic('info',15)} The email log reads live from Airtable — open this on the deployed site (jv-mpd-app.netlify.app) to see it.</div>`;
+    else if(cache==='loading'||cache===undefined) body=`<div class="em-b-msg">${ic('clock',15)} Loading ${name}'s email history…</div>`;
+    else if(cache==='error') body=`<div class="em-b-msg">${ic('info',15)} Couldn't load just now — close and reopen to retry.</div>`;
+    else if(Array.isArray(cache)&&cache.length){
+      const sent=cache.filter(e=>e.sent).length;
+      body=`<div class="em-head"><b>${cache.length} email${cache.length===1?'':'s'}</b><span>${sent} confirmed sent</span></div>`+
+        cache.map(e=>`<div class="em-row"><span class="em-date">${fmtEmailDate(e.date)}</span>
+          <span class="em-main"><span class="em-subj">${e.subject||'(no subject)'}</span><span class="em-to">to ${e.to||'—'}${e.cc?` · cc ${e.cc}`:''}</span></span>
+          <span class="em-sent ${e.sent?'yes':'no'}">${e.sent?ic('check',13)+' sent':'not sent'}</span></div>`).join("");
+    } else body=`<div class="em-b-msg">${ic('info',15)} No emails logged for ${name} yet.</div>`;
   }
-  return `<div style="margin-bottom:4px"><div class="eyebrow">Restricted · Mel &amp; MPD directors</div><h2 style="font-size:19px">Emails sent</h2>
-    <div class="said" style="margin-top:6px;max-width:60ch">Every automated email the system sent around each staff person — the recipient, the subject, and a check that it actually went out.</div></div>
-  ${search}
-  <div class="em-chips">${chips}</div>
-  <section class="card pad" style="margin-top:14px">${panel}</section>`;
+  return `<div class="em-acc ${open?'open':''}" data-emname="${name.toLowerCase()}">
+    <button class="em-acc-h" data-emtoggle="${name}"><span class="av2">${initials(name)}</span><span class="em-acc-n">${name}</span>${badge}<span class="em-chev">${ic('chevron',16)}</span></button>
+    ${open?`<div class="em-acc-b">${body}</div>`:''}
+  </div>`;
 }
-function loadEmails(name){
-  emailStaff=name; emailData=null; emailErr=false; emailLoading=LIVE; render();
-  if(!LIVE) return;
+function dirEmails(){
+  const cohort=[...new Set(PAYOUT.map(p=>p.n))].sort((a,b)=>a.localeCompare(b));
+  const cset=new Set(cohort.map(x=>x.toLowerCase()));
+  const hist=(emailAllStaff||[]).filter(n=>!cset.has(n.toLowerCase())).sort((a,b)=>a.localeCompare(b));
+  const search=`<input id="em-search" class="em-search" placeholder="Search all staff by name…" autocomplete="off">`;
+  const activeAcc=cohort.map(emailAccordion).join("");
+  const histAcc=hist.length?hist.map(emailAccordion).join("")
+    : `<div class="em-b-msg" style="padding:14px 2px">${LIVE?'Loading the rest of the directory…':'The full directory loads on the deployed site.'}</div>`;
+  return `<div style="margin-bottom:4px"><div class="eyebrow">Restricted · Mel &amp; MPD directors</div><h2 style="font-size:19px">Emails sent</h2>
+    <div class="said" style="margin-top:6px;max-width:60ch">Every automated email the system sent around each staff person — the recipient, the subject, and a check that it actually went out. Tap a name to open its history.</div></div>
+  ${search}
+  <div class="em-sec"><div class="eyebrow">Active staff</div><h3 class="em-sec-h">In the current cohort</h3></div>
+  <div class="em-accs">${activeAcc}</div>
+  <div class="em-sec em-sec2"><div class="eyebrow">Historical</div><h3 class="em-sec-h">Everyone else</h3></div>
+  <div class="em-accs">${histAcc}</div>`;
+}
+function loadEmailsFor(name){
+  if(!LIVE){ render(); return; }
+  emailCache[name]='loading'; render();
   fetch('/.netlify/functions/airtable?action=emails&staff='+encodeURIComponent(name))
-    .then(r=>r.ok?r.json():Promise.reject()).then(j=>{ emailData=j.emails||[]; emailLoading=false; render(); })
-    .catch(()=>{ emailErr=true; emailLoading=false; render(); });
+    .then(r=>r.ok?r.json():Promise.reject()).then(j=>{ emailCache[name]=j.emails||[]; render(); })
+    .catch(()=>{ emailCache[name]='error'; render(); });
 }
 function wireEmails(scope){
-  scope.querySelectorAll("[data-emstaff]").forEach(b=>b.onclick=()=>loadEmails(b.dataset.emstaff));
+  scope.querySelectorAll("[data-emtoggle]").forEach(b=>b.onclick=()=>{
+    const n=b.dataset.emtoggle, willOpen=!emailOpen[n]; emailOpen[n]=willOpen;
+    if(willOpen && emailCache[n]===undefined) loadEmailsFor(n); else render();
+  });
   const s=scope.querySelector("#em-search");
   if(s) s.addEventListener("input",()=>{const q=s.value.trim().toLowerCase();
     scope.querySelectorAll("[data-emname]").forEach(c=>{c.hidden = q && !c.dataset.emname.includes(q);});});
-  // pull the full staff directory once (live) so directors can look up anyone
   if(LIVE && !emailAllStaff){ fetch('/.netlify/functions/airtable?action=staff').then(r=>r.ok?r.json():null)
     .then(j=>{ if(j&&Array.isArray(j.staff)&&j.staff.length){ emailAllStaff=j.staff; if(dirTab==='emails'&&role==='director') render(); } }).catch(()=>{}); }
 }
@@ -1400,6 +1914,23 @@ function render(){
     if(melTab==='fund'){ wireFund(v); return; }
     if(melTab==='payout'){ wirePayout(v); return; }
     v.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{deskOpen[b.dataset.toggle]=!deskOpen[b.dataset.toggle];render();});
+    v.querySelectorAll("[data-approve]").forEach(btn=>btn.onclick=()=>{
+      const i=+btn.dataset.approve, p=MELQUEUE[i]; if(!p) return;
+      const gAmt=deskGrant[i] ?? ( /wife|husband|&| and /i.test(p.also||"") ? 18000 : 12000 );
+      if(LIVE && p.id){
+        btn.disabled=true; btn.textContent="Approving…";
+        // set grant cap + funding + active + record Mel's approval
+        fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({id:p.id, maxpay:gAmt, funding:'Grant', payout:'Active', approve:true})})
+          .catch(()=>{});
+        // fire the existing Make onboarding webhook too, if present
+        if(p.approve){ fetch(p.approve,{mode:'no-cors'}).catch(()=>{}); }
+        MELQUEUE.splice(i,1); render();
+        setTimeout(loadLive, 1500);
+      } else {
+        alert('Demo preview — open the deployed site (jv-mpd-app.netlify.app) to record approvals live.');
+      }
+    });
     MELQUEUE.forEach((p,i)=>{
       const inp=document.getElementById("gin-"+i); if(!inp) return;
       inp.addEventListener("input",()=>{
@@ -1428,7 +1959,30 @@ function render(){
       v.querySelectorAll(".cb").forEach(c=>c.onclick=e=>{e.stopPropagation();const done=seedHw(s.n),k=c.dataset.t;if(done.has(k))done.delete(k);else done.add(k);s.hw=Math.round(done.size/HW_TOTAL*100);render();});
     }
   }
-  else if(role==="coach"){v.innerHTML=viewCoach();v.querySelectorAll("[data-chat-n]").forEach(r=>r.onclick=()=>{chatWith=r.dataset.chatN;render();});const sel=S.find(s=>s.n===chatWith);if(sel)wireChat(sel,"coach");}
+  else if(role==="coach"){v.innerHTML=viewCoach();v.querySelectorAll("[data-chat-n]").forEach(r=>r.onclick=()=>{chatWith=r.dataset.chatN;render();});const sel=S.find(s=>s.n===chatWith);if(sel)wireChat(sel,"coach");
+    const cdi=v.querySelector("#cdmi"),cds=v.querySelector("#cdsend"),cdbox=v.querySelector("#cdmsgs");
+    if(cdi){
+      const send=()=>{const val=cdi.value.trim();if(!val)return;const coach=who;
+        (coachThreads[coach]=coachThreads[coach]||[]).push({from:"coach",text:val,t:"now"});
+        if(LIVE){ fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:{coach,from:"coach",text:val}})}).catch(()=>{}); }
+        render();};
+      cds.onclick=send; cdi.addEventListener("keydown",e=>{if(e.key==="Enter")send();}); if(cdbox)cdbox.scrollTop=cdbox.scrollHeight;
+    }
+    // coaching-meeting log: lazy-load past meetings for the selected staff
+    if(LIVE && chatWith && meetLog[chatWith]===undefined){ meetLog[chatWith]='loading';
+      fetch('/.netlify/functions/airtable?action=meetings&staff='+encodeURIComponent(chatWith))
+        .then(r=>r.ok?r.json():Promise.reject()).then(j=>{ meetLog[chatWith]=j.meetings||[]; render(); }).catch(()=>{ meetLog[chatWith]=[]; render(); }); }
+    const cmSave=v.querySelector("#cm-save");
+    if(cmSave) cmSave.onclick=()=>{
+      const d=(v.querySelector("#cm-date")||{}).value||new Date().toISOString().slice(0,10);
+      const n=((v.querySelector("#cm-notes")||{}).value||"").trim();
+      if(!n){ alert("Add a few notes from the meeting first."); return; }
+      const staff=chatWith, coach=who;
+      meetLog[staff]=[{date:d,coach,notes:n}, ...(Array.isArray(meetLog[staff])?meetLog[staff]:[])];
+      if(LIVE){ fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meeting:{staff,coach,date:d,notes:n}})}).catch(()=>{}); }
+      render();
+    };
+  }
   else if(role==="uplink")v.innerHTML=viewUplink();
   else if(role==="leader")v.innerHTML=viewLeader();
   else { v.innerHTML=viewDirector();
@@ -1437,10 +1991,25 @@ function render(){
     if(dirTab==='payout') wirePayout(v);
     if(dirTab==='coaches') wireCoaches(v);
     if(dirTab==='emails') wireEmails(v);
+    if(dirTab==='care') v.querySelectorAll("[data-care-coach]").forEach(b=>b.onclick=()=>{const c=b.dataset.careCoach;careCoach=(c&&careCoach!==c)?c:null;render();});
   }
 }
 wordIdx=new Date().getDay();
 syncRoles();buildId();render();loadLive();
+
+/* ---- Sandbox: name every view so no note files as "Somewhere" ---- */
+function sbScreen(){
+  try{
+    if(role==='mel')      return 'My desk · '+({approvals:'Approvals',payout:'Monthly payout',fund:'Grant fund'}[melTab]||'Approvals');
+    if(role==='staff')    return 'Staff · '+({home:'Home',hw:'Homework',mpd:'Weekly update'}[staffTab]||'Home');
+    if(role==='coach')    return 'Coach'+(who?' · '+who:'')+(chatWith?' · '+chatWith:'');
+    if(role==='uplink')   return 'Uplink'+(who?' · '+who:'');
+    if(role==='leader')   return 'Country Leader'+(who?' · '+who:'');
+    if(role==='director') return 'MPD Director · '+({care:'Who to reach',coaches:'Coaches',payout:'Monthly payout',emails:'Emails sent',grants:'Grant fund'}[dirTab]||'Who to reach');
+  }catch(e){}
+  return 'Somewhere';
+}
+if(window.Sandbox) Sandbox.init({ screen:sbScreen, rerender:()=>render(), context:()=> (LIVE?'live':'demo')+' data' });
 </script>
 </body>
 </html>

@@ -1,7 +1,15 @@
 # Ministry Partner Development App — Netlify config
 [build]
   publish = "."
-  command = ""
+  # Build stamp: writes version.json so the sandbox pencil can tell a tester whether the
+  # page in front of them contains the latest deploy (stops the same note arriving three times).
+  command = "node -e \"require('fs').writeFileSync('version.json',JSON.stringify({at:new Date().toISOString(),ref:(process.env.COMMIT_REF||'').slice(0,7)}))\""
+
+# Sandbox feedback notes -> the notes function (token stays server-side)
+[[redirects]]
+  from = "/api/notes"
+  to = "/.netlify/functions/notes"
+  status = 200
 
 [[headers]]
   for = "/*"
