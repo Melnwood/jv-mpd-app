@@ -120,6 +120,12 @@
   .jmeta .facts{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
   .fact{font-size:12.5px;color:var(--ink-2)}
   .fact b{display:block;font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .pace{display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding:11px 13px;background:var(--pine-soft);border:1px solid color-mix(in srgb,var(--pine) 30%,transparent);border-radius:12px;font-size:13px;line-height:1.5;color:var(--ink)}
+  .pace svg{flex:none;margin-top:2px;color:var(--pine-deep)}
+  .pace b{color:var(--pine-deep)}
+  .pchart{margin-top:6px;max-width:520px}
+  .pchart-cap{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin-top:8px;max-width:60ch}
+  .pchart-cap b{color:var(--pine-deep)}
 
   .invite{margin-top:18px;border-radius:var(--r-sm);padding:15px 17px;display:flex;gap:14px;align-items:center;
     background:linear-gradient(100deg,var(--honey-soft),color-mix(in srgb,var(--honey-soft) 40%,var(--card)));border:1px solid color-mix(in srgb,var(--honey) 28%,transparent)}
@@ -225,8 +231,54 @@
   .cm-top label{font-size:12.5px;font-weight:600;color:var(--ink-2)}
   .cm-top input[type=date]{font:inherit;font-size:13.5px;background:var(--card-2);border:1.5px solid var(--line);border-radius:12px;padding:9px 13px;color:var(--ink)}
   .cm-top input[type=date]:focus{border-color:var(--pine);outline:none}
-  #cm-notes{width:100%;font:inherit;font-size:13.5px;line-height:1.5;background:var(--card-2);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;color:var(--ink);min-height:88px;resize:vertical}
-  #cm-notes:focus{border-color:var(--pine);background:var(--card);outline:none}
+  .cm-lead{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .cm-qs{display:flex;flex-direction:column;gap:12px;margin-top:2px}
+  .cm-field label{display:block;font-size:12.5px;font-weight:650;color:var(--ink);margin-bottom:5px}
+  .cm-field textarea{width:100%;font:inherit;font-size:13.5px;line-height:1.5;background:var(--card-2);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--ink);min-height:50px;resize:vertical}
+  .cm-field textarea:focus{border-color:var(--pine);background:var(--card);outline:none}
+  .cm-qa{margin-top:9px}.cm-qa:first-child{margin-top:0}
+  .cm-q{font-size:11.5px;font-weight:700;color:var(--pine-deep)}
+  .cm-a{font-size:13.5px;line-height:1.5;color:var(--ink);margin-top:2px}
+  .cm-plain{font-size:13.5px;line-height:1.5;color:var(--ink)}
+
+  /* ===== coach → one staff, everything in the box ===== */
+  .cs-lead{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(24,34,60,.04)}
+  .cs-lead.open{border-color:color-mix(in srgb,var(--honey) 42%,var(--line))}
+  .cs-head{width:100%;display:flex;align-items:center;gap:11px;padding:12px 14px;background:none;border:none;cursor:pointer;text-align:left;font:inherit;color:inherit}
+  .cs-head .av{width:34px;height:34px;flex:none;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;font-family:var(--serif);background:linear-gradient(135deg,var(--honey),var(--honey-deep))}
+  .cs-t{flex:1;min-width:0;font-weight:700;font-size:14px}
+  .cs-t small{display:block;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:1px}
+  .cs-sum{flex:none;font-size:11.5px;color:var(--muted);background:var(--card-2);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+  .cs-chev{flex:none;color:var(--muted);transition:transform .18s}
+  .cs-lead.open .cs-chev,.cs-acc.open .cs-chev{transform:rotate(180deg)}
+  .cs-body{padding:0 14px 14px}
+  .cs-lead .cs-body{border-top:1px solid var(--line);padding-top:12px}
+  .cs-box{display:flex;flex-direction:column}
+  .cs-top{display:flex;align-items:center;gap:11px;padding-bottom:12px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+  .cs-top .av{width:38px;height:38px;flex:none;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:13.5px;color:#fff;font-family:var(--serif)}
+  .cs-who{flex:1;min-width:0}
+  .cs-who b{font-size:15px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cs-who span{font-size:12px;color:var(--muted)}
+  .cs-acc{border-top:1px solid var(--line)}
+  .cs-acc .cs-head{padding:12px 2px}
+  .cs-acc .cs-body{padding:0 2px 12px}
+  .cs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .cs-k{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+  .cs-k span{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  .cs-k b{font-size:15px;font-family:var(--serif);font-weight:600;font-variant-numeric:tabular-nums}
+  .cs-dx{margin-top:10px;background:var(--card-2);border-left:3px solid var(--line);border-radius:0 10px 10px 0;padding:9px 12px;font-size:13px;line-height:1.5}
+  .cs-givers{display:flex;flex-direction:column;gap:1px;background:var(--line);border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  .cs-giver{display:flex;justify-content:space-between;gap:10px;background:var(--card);padding:8px 12px;font-size:13px}
+  .cs-giver b{font-variant-numeric:tabular-nums}
+  .cs-giver.tot{background:var(--card-2);font-weight:700}
+  .cs-fn{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  .cs-fc{background:var(--card-2);border:1px solid var(--line);border-radius:9px;padding:7px 3px;text-align:center}
+  .cs-fc b{display:block;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+  .cs-fc span{font-size:9.5px;color:var(--muted)}
+  .cs-note{display:flex;gap:7px;margin-top:9px;font-size:12.5px;font-style:italic;color:var(--ink-2);line-height:1.5}
+  .cs-note svg{flex:none;margin-top:2px;color:var(--muted)}
+  .cs-empty{font-size:12.5px;color:var(--muted);padding:6px 0}
+  @media(max-width:560px){.cs-fn{grid-template-columns:repeat(3,1fr)}}
   .cm-form .btn-primary{align-self:flex-start;display:inline-flex;align-items:center;gap:7px}
   .cm-hist{margin-top:16px;display:flex;flex-direction:column;gap:10px}
   .cm-item{background:var(--card-2);border:1px solid var(--line);border-left:3px solid var(--pine);border-radius:0 13px 13px 0;padding:12px 15px}
@@ -919,6 +971,11 @@ const FUNNEL={
  "Anna Dyka":{asks:5,mtgs:3,yes:3,monthly:2,onetime:1,hours:44,weeks:4,coachMet:1,daysSince:5,note:"Close to fully funded — finishing the last asks and planning the handoff."},
 };
 S.forEach(s=>{ s.fn=FUNNEL[s.n]||{asks:0,mtgs:0,yes:0,monthly:0,onetime:0,hours:0,weeks:0,coachMet:0,daysSince:999,note:""}; });
+/* baked month-by-month new monthly support raised (sums to their current monthly total).
+   Live site would use the "Month N (Amt. Raised)" rollups. Deterministic per name so bars are stable. */
+function sbRng(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return function(){h+=0x6D2B79F5;let t=h;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+S.forEach(s=>{ const rng=sbRng(s.n+'|series'); const m=Math.max(1,Math.min(11,s.mo)); let raw=[]; for(let i=0;i<m;i++) raw.push(0.3+rng()*1.6);
+  const sum=raw.reduce((a,b)=>a+b,0)||1; s.series=raw.map(w=>Math.round(w/sum*s.moAmt)); });
 
 /* ---- grant money (live from Grant Budget 20/12 + Staff Members) ---- */
 const CYCLES=[ /* pool = paidStaff + fees + winter + unspent */
@@ -1023,6 +1080,7 @@ const ROLES=[{id:"mel",icon:"inbox",label:"My desk"},{id:"staff",icon:"route",la
 let role="mel",who=null,chatWith=null,staffTab="home",mpdRating=0,mpdCoachMtg="Yes",mpdSubmitted=false,donorRows=1,wordIdx=0,dirTab="care",grantFilter="all",deskOpen={},deskGrant={},melTab="approvals";
 let emailOpen={},emailCache={},emailAllStaff=null,meetLog={};
 let careData=null,careCoach=null;
+let leadOpen=false,csOpen={};
 
 const MELQUEUE=[
   {n:"Stanislav Chlebek", also:"applying with his wife, Debbie", co:"Czech Republic", dob:"22 Mar 1996", age:30,
@@ -1226,6 +1284,27 @@ function viewStaff(){
   let inner = staffTab==="home"?staffHome(s):staffTab==="mpd"?staffMpd(s):staffHw(s);
   return nav+inner;
 }
+function paceChart(s){
+  const pace=Math.round(s.tgt/11), vals=(s.series||[]).slice(0,11), N=11;
+  const maxV=Math.max(pace, ...(vals.length?vals:[1]))*1.22||1;
+  const W=360,H=158,padB=24,padT=16,padL=8,padR=10, cw=(W-padL-padR)/N, bw=cw*0.56;
+  const y=v=> padT+(H-padT-padB)*(1-v/maxV);
+  const bars=vals.map((v,i)=>{ const x=padL+cw*i+(cw-bw)/2, yy=y(v), h=Math.max(0,(H-padB)-yy), good=v>=pace;
+    return `<rect x="${x.toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="2.5" fill="${good?'var(--pine)':'var(--honey)'}" opacity="${good?1:.9}"/>`; }).join("");
+  const upcoming=Array.from({length:N-vals.length},(_,k)=>{ const i=vals.length+k, x=padL+cw*i+(cw-bw)/2;
+    return `<rect x="${x.toFixed(1)}" y="${(H-padB-6).toFixed(1)}" width="${bw.toFixed(1)}" height="6" rx="2" fill="var(--line)"/>`; }).join("");
+  const labs=Array.from({length:N},(_,i)=>{ const x=padL+cw*i+cw/2;
+    return `<text x="${x.toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="8" fill="var(--muted)">${i+1}</text>`; }).join("");
+  const py=y(pace);
+  const line=`<line x1="${padL}" x2="${W-padR}" y1="${py.toFixed(1)}" y2="${py.toFixed(1)}" stroke="var(--pine-deep)" stroke-width="1.4" stroke-dasharray="4 3"/>`
+    +`<text x="${W-padR}" y="${(py-4).toFixed(1)}" text-anchor="end" font-size="8.5" font-weight="700" fill="var(--pine-deep)">${money(pace)}/mo pace</text>`;
+  const hit=vals.filter(v=>v>=pace).length;
+  return `<section class="card pad" style="margin-top:16px">
+    <div class="sec-head"><div><div class="eyebrow">Month by month</div><h2>Your pace, month by month</h2></div><span class="note">${hit} of ${vals.length} month${vals.length===1?'':'s'} at or above pace</span></div>
+    <div class="pchart"><svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="New monthly support raised each month against the pace line">${line}${bars}${upcoming}${labs}</svg></div>
+    <div class="pchart-cap">Each bar is the new monthly support you added that month. The dotted line is your <b>${money(pace)}/mo</b> pace — bars that reach it kept you on track for your ${money(s.tgt)} goal. Green met the pace; amber came in under.</div>
+  </section>`;
+}
 function staffHome(s){
   const t = s.pct>=.75 ? 'good' : 'warn'; /* staff's own ring is never a warning colour */
   let line,enc;
@@ -1234,6 +1313,7 @@ function staffHome(s){
   else if(s.pct>=.2){line="You're on your way.";enc="The early stretch is the hardest and you're moving through it. Three clear asks this week is a full, faithful week.";}
   else {line="The beginning takes courage.";enc="Starting is the bravest part, and you've started. You're not doing this alone — your coach and your people are with you.";}
   const w=WORDS[wordIdx%WORDS.length];
+  const moTarget=Math.round(s.tgt/11); /* monthly goal ÷ 11 = new monthly support to add each month */
   const circle=[["Coach",s.coach,"say"],["Uplink",s.uplink,"ghost"],["Country leader",s.lead,"ghost"]];
   return `<div class="greeting">
       <div><div class="hi">${greetTime()}, <b>${s.first}</b>.</div>
@@ -1250,6 +1330,7 @@ function staffHome(s){
             <div class="fact"><b>${money(s.tgt)}</b>monthly goal</div>
             <div class="fact"><b>${s.wk}</b>weeks of grant</div>
           </div>
+          <div class="pace">${ic('scope',15)}<div><b>${money(moTarget)} a month</b> is your pace — add about this much in new monthly support each month, and in 11 months you'll be at your ${money(s.tgt)} goal.</div></div>
         </div>
       </div>
       <div class="invite ${s.sub===0?'':'done'}">
@@ -1262,6 +1343,7 @@ function staffHome(s){
     </div>
     <div class="card pad" id="chatcard">${chatPanel(s,"staff")}</div>
   </section>
+  ${paceChart(s)}
   <section class="card pad">
     <div class="sec-head"><div><div class="eyebrow">Your circle</div><h2>The people walking with you</h2></div></div>
     <div class="circle">${circle.map(([r,nm,k])=>`<div class="friend"><div class="av t-good">${initials(nm)}</div><div class="in"><div class="role-l">${r}</div><div class="nm">${nm}</div></div><button class="say ${k}" ${k==='say'?'data-scroll="1"':''}>${k==='say'?'Message':ic('message',16)}</button></div>`).join("")}</div>
@@ -1313,16 +1395,34 @@ function staffHw(s){
 }
 
 /* ===== COACH ===== */
+/* the questions a coach walks through — heart, belief and blockers, not just "how are you doing" */
+const CM_QUESTIONS=[
+  {k:'doing',  q:'How are you really doing?',                         ph:"Not the numbers — how are you feeling in the process this week?"},
+  {k:'wins',   q:'Where have you seen God at work — any wins?',       ph:"Celebrate first. A yes, an answered prayer, a brave conversation."},
+  {k:'block',  q:"What's blocking you right now?",                    ph:"The real obstacle — time, the list, a hard conversation, logistics."},
+  {k:'belief', q:'Any fears or problems of belief about asking?',     ph:"Is asking bumping into fear, worth, “am I a burden,” or doubt that God will provide?"},
+  {k:'asking', q:'How does asking feel — and what’s helping you move through it?', ph:"Name the emotion, then the next brave step that helps them past it."},
+  {k:'next',   q:'Next steps before we meet again',                   ph:"What will they commit to this week?"},
+  {k:'pray',   q:'How can we pray for and support you?',              ph:"Carry it together."},
+];
+function fmtMeetingNotes(raw){
+  const s=String(raw||''), esc=t=>t.replace(/</g,'&lt;').replace(/\n/g,'<br>');
+  if(s.indexOf('❯ ')===-1) return `<div class="cm-plain">${esc(s)}</div>`; // older free-text note
+  return s.split(/\n?❯ /).filter(b=>b.trim()).map(b=>{ const nl=b.indexOf('\n');
+    const label=nl>=0?b.slice(0,nl):b, ans=nl>=0?b.slice(nl+1):'';
+    return `<div class="cm-qa"><div class="cm-q">${esc(label)}</div><div class="cm-a">${esc(ans)}</div></div>`; }).join('');
+}
 function coachMeetings(name){
   const log=meetLog[name]; let hist;
   if(!LIVE) hist=`<div class="cm-msg">${ic('info',15)} Saved meetings appear here on the deployed site.</div>`;
   else if(log===undefined||log==='loading') hist=`<div class="cm-msg">${ic('clock',15)} Loading past meetings…</div>`;
-  else if(Array.isArray(log)&&log.length) hist=log.map(m=>`<div class="cm-item"><div class="cm-d">${fmtEmailDate(m.date)}${m.coach?` · ${m.coach}`:''}</div><div class="cm-n">${(m.notes||'').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div></div>`).join("");
+  else if(Array.isArray(log)&&log.length) hist=log.map(m=>`<div class="cm-item"><div class="cm-d">${fmtEmailDate(m.date)}${m.coach?` · ${m.coach}`:''}</div><div class="cm-n">${fmtMeetingNotes(m.notes)}</div></div>`).join("");
   else hist=`<div class="cm-msg">No meetings logged yet — add the first one above.</div>`;
   const today=new Date().toISOString().slice(0,10);
   return `<div class="cm-form">
       <div class="cm-top"><label>Meeting date</label><input type="date" id="cm-date" value="${today}"></div>
-      <textarea id="cm-notes" placeholder="What did you talk about? Wins, struggles, next steps, prayer requests…"></textarea>
+      <div class="cm-lead">Walk through what's real — fill in what you talked about. Skip any that didn't come up.</div>
+      <div class="cm-qs">${CM_QUESTIONS.map(Q=>`<div class="cm-field"><label>${Q.q}</label><textarea id="cm-${Q.k}" placeholder="${Q.ph}"></textarea></div>`).join("")}</div>
       <button class="btn-primary" id="cm-save">${ic('check',15)} Save meeting</button>
     </div>
     <div class="cm-hist">${hist}</div>`;
@@ -1336,36 +1436,63 @@ function coachDirPanel(coach){
     <div class="composer"><input id="cdmi" placeholder="Message the directors…" autocomplete="off"><button id="cdsend">Send</button></div>
     <div class="whoami">as ${coach} · MPD coach</div></div>`;
 }
+function normName(x){ return (x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim(); }
+function findPayout(sel){ return PAYOUT.find(p=>p.n===sel.n) || PAYOUT.find(p=>normName(p.n)===normName(sel.n)) || null; }
+function csAcc(key,title,summary,body){ const open=csOpen[key];
+  return `<div class="cs-acc ${open?'open':''}"><button class="cs-head" data-cs="${key}"><span class="cs-t">${title}</span>${summary?`<span class="cs-sum">${summary}</span>`:''}<span class="cs-chev">${ic('chevron',15)}</span></button>${open?`<div class="cs-body">${body}</div>`:''}</div>`; }
+function coachStaffDetail(sel){
+  if(!sel) return `<div class="card pad"><div class="empty-chat">No one assigned yet.</div></div>`;
+  const dx=sDx(sel), p=findPayout(sel), givers=p?p.givers:[], match=p?p.match:0, fn=sel.fn;
+  const info=`<div class="cs-grid">
+    <div class="cs-k"><span>Funded</span><b>${Math.round(sel.pct*100)}%</b></div>
+    <div class="cs-k"><span>Raised / mo</span><b>${money(sel.moAmt)}</b></div>
+    <div class="cs-k"><span>Monthly goal</span><b>${money(sel.tgt)}</b></div>
+    <div class="cs-k"><span>Month</span><b>${sel.mo}/12</b></div>
+    <div class="cs-k"><span>Weeks of grant</span><b>${sel.wk}</b></div>
+    <div class="cs-k"><span>Homework</span><b>${sel.hw}%</b></div>
+  </div><div class="cs-dx" style="border-left-color:${dxCol[dx.tone]}"><b>${dx.label}.</b> ${dx.help}</div>`;
+  const giversHtml = givers.length
+    ? `<div class="cs-givers">${givers.map(g=>`<div class="cs-giver"><span>${g[0]}</span><b>${money(g[1])}</b></div>`).join("")}<div class="cs-giver tot"><span>${givers.length} giving monthly</span><b>${money(match)}</b></div></div>`
+    : `<div class="cs-empty">No coach-confirmed monthly givers logged this month yet.</div>`;
+  const reports = fn.weeks
+    ? `<div class="cs-fn"><div class="cs-fc"><b>${fn.asks}</b><span>Asks</span></div><div class="cs-fc"><b>${fn.mtgs}</b><span>Meetings</span></div><div class="cs-fc"><b>${fn.yes}</b><span>Yeses</span></div><div class="cs-fc"><b>${fn.monthly}</b><span>Monthly</span></div><div class="cs-fc"><b>${fn.hours}</b><span>Hours</span></div><div class="cs-fc"><b>${fn.weeks}</b><span>weeks</span></div></div>${fn.note?`<div class="cs-note">${ic('message',13)}<span>“${(fn.note||'').replace(/</g,'&lt;')}”</span></div>`:''}`
+    : `<div class="cs-empty">No weekly reports in the last stretch.</div>`;
+  return `<div class="card pad cs-box">
+    <div class="cs-top"><span class="av t-${dx.tone}">${initials(sel.n)}</span><div class="cs-who"><b>${sel.n}</b><span>${sel.co} &middot; month ${sel.mo}/12 &middot; ${Math.round(sel.pct*100)}% funded</span></div><span class="lvl lc-${dx.tone}">${dx.label}</span></div>
+    ${chatPanel(sel,"coach")}
+    ${csAcc('info','Where '+sel.first+' is at', Math.round(sel.pct*100)+'% funded', info)}
+    ${csAcc('givers','Given this month', givers.length?givers.length+' &middot; '+money(match):'none yet', giversHtml)}
+    ${csAcc('reports','From '+sel.first+"'s weekly reports", fn.weeks?fn.asks+' asks · '+fn.monthly+' monthly':'—', reports)}
+    ${csAcc('meeting','Coaching meeting &amp; questions','', coachMeetings(sel.n))}
+  </div>`;
+}
 function viewCoach(){
   const mine=S.filter(s=>s.coach===who).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]);
   if(!chatWith||!mine.find(s=>s.n===chatWith))chatWith=mine[0]?.n;
   const dxs=mine.map(sDx);
   const first=dxs.filter(d=>d.tone==='crit').length, ask=dxs.filter(d=>d.tone==='warn').length, track=dxs.filter(d=>d.tone==='good').length;
   const sel=S.find(s=>s.n===chatWith);
+  const th=(coachThreads[who]||[]).length;
   return `<div style="margin-bottom:4px"><div class="eyebrow">Coaching ${who}'s people</div><h2 style="font-size:19px">${mine.length} staff you're walking with</h2></div>
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">Reach first</div><div class="v" style="color:${first?'var(--flame)':'var(--pine-deep)'}">${first}</div><div class="f">quiet or out of time</div></div>
     <div class="card stat-c"><div class="l">Coach the ask</div><div class="v" style="color:${ask?'var(--honey-deep)':'var(--ink)'}">${ask}</div><div class="f">asks, conversion or monthly</div></div>
     <div class="card stat-c"><div class="l">In rhythm</div><div class="v" style="color:var(--pine-deep)">${track}</div><div class="f">asking &amp; converting</div></div>
   </section>
-  <section class="grid two-b">
-    <div class="card pad"><div class="sec-head"><div><div class="eyebrow">Sorted by who to reach first</div><h2>My people</h2></div></div>
+  <div class="cs-lead ${leadOpen?'open':''}" style="margin-top:14px">
+    <button class="cs-head cs-lead-h" data-lead="1"><span class="av">DG</span><span class="cs-t">Message Dave &amp; Geri<small>your line to leadership — a question, a win, or someone you're worried about</small></span>${th?`<span class="cs-sum">${th}</span>`:''}<span class="cs-chev">${ic('chevron',15)}</span></button>
+    ${leadOpen?`<div class="cs-body">${coachDirPanel(who)}</div>`:''}
+  </div>
+  <section class="grid two-b" style="margin-top:16px">
+    <div class="card pad"><div class="sec-head"><div><div class="eyebrow">Tap a person to open their box</div><h2>My people</h2></div></div>
       <div class="plist">${mine.map(s=>{const un=(threads[s.n]||[]).slice(-1)[0],unread=un&&un.from==="staff";const dx=sDx(s);
         return `<div class="prow ${s.n===chatWith?'sel':''}" data-chat-n="${s.n}"><div class="face t-${dx.tone}">${initials(s.n)}${unread?`<span class="ping"></span>`:""}</div>
         <div class="pin"><div class="pn">${s.n}</div><div class="pm">${dx.help}</div>
           <div class="flags"><span class="fl">${ic('scope',13)} ${s.fn.weeks?s.fn.asks+' asks · '+s.fn.monthly+' monthly':'no recent update'}</span><span class="fl">${ic('coins',13)} ${Math.round(s.pct*100)}%</span></div></div>
         <div class="pr"><span class="lvl lc-${dx.tone}">${dx.label}</span></div></div>`;}).join("")}</div></div>
-    <div class="card pad" id="chatcard">${sel?chatPanel(sel,"coach"):`<div class="empty-chat">No one assigned yet.</div>`}</div>
+    ${coachStaffDetail(sel)}
   </section>
-  ${sel?`<section class="card pad" id="coachmeetcard" style="margin-top:16px">
-    <div class="sec-head"><div><div class="eyebrow">Coaching meetings</div><h2>Meetings with ${sel.n}</h2></div><span class="note">log the date &amp; notes — kept so you and the directors can look back</span></div>
-    ${coachMeetings(sel.n)}
-  </section>`:''}
-  <section class="card pad" id="coachdircard" style="margin-top:16px">
-    <div class="sec-head"><div><div class="eyebrow">Your line to leadership</div><h2>Message Dave &amp; Geri</h2></div><span class="note">reach the directors directly — questions, wins, or a staff person you're worried about</span></div>
-    ${coachDirPanel(who)}
-  </section>
-  <div class="hint">${ic('info',16)} Each person's read comes from their own weekly updates — how many they're asking, how many say yes, and whether the yeses are monthly — so it's the one specific thing to work on, not a vague "needs care." Reach the quiet ones as friends first.</div>`;
+  <div class="hint">${ic('info',16)} Everything about one person is in their box — the conversation, where they're at, who's giving this month, their weekly reports, and your coaching notes. Open only the parts you need.</div>`;
 }
 
 /* ===== UPLINK ===== */
@@ -1960,6 +2087,8 @@ function render(){
     }
   }
   else if(role==="coach"){v.innerHTML=viewCoach();v.querySelectorAll("[data-chat-n]").forEach(r=>r.onclick=()=>{chatWith=r.dataset.chatN;render();});const sel=S.find(s=>s.n===chatWith);if(sel)wireChat(sel,"coach");
+    v.querySelectorAll("[data-cs]").forEach(b=>b.onclick=()=>{csOpen[b.dataset.cs]=!csOpen[b.dataset.cs];render();});
+    const lb=v.querySelector("[data-lead]"); if(lb) lb.onclick=()=>{leadOpen=!leadOpen;render();};
     const cdi=v.querySelector("#cdmi"),cds=v.querySelector("#cdsend"),cdbox=v.querySelector("#cdmsgs");
     if(cdi){
       const send=()=>{const val=cdi.value.trim();if(!val)return;const coach=who;
@@ -1975,8 +2104,8 @@ function render(){
     const cmSave=v.querySelector("#cm-save");
     if(cmSave) cmSave.onclick=()=>{
       const d=(v.querySelector("#cm-date")||{}).value||new Date().toISOString().slice(0,10);
-      const n=((v.querySelector("#cm-notes")||{}).value||"").trim();
-      if(!n){ alert("Add a few notes from the meeting first."); return; }
+      const n=CM_QUESTIONS.map(Q=>{ const el=v.querySelector("#cm-"+Q.k); const a=(el&&el.value||"").trim(); return a?("❯ "+Q.q+"\n"+a):""; }).filter(Boolean).join("\n\n");
+      if(!n){ alert("Fill in at least one question from the meeting first."); return; }
       const staff=chatWith, coach=who;
       meetLog[staff]=[{date:d,coach,notes:n}, ...(Array.isArray(meetLog[staff])?meetLog[staff]:[])];
       if(LIVE){ fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meeting:{staff,coach,date:d,notes:n}})}).catch(()=>{}); }
