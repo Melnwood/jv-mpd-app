@@ -28,6 +28,12 @@ const M = { coach:"fld34KByNlXMGYg3Q", from:"fldyEklsaH2Bk2tus", text:"fldbrw0nZ
 const T_EMAIL = "tblWigjcOuSvDmpuO";
 const E = { date:"fldwofjb5avf41aeB", subject:"fldDAu0dyYO8OCmeO", to:"fldfkxhP69eA7cZe0",
   cc:"fldnF9i00jD8TmO2F", sent:"fldJ3ii3DRlc0k6MK" };
+// fields for the approval queue
+const A = { pref:"fld4zG96Q7fJ8667g", budget:"fldERasO2urJRKhwe", email:"fldmbttAOTOAKWA7O", age:"fldShBfTD7mMFykTk",
+  coach:"fldRPbkFFaR0YW9E8", coachEmail:"fldZEz2vM85lVbQCA", uplink:"fldqNyavY4tp4v7ML", uplinkEmail:"fldXprH8aL679a0Sa",
+  lead:"fldeKeyhBKCQZLq1j", leadEmail:"fldUEqhu1Y5z5qulY", onbNotes:"fldZ2VWzRfi8vWsCE", onbDate:"flduitgP9yAPno6mT",
+  melLink:"fld9UYikghOY3rldi", melAppr:"fld3L6c7XC7fd44fQ", dirAppr:"fldGeaBDzLfzC5Ms8" };
+const first1 = v => Array.isArray(v) ? (v[0]||"") : (v||"");
 
 const FACTOR = [100,100,90,80,70,60,50,40,30,20,10,0];
 const H = { Authorization:`Bearer ${process.env.AIRTABLE_TOKEN}`, "Content-Type":"application/json" };
@@ -141,12 +147,32 @@ async function buildEmails(name){
     return { date:c[E.date]||"", subject:c[E.subject]||"", to:c[E.to]||"", cc:c[E.cc]||"", sent: !!c[E.sent] }; });
 }
 
+async function buildApprovals(){
+  const staff = await listAll(T_STAFF, [F.name,F.country,F.start,F.salary,F.acct,
+    A.pref,A.budget,A.email,A.age,A.coach,A.coachEmail,A.uplink,A.uplinkEmail,A.lead,A.leadEmail,A.onbNotes,A.onbDate,A.melLink,A.melAppr,A.dirAppr]);
+  return staff.filter(r=>{ const c=r.cellValuesByFieldId||{};
+      return sel(c[A.dirAppr])==="Approved" && sel(c[A.melAppr])!=="Approved"; })
+    .map(r=>{ const c=r.cellValuesByFieldId||{};
+      return { id:r.id, n:(c[F.name]||"").trim(), also:"", co:sel(c[F.country])||"",
+        age:Number(c[A.age])||"", budget:Number(c[A.budget])||0, salary:Number(c[F.salary])||0,
+        cedarstone:(c[F.acct]||"").replace(/[^0-9]/g,""), start:fmtDate(c[F.start]||c[A.pref]), met:fmtDate(c[A.onbDate]),
+        email:c[A.email]||"", emailOk:true,
+        coach:first1(c[A.coach])||"—", coachEmail:first1(c[A.coachEmail])||"",
+        uplink:first1(c[A.uplink])||"—", uplinkEmail:first1(c[A.uplinkEmail])||"",
+        lead:first1(c[A.lead])||"—", leadEmail:first1(c[A.leadEmail])||"",
+        approve:c[A.melLink]||"", record:`https://airtable.com/${BASE}/${T_STAFF}/${r.id}`,
+        overview:(c[A.onbNotes]||"Approved by Dave & Geri — open the full application in Airtable for the meeting notes."),
+        notes:[], next:[] };
+    });
+}
+
 export default async (req) => {
   try{
     if(!process.env.AIRTABLE_TOKEN) return json({error:"AIRTABLE_TOKEN not set on the site."},500);
     if(req.method==="GET"){
       const url=new URL(req.url), action=url.searchParams.get("action");
       if(action==="payout") return json({payout: await buildPayout()});
+      if(action==="approvals") return json({approvals: await buildApprovals()});
       if(action==="grantfund") return json(await buildGrantFund());
       if(action==="messages") return json({messages: await buildMessages()});
       if(action==="emails") return json({emails: await buildEmails(url.searchParams.get("staff"))});
@@ -165,11 +191,13 @@ export default async (req) => {
         if(!r.ok) return json({error:`Airtable message ${r.status}: ${await r.text()}`},502);
         return json({ok:true});
       }
-      // update a staff record's Funding Type / Payout Status
+      // update a staff record's Funding Type / Payout Status / grant cap / approval
       if(!b.id) return json({error:"missing record id"},400);
       const fields={};
       if(b.funding!==undefined) fields[F.funding]=b.funding;
       if(b.payout!==undefined)  fields[F.status]=b.payout;
+      if(b.maxpay!==undefined)  fields[F.max]=Number(b.maxpay)||0;
+      if(b.approve===true){ fields[A.melAppr]="Approved"; }
       if(!Object.keys(fields).length) return json({error:"nothing to update"},400);
       const r = await fetch(`https://api.airtable.com/v0/${BASE}/${T_STAFF}`, { method:"PATCH", headers:H,
         body: JSON.stringify({returnFieldsByFieldId:true, records:[{id:b.id, fields}]}) });
