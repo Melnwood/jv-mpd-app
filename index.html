@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ministry Partner Development App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --paper:#f6f8fb; --paper-2:#eceff5; --card:#ffffff; --card-2:#f3f6fa;
+    --ink:#1b2230; --ink-2:#525f78; --muted:#93a0b6;
+    --line:#e3e8f0; --line-soft:#eef2f7;
+    --pine:#10a173; --pine-deep:#0a7f58; --pine-soft:#d7f5e9;
+    --honey:#f2a412; --honey-deep:#cf8309; --honey-soft:#fdefcf;
+    --flame:#f1554c; --flame-soft:#ffe1de;
+    --serif:'Fraunces',Georgia,'Times New Roman',serif;
+    --sans:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --shadow:0 1px 2px rgba(24,34,60,.05), 0 8px 24px rgba(24,34,60,.08);
+    --shadow-soft:0 1px 3px rgba(24,34,60,.06);
+    --r:20px; --r-sm:13px;
+  }
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#12151d; --paper-2:#181c26; --card:#1a1f2a; --card-2:#212734;
+    --ink:#eef1f8; --ink-2:#b4bed2; --muted:#7d8aa2;
+    --line:#2a3040; --line-soft:#232935;
+    --pine:#2ed49b; --pine-deep:#57e2b0; --pine-soft:#0f3a2a;
+    --honey:#f7bb44; --honey-deep:#fbcd68; --honey-soft:#3a2d12;
+    --flame:#ff6e64; --flame-soft:#3f211f;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 28px rgba(0,0,0,.46);
+    --shadow-soft:0 1px 3px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --paper:#12151d; --paper-2:#181c26; --card:#1a1f2a; --card-2:#212734;
+    --ink:#eef1f8; --ink-2:#b4bed2; --muted:#7d8aa2;
+    --line:#2a3040; --line-soft:#232935;
+    --pine:#2ed49b; --pine-deep:#57e2b0; --pine-soft:#0f3a2a;
+    --honey:#f7bb44; --honey-deep:#fbcd68; --honey-soft:#3a2d12;
+    --flame:#ff6e64; --flame-soft:#3f211f;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 28px rgba(0,0,0,.46);
+    --shadow-soft:0 1px 3px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--paper);color:var(--ink);
+    -webkit-font-smoothing:antialiased;line-height:1.5;padding:clamp(12px,2.5vw,28px);
+    background-image:radial-gradient(1200px 500px at 15% -8%, color-mix(in srgb,var(--honey) 10%,transparent), transparent 60%),radial-gradient(1000px 480px at 100% 0%, color-mix(in srgb,var(--pine) 8%,transparent), transparent 55%);
+    background-attachment:fixed;}
+  .wrap{max-width:1060px;margin:0 auto}
+  a{color:var(--pine-deep)}
+  :focus-visible{outline:2.5px solid var(--pine);outline-offset:2px;border-radius:6px}
+  .i{display:inline-block;vertical-align:-.16em;flex:none}
+  .rate .star svg{fill:none}
+  .rate .star.on svg{fill:currentColor}
+  .success .h{display:flex;align-items:center;gap:9px}
+  .callout .i,.hint .i{vertical-align:-.22em;margin-right:3px}
+
+  header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:13px}
+  .mark{width:46px;height:46px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    font-family:var(--sans);font-weight:800;font-size:14px;letter-spacing:.02em;color:#fff;
+    background:linear-gradient(140deg, var(--pine), var(--honey-deep) 130%);box-shadow:0 4px 14px color-mix(in srgb,var(--pine) 32%,transparent)}
+  .brand h1{font-family:var(--serif);font-size:clamp(19px,2.6vw,23px);font-weight:600;letter-spacing:-.01em}
+  .brand .sub{color:var(--ink-2);font-size:12.5px}
+  .kicker{font-family:var(--sans);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:var(--honey-deep)}
+
+  /* role nav */
+  .roles{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+  .role{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-2);
+    padding:9px 15px;border-radius:100px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;transition:.16s}
+  .role:hover{border-color:var(--honey);color:var(--ink)}
+  .role.on{background:var(--pine);border-color:var(--pine);color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--pine) 30%,transparent)}
+  .role .ic{font-size:15px}
+
+  .idbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0 2px}
+  .idbar label{font-size:12.5px;color:var(--ink-2);font-weight:600}
+  select{font:inherit;font-weight:600;font-size:14px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);
+    border-radius:12px;padding:9px 13px;box-shadow:var(--shadow-soft);cursor:pointer;max-width:100%}
+  select:hover{border-color:var(--honey)}
+  .idnote{font-size:12.5px;color:var(--muted)}
+
+  section{margin-top:16px}
+  .grid{display:grid;gap:14px}
+  .two{grid-template-columns:1.35fr 1fr}
+  .two-b{grid-template-columns:1.5fr 1fr}
+  @media(max-width:820px){.two,.two-b{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+  .pad{padding:20px 22px}
+  h2{font-family:var(--serif);font-size:17px;font-weight:600;letter-spacing:-.01em}
+  .eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--honey-deep);margin-bottom:3px}
+  .sec-head{display:flex;align-items:baseline;gap:9px;margin-bottom:13px;flex-wrap:wrap}
+  .sec-head .note{font-size:12.5px;color:var(--muted)}
+
+  /* ===== STAFF ===== */
+  .greeting{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:2px}
+  .greeting .hi{font-family:var(--serif);font-size:clamp(22px,3.4vw,30px);font-weight:500;letter-spacing:-.015em;line-height:1.15}
+  .greeting .hi b{font-weight:600;color:var(--honey-deep)}
+  .greeting .said{color:var(--ink-2);font-size:13.5px;margin-top:5px;max-width:52ch}
+
+  .subnav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 2px}
+  .sn{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-2);
+    padding:10px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;transition:.15s}
+  .sn:hover{border-color:var(--honey)}
+  .sn.on{background:var(--card);border-color:var(--honey);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--honey)}
+  .sn .tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:100px;background:var(--honey-soft);color:var(--honey-deep)}
+  .sn .tag.due{background:var(--flame-soft);color:var(--flame)}
+  .sn .tag.done{background:var(--pine-soft);color:var(--pine-deep)}
+
+  .journey{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .thermo{position:relative;width:132px;height:132px;flex-shrink:0}
+  .thermo .cap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .thermo .cap b{font-family:var(--serif);font-size:32px;font-weight:600;line-height:1}
+  .thermo .cap span{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:2px;letter-spacing:.02em}
+  .jmeta{flex:1;min-width:180px}
+  .jmeta .line{font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:-.01em}
+  .jmeta .encourage{font-size:13.5px;color:var(--ink-2);margin-top:6px;line-height:1.45}
+  .jmeta .facts{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+  .fact{font-size:12.5px;color:var(--ink-2)}
+  .fact b{display:block;font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+  .invite{margin-top:18px;border-radius:var(--r-sm);padding:15px 17px;display:flex;gap:14px;align-items:center;
+    background:linear-gradient(100deg,var(--honey-soft),color-mix(in srgb,var(--honey-soft) 40%,var(--card)));border:1px solid color-mix(in srgb,var(--honey) 28%,transparent)}
+  .invite.done{background:linear-gradient(100deg,var(--pine-soft),color-mix(in srgb,var(--pine-soft) 40%,var(--card)));border-color:color-mix(in srgb,var(--pine) 28%,transparent)}
+  .invite .em{flex:none;color:var(--honey-deep);display:flex}
+  .invite.done .em{color:var(--pine)}
+  .invite .txt{flex:1}
+  .invite .txt b{font-size:14px} .invite .txt div{font-size:12.5px;color:var(--ink-2);margin-top:1px}
+  .invite .go{font:inherit;font-weight:650;font-size:12.5px;color:#fff;background:var(--honey-deep);border:none;border-radius:11px;padding:9px 15px;cursor:pointer;white-space:nowrap}
+  .invite.done .go{background:var(--pine)}
+
+  .word{margin-top:16px;padding:16px 18px;border-radius:var(--r-sm);background:var(--card-2);border:1px dashed var(--line)}
+  .word .e{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:var(--honey-deep)}
+  .word .q{font-family:var(--serif);font-size:16px;font-weight:500;font-style:italic;line-height:1.4;margin-top:6px;color:var(--ink)}
+  .word .ref{font-size:12px;color:var(--muted);margin-top:6px}
+
+  .circle{display:flex;flex-direction:column;gap:10px}
+  .friend{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:var(--r-sm);background:var(--card-2);border:1px solid var(--line-soft)}
+  .friend .av{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;color:#fff;font-family:var(--serif)}
+  .friend .in{flex:1;min-width:0}
+  .friend .role-l{font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .friend .nm{font-size:14.5px;font-weight:600}
+  .friend .say{font:inherit;font-weight:650;font-size:12.5px;color:var(--pine-deep);background:var(--pine-soft);border:none;border-radius:10px;padding:9px 14px;cursor:pointer}
+  .friend .say.ghost{color:var(--muted);background:transparent}
+
+  /* forms */
+  .intro{font-size:13px;color:var(--ink-2);margin-bottom:16px;line-height:1.5}
+  .intro b{color:var(--ink)}
+  .fgrid{display:grid;gap:15px;grid-template-columns:1fr 1fr}
+  @media(max-width:560px){.fgrid{grid-template-columns:1fr}}
+  .field{margin-top:0}
+  .field label{display:block;font-size:12.5px;font-weight:650;margin-bottom:6px}
+  .req{color:var(--flame);font-weight:700}
+  .field input,.field textarea,.field select{width:100%;font:inherit;font-size:13.5px;background:var(--card-2);
+    border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;color:var(--ink)}
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--pine);background:var(--card)}
+  .field textarea{min-height:66px;resize:vertical}
+  .hours{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+  .hours .d{text-align:center}
+  .hours .d span{font-size:10.5px;color:var(--muted);display:block;margin-bottom:4px;font-weight:600}
+  .hours input{text-align:center;padding:9px 4px}
+  .rate{display:flex;gap:7px}
+  .rate .star{width:34px;height:34px;border-radius:10px;border:1.5px solid var(--line);background:var(--card-2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .rate .star.on{background:var(--honey-soft);border-color:var(--honey);color:var(--honey-deep)}
+  .seg{display:inline-flex;background:var(--card-2);border:1.5px solid var(--line);border-radius:11px;overflow:hidden}
+  .seg button{font:inherit;font-size:13px;font-weight:600;padding:9px 18px;border:none;background:transparent;color:var(--ink-2);cursor:pointer}
+  .seg button.on{background:var(--pine);color:#fff}
+  .donor-row{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:9px;margin-top:9px}
+  @media(max-width:560px){.donor-row{grid-template-columns:1fr 1fr}}
+  .addbtn{margin-top:10px;font:inherit;font-size:13px;font-weight:650;color:var(--pine-deep);background:var(--pine-soft);
+    border:1.5px dashed color-mix(in srgb,var(--pine) 40%,transparent);border-radius:12px;padding:11px;cursor:pointer;width:100%}
+  .submit{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .btn-primary{font:inherit;font-weight:700;font-size:14.5px;color:#fff;background:var(--pine);border:none;border-radius:13px;padding:13px 26px;cursor:pointer;box-shadow:0 5px 16px color-mix(in srgb,var(--pine) 32%,transparent)}
+  .btn-primary:hover{background:var(--pine-deep)}
+  .submit .meta{font-size:12.5px;color:var(--muted)}
+  .success{background:var(--pine-soft);border:1px solid color-mix(in srgb,var(--pine) 30%,transparent);border-radius:var(--r-sm);padding:20px}
+  .success .h{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--pine-deep)}
+  .success p{font-size:13.5px;color:var(--ink-2);margin-top:7px}
+
+  /* homework */
+  .hwbar{margin-bottom:16px}
+  .hwbar .row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:7px}
+  .hwbar .row b{font-family:var(--serif);font-size:16px;font-weight:600}
+  .hwbar .t{height:13px;background:var(--card-2);border:1px solid var(--line);border-radius:100px;overflow:hidden}
+  .hwbar .f{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--honey),var(--pine))}
+  .wk{border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:10px;overflow:hidden;background:var(--card-2)}
+  .wk-h{display:flex;align-items:center;gap:11px;padding:13px 15px;cursor:pointer}
+  .wk-h .chev{color:var(--muted);transition:.2s;font-size:12px}
+  .wk.open .chev{transform:rotate(90deg)}
+  .wk-h .wn{font-family:var(--serif);font-size:15px;font-weight:600;flex:1}
+  .wk-h .wc{font-size:12px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+  .wk-h .wdone{color:var(--pine-deep)}
+  .wk-body{display:none;padding:2px 15px 13px}
+  .wk.open .wk-body{display:block}
+  .task{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line-soft);align-items:flex-start}
+  .task:first-child{border-top:none}
+  .cb{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--muted);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;margin-top:1px;transition:.12s}
+  .cb.on{background:var(--pine);border-color:var(--pine)}
+  .task .tl{font-size:13px;line-height:1.4}
+  .task.done .tl{color:var(--muted);text-decoration:line-through}
+  .task .tl a{font-size:12px;font-weight:600;display:inline-block;margin-top:3px}
+
+  /* chat */
+  .chat{display:flex;flex-direction:column;height:100%;min-height:330px}
+  .chat-h{display:flex;align-items:center;gap:11px;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  .chat-h .av{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;font-family:var(--serif)}
+  .chat-h .nm{font-size:14px;font-weight:600}.chat-h .nm small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}
+  .msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:2px 2px 4px;max-height:330px}
+  .bub{max-width:82%;padding:10px 13px;border-radius:16px;font-size:13.5px;line-height:1.45}
+  .bub .t{font-size:9.5px;opacity:.7;margin-top:4px;display:block}
+  .bub.them{align-self:flex-start;background:var(--card-2);border:1px solid var(--line);border-bottom-left-radius:5px}
+  .bub.me{align-self:flex-end;background:var(--pine);color:#fff;border-bottom-right-radius:5px}
+  .empty-chat{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:13px;padding:20px;line-height:1.5}
+  .composer{display:flex;gap:9px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+  .composer input{flex:1;font:inherit;font-size:13.5px;background:var(--card-2);border:1.5px solid var(--line);border-radius:13px;padding:11px 14px;color:var(--ink)}
+  .composer input:focus{border-color:var(--pine)}
+  .composer button{font:inherit;font-weight:700;font-size:13.5px;color:#fff;background:var(--pine);border:none;border-radius:13px;padding:11px 18px;cursor:pointer}
+  .whoami{font-size:11px;color:var(--muted);margin-top:7px;text-align:right}
+
+  /* ===== leader/coach/director shared ===== */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:14px}
+  .stat-c{padding:16px 18px}
+  .stat-c .l{font-size:12px;color:var(--ink-2);font-weight:600}
+  .stat-c .v{font-family:var(--serif);font-size:clamp(24px,3.6vw,30px);font-weight:600;letter-spacing:-.02em;margin-top:6px;line-height:1;font-variant-numeric:tabular-nums}
+  .stat-c .v small{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--muted)}
+  .stat-c .f{font-size:11.5px;color:var(--muted);margin-top:7px}
+
+  .plist{display:flex;flex-direction:column}
+  .prow{display:flex;align-items:center;gap:13px;padding:13px 6px;border-bottom:1px solid var(--line-soft);cursor:pointer}
+  .prow:last-child{border-bottom:none}
+  .prow:hover{background:color-mix(in srgb,var(--honey) 6%,transparent)}
+  .prow.sel{background:color-mix(in srgb,var(--honey) 9%,transparent)}
+  .face{width:44px;height:44px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;font-family:var(--serif);position:relative}
+  .face .ping{position:absolute;right:-3px;top:-3px;width:13px;height:13px;border-radius:50%;border:2.5px solid var(--card);background:var(--honey)}
+  .t-good{background:linear-gradient(135deg,var(--pine),var(--pine-deep))}
+  .t-warn{background:linear-gradient(135deg,var(--honey),var(--honey-deep))}
+  .t-crit{background:linear-gradient(135deg,var(--flame),#c94a30)}
+  .prow .pin{flex:1;min-width:0}
+  .prow .pn{font-size:14.5px;font-weight:600}
+  .prow .pm{font-size:12px;color:var(--ink-2);margin-top:1px}
+  .flags{display:flex;gap:7px;margin-top:6px;flex-wrap:wrap}
+  .fl{font-size:10.5px;font-weight:650;padding:3px 9px;border-radius:100px;display:inline-flex;gap:4px;align-items:center}
+  .fl.ok{color:var(--pine-deep);background:var(--pine-soft)}
+  .fl.no{color:var(--flame);background:var(--flame-soft)}
+  .fl.hw{color:var(--honey-deep);background:var(--honey-soft)}
+  .prow .pr{text-align:right;font-size:12px;color:var(--ink-2);white-space:nowrap}
+  .prow .pr .lvl{font-weight:700;font-size:12.5px}
+  .lc-good{color:var(--pine-deep)} .lc-warn{color:var(--honey-deep)} .lc-crit{color:var(--flame)}
+  .prow .pr small{display:block;color:var(--muted);margin-top:2px}
+  .thermo-mini{height:8px;background:var(--card-2);border-radius:100px;overflow:hidden;margin-top:7px;max-width:210px}
+  .thermo-mini i{display:block;height:100%;border-radius:100px}
+  .load{display:flex;height:10px;border-radius:100px;overflow:hidden;gap:2px;margin-top:8px;max-width:200px}
+  .load span{height:100%}
+  .callout{font-size:13px;color:var(--ink-2);background:var(--honey-soft);border:1px solid color-mix(in srgb,var(--honey) 25%,transparent);border-radius:var(--r-sm);padding:13px 15px;margin-top:14px;line-height:1.5}
+  .callout b{color:var(--ink)}
+  .hint{font-size:12.5px;color:var(--ink-2);margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 15px;line-height:1.5}
+  .hint b{color:var(--ink)}
+  /* grant money tab */
+  .filterchips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+  .fc{font:inherit;font-size:12.5px;font-weight:600;color:var(--ink-2);padding:8px 14px;border-radius:100px;border:1.5px solid var(--line);background:var(--card);cursor:pointer}
+  .fc:hover{border-color:var(--honey)}
+  .fc.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .fc .n{opacity:.6;margin-left:4px}
+  .alloc{display:flex;height:34px;border-radius:11px;overflow:hidden;gap:2px;margin:4px 0 12px}
+  .alloc span{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;min-width:0;white-space:nowrap;overflow:hidden}
+  .alloc .a-paid{background:var(--pine)} .alloc .a-fees{background:var(--honey-deep)} .alloc .a-win{background:var(--flame)} .alloc .a-free{background:var(--muted)}
+  .alloc-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--ink-2)}
+  .alloc-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .gtable{width:100%;border-collapse:collapse;font-size:13px}
+  .gtable th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;padding:0 10px 9px;border-bottom:1px solid var(--line)}
+  .gtable th.num,.gtable td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .gtable td{padding:11px 10px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+  .gtable tr:last-child td{border-bottom:none}
+  .gname{font-weight:600}.gname small{display:block;color:var(--muted);font-size:11px;font-weight:500}
+  .paidcell{min-width:120px}
+  .paidbar{height:7px;background:var(--card-2);border-radius:100px;overflow:hidden;margin-top:5px}
+  .paidbar i{display:block;height:100%;border-radius:100px}
+  .spill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;display:inline-block}
+  .sp-active{color:var(--honey-deep);background:var(--honey-soft)}
+  .sp-complete{color:var(--pine-deep);background:var(--pine-soft)}
+  .sp-dropped{color:var(--flame);background:var(--flame-soft)}
+  .gtotal td{border-top:2px solid var(--line);font-weight:750;font-family:var(--serif);padding-top:13px}
+  .gtwrap{overflow-x:auto}
+  @media(max-width:640px){.hide-sm{display:none}}
+  /* my desk */
+  .desk-top{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-start}
+  .desk-name{font-family:var(--serif);font-size:20px;font-weight:600;margin-top:2px;letter-spacing:-.01em}
+  .desk-sub{font-size:13px;color:var(--ink-2);margin-top:2px}
+  .desk-badge{text-align:right}
+  .okpill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--pine-deep);background:var(--pine-soft);padding:6px 12px;border-radius:100px}
+  .desk-badge small{display:block;color:var(--muted);font-size:11.5px;margin-top:5px}
+  .deskfacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:10px;margin-top:16px}
+  .df{background:var(--card-2);border:1px solid var(--line-soft);border-radius:11px;padding:10px 12px}
+  .df span{font-size:11px;color:var(--muted);font-weight:600;display:block}
+  .df b{font-size:14px;font-weight:700;margin-top:2px;display:block}
+  .notesblock{background:var(--card-2);border:1px solid var(--line);border-radius:14px;padding:15px 17px;margin-top:16px}
+  .nb-h{font-family:var(--serif);font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .nb-over{font-size:13.5px;color:var(--ink-2);margin-top:9px;line-height:1.55}
+  .nb-item{font-size:13px;color:var(--ink-2);margin-top:11px;line-height:1.5}
+  .nb-item b{color:var(--ink)}
+  .nb-next{margin-top:15px}
+  .nb-nexth{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--honey-deep);margin-bottom:6px}
+  .nb-next ul{margin:0 0 0 18px;font-size:13px;color:var(--ink-2);line-height:1.65}
+  .nb-toggle{margin-top:13px;font:inherit;font-size:12.5px;font-weight:650;color:var(--pine-deep);background:none;border:none;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:4px}
+  .desk-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+  .desk-actions .btn-primary{text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+  .btn-ghost{font:inherit;font-weight:650;font-size:13.5px;color:var(--ink-2);text-decoration:none;border:1.5px solid var(--line);border-radius:13px;padding:12px 18px;background:var(--card)}
+  .btn-ghost:hover{border-color:var(--honey)}
+  .desk-note{font-size:12px;color:var(--muted);margin-top:10px}
+  /* grant fund */
+  .fcyc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:13px;overflow:hidden}
+  .fcyc-h{padding:17px 19px}
+  .fcyc-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+  .fcyc-name{font-family:var(--serif);font-size:18px;font-weight:600}
+  .badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 8px;border-radius:100px;margin-left:7px;vertical-align:2px}
+  .b-active{background:var(--pine-soft);color:var(--pine-deep)} .b-closed{background:var(--card-2);color:var(--muted);border:1px solid var(--line)}
+  .fcyc-dep{font-size:12px;color:var(--muted);margin-top:3px}
+  .fcyc-u{text-align:right} .fcyc-u .u{font-family:var(--serif);font-size:21px;font-weight:600} .fcyc-u .ul{font-size:11px;color:var(--muted)}
+  .alloc{display:flex;height:26px;border-radius:8px;overflow:hidden;gap:2px;margin-top:15px}
+  .alloc span{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;min-width:0;overflow:hidden;white-space:nowrap}
+  .alloc .a-paid{background:var(--pine)} .alloc .a-other{background:var(--honey-deep)} .alloc .a-left{background:var(--muted)}
+  .alloc-leg{display:flex;flex-wrap:wrap;gap:13px;font-size:11.5px;color:var(--ink-2);margin-top:9px}
+  .alloc-leg i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+  .toggle{margin-top:13px;font:inherit;font-size:12.5px;font-weight:650;color:var(--pine-deep);background:none;border:none;cursor:pointer;padding:0;display:inline-flex;gap:5px;align-items:center}
+  .toggle svg{transition:transform .2s} .toggle.open svg{transform:rotate(90deg)}
+  .ppl-list{border-top:1px solid var(--line);background:var(--card-2)}
+  .frow{display:flex;align-items:center;gap:12px;padding:9px 19px;border-bottom:1px solid var(--line-soft);font-size:13px}
+  .frow:last-child{border-bottom:none} .frow .nm{flex:1;font-weight:600} .frow .amt{font-family:var(--serif);font-weight:600;font-variant-numeric:tabular-nums}
+  .st{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:2px 7px;border-radius:100px;width:70px;text-align:center;flex-shrink:0}
+  .s-done{background:var(--pine-soft);color:var(--pine-deep)} .s-on{background:var(--honey-soft);color:var(--honey-deep)} .s-left{background:var(--flame-soft);color:var(--flame)}
+  .fsplit .fcap{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-2);margin-bottom:9px;font-weight:600}
+  .ftrack{display:flex;height:30px;border-radius:9px;overflow:hidden;gap:2px}
+  .ftrack span{display:flex;align-items:center;padding:0 11px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap}
+  .ftrack .t-free{background:var(--pine)} .ftrack .t-spoken{background:var(--honey-deep)}
+  .ffoot{font-size:12px;color:var(--muted);margin-top:10px}
+  .proj{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
+  .proj-in label{display:block;font-size:12px;font-weight:650;margin-bottom:6px;color:var(--ink-2)}
+  .proj-out{font-size:15px;color:var(--ink);line-height:1.5} .proj-out b{color:var(--ink)}
+  .proj-ref{font-size:13px;color:var(--ink-2);margin-top:8px}
+  .recon .rr{display:flex;justify-content:space-between;font-size:14px;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+  .recon .rr b{font-variant-numeric:tabular-nums}
+  .recon .rr.tot{border-bottom:none;font-family:var(--serif);font-weight:600;font-size:16px;padding-top:12px;border-top:2px solid var(--line);margin-top:3px}
+  .grantset{margin-top:16px;border:1px solid color-mix(in srgb,var(--honey) 32%,transparent);background:var(--honey-soft);border-radius:14px;padding:15px 17px}
+  .gs-h{font-family:var(--serif);font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .gs-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .gs-in{display:flex;align-items:center;background:var(--card);border:1.5px solid var(--honey);border-radius:12px;padding:0 12px}
+  .gs-in .cur{font-weight:700;color:var(--ink-2);font-size:16px}
+  .gs-in input{border:none;background:none;font:inherit;font-size:18px;font-weight:700;color:var(--ink);width:104px;padding:10px 6px;outline:none}
+  .gs-note{font-size:12px;color:var(--ink-2);flex:1;min-width:170px;line-height:1.45}
+  .gs-after{font-size:13.5px;color:var(--ink);margin-top:13px}
+  .gs-after b{color:var(--honey-deep)}
+  .gs-warn{font-size:12.5px;color:var(--flame);font-weight:650;margin-top:8px}
+  .gs-warn2{font-size:12px;color:var(--ink-2);margin-top:10px;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--honey) 25%,transparent);line-height:1.5}
+  footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.6}
+  footer b{color:var(--ink-2)}
+  /* monthly payout worksheet */
+  .said{color:var(--ink-2);font-size:13.5px}
+  .t-mute{background:var(--card-2);color:var(--muted)!important}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:11px;overflow:hidden}
+  .phead{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:none;border:none;cursor:pointer;text-align:left;color:inherit;font:inherit}
+  .pcard .av,.pdone .av{width:37px;height:37px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13.5px;color:#fff;font-family:var(--serif)}
+  .pwho{flex:1;min-width:0}.pwho b{font-size:14.5px;font-weight:600;display:block;letter-spacing:-.01em}.pwho span{font-size:11.5px;color:var(--muted)}
+  .pamt{flex:none;text-align:right}.pamt b{font-family:var(--serif);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;display:block;line-height:1.05}.pamt span{font-size:10.5px;color:var(--muted);font-weight:600}
+  .pchev{flex:none;color:var(--muted);display:flex;transition:.2s}.pcard.open .pchev{transform:rotate(90deg)}
+  .pbody{display:none;padding:2px 16px 16px;border-top:1px solid var(--line-soft)}.pcard.open .pbody{display:block}
+  .pay-hold{display:flex;gap:8px;align-items:center;font-size:12.5px;padding:10px 12px;border-radius:12px;margin:13px 0 2px;line-height:1.35}.pay-hold svg{flex:none}
+  .pay-hold.pend{background:var(--honey-soft);color:var(--honey-deep)}.pay-hold.nosub{background:var(--flame-soft);color:var(--flame)}
+  .peq{display:flex;align-items:stretch;gap:8px;margin:14px 0 6px;flex-wrap:wrap}
+  .pe{flex:1;min-width:130px;border-radius:13px;padding:11px 13px;border:1px solid var(--line);background:var(--card-2)}
+  .pe .pl{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-2)}
+  .pe b{font-family:var(--serif);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;display:block;margin-top:4px;line-height:1}
+  .pe i{font-style:normal;font-size:10.5px;color:var(--muted);display:block;margin-top:4px}
+  .pe.grant{background:var(--pine-soft);border-color:color-mix(in srgb,var(--pine) 22%,transparent)}.pe.grant .pl{color:var(--pine-deep)}
+  .pe.match{background:var(--honey-soft);border-color:color-mix(in srgb,var(--honey) 24%,transparent)}.pe.match .pl{color:var(--honey-deep)}.pe.match b{color:var(--honey-deep)}
+  .pe.tot{background:var(--ink);border-color:var(--ink)}.pe.tot .pl{color:color-mix(in srgb,var(--paper) 72%,transparent)}.pe.tot b{color:var(--paper)}.pe.tot i{color:color-mix(in srgb,var(--paper) 60%,transparent)}
+  .pop{align-self:center;font-family:var(--serif);font-size:20px;font-weight:600;color:var(--muted)}
+  .pg-lab{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--pine-deep);margin:15px 0 6px}
+  .pg-list{border-top:1px solid var(--line-soft)}
+  .pg-row{display:flex;justify-content:space-between;gap:12px;padding:8px 2px;border-bottom:1px solid var(--line-soft);font-size:13px}
+  .pg-n{font-weight:600;color:var(--ink)}.pg-a{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+  .pg-row.sum{border-bottom:none;border-top:2px solid var(--line);margin-top:2px;padding-top:9px;color:var(--honey-deep)}.pg-row.sum .pg-a{color:var(--honey-deep)}
+  .pg-ex{font-size:11.5px;color:var(--muted);margin-top:9px;font-style:italic}
+  .pdone-wrap{margin-top:2px}
+  .pdone{display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--card) 80%,var(--paper));border:1px solid var(--line);border-radius:var(--r-sm);box-shadow:var(--shadow-soft);padding:11px 14px;margin-bottom:8px}
+  .pdt{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:100px}
+  .pdt.full{background:var(--pine-soft);color:var(--pine-deep)}.pdt.win{background:var(--honey-soft);color:var(--honey-deep)}.pdt.nosub{background:var(--flame-soft);color:var(--flame)}
+  .pay-foot{margin-top:18px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;line-height:1.55}.pay-foot b{color:var(--ink-2)}
+  /* director · coaches */
+  .ccard-wrap{display:flex;flex-direction:column;gap:11px}
+  .ccard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .chead{width:100%;display:flex;align-items:center;gap:12px;padding:14px 15px;background:none;border:none;cursor:pointer;text-align:left;color:inherit;font:inherit}
+  .chead .face{flex:none;color:#fff;font-family:var(--serif);font-weight:700;border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .cwho{flex:1;min-width:0;display:flex;flex-direction:column}.cwho b{font-size:14.5px;font-weight:600;letter-spacing:-.01em}.cwho span{font-size:11.5px;color:var(--muted)}
+  .cwho .load{display:flex;gap:2px;height:5px;border-radius:100px;overflow:hidden;max-width:160px}.cwho .load span{display:block;height:100%}
+  .cread{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:100px;white-space:nowrap}
+  .cread.lc-crit{background:var(--flame-soft);color:var(--flame)}.cread.lc-warn{background:var(--honey-soft);color:var(--honey-deep)}.cread.lc-good{background:var(--pine-soft);color:var(--pine-deep)}
+  .pchev{flex:none;color:var(--muted);display:flex;transition:.2s}.ccard.open .pchev{transform:rotate(90deg)}
+  .cbody{display:none;padding:4px 15px 15px;border-top:1px solid var(--line-soft)}.ccard.open .cbody{display:block}
+  .cread-full{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.4;padding:11px 13px;border-radius:12px;margin:13px 0 6px}.cread-full svg{flex:none;margin-top:1px}
+  .cread-full.lc-crit{background:var(--flame-soft);color:var(--flame)}.cread-full.lc-warn{background:var(--honey-soft);color:var(--honey-deep)}.cread-full.lc-good{background:var(--pine-soft);color:var(--pine-deep)}.cread-full b{color:inherit}
+  .cf-lab{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--ink-2);margin:14px 0 8px}
+  .cf-row{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+  .cf-row .face{flex:none;color:#fff;font-family:var(--serif);font-weight:700;border-radius:10px;display:flex;align-items:center;justify-content:center}
+  .cf-in{flex:1;min-width:0}.cf-n{font-size:13.5px;font-weight:600}.cf-mo{font-size:10.5px;font-weight:600;color:var(--muted);margin-left:4px}
+  .cf-work{font-size:12px;color:var(--ink-2);margin:2px 0 5px;line-height:1.4}.cf-work b{color:var(--ink)}
+  .cf-row .lvl{flex:none}
+  .cf-msg{margin-top:12px}
+  .cf-open{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:12.5px;font-weight:600;color:var(--honey-deep);background:var(--honey-soft);border:1px solid color-mix(in srgb,var(--honey) 28%,transparent);border-radius:11px;padding:9px 14px;cursor:pointer}
+  .cf-open.on{background:var(--honey-deep);color:#fff;border-color:var(--honey-deep)}
+  @media(max-width:760px){.cread{display:none}}
+  /* payout controls + download */
+  .pay-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+  .dl-btn{flex:none;display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:13px;font-weight:600;color:#fff;background:var(--pine);border:none;border-radius:12px;padding:10px 16px;cursor:pointer;box-shadow:0 3px 12px color-mix(in srgb,var(--pine) 28%,transparent)}
+  .dl-btn:hover{background:var(--pine-deep)}
+  .pcard.is-paused{opacity:.82}.pcard.is-paused .av{filter:grayscale(.5)}
+  .pay-hold.paused{background:var(--paper-2);color:var(--ink-2)}
+  .pctrl{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}
+  .pbtn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:12.5px;font-weight:600;padding:9px 14px;border-radius:11px;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink-2)}
+  .pbtn:hover{border-color:var(--honey)}
+  .pbtn.pause{color:var(--honey-deep)}.pbtn.fin{color:var(--pine-deep)}
+  .pbtn.resume{background:var(--pine);color:#fff;border-color:var(--pine)}.pbtn.resume:hover{background:var(--pine-deep);border-color:var(--pine-deep)}
+  .pdone{position:relative}
+  .pbtn.reactivate{flex:none;font-size:11.5px;padding:6px 11px;margin-left:auto}
+  .pbtn.nog{color:var(--ink-2)}
+  /* csv upload on grant fund */
+  .up-drop{display:flex;align-items:center;gap:13px;padding:16px 18px;border:1.6px dashed var(--line);border-radius:14px;cursor:pointer;background:var(--card-2);transition:.15s}
+  .up-drop:hover{border-color:var(--pine);background:color-mix(in srgb,var(--pine-soft) 45%,var(--card-2))}
+  .up-drop>svg{color:var(--pine);flex:none}
+  .up-drop b{font-size:14px;display:block}.up-drop span{font-size:12px;color:var(--muted);display:block;margin-top:2px}
+  .up-btn{margin-left:auto;flex:none;font-size:12.5px;font-weight:600;color:#fff;background:var(--pine);border-radius:10px;padding:9px 15px;white-space:nowrap}
+  .up-err{margin-top:11px;font-size:12.5px;color:var(--flame);background:var(--flame-soft);border-radius:10px;padding:10px 13px}
+  .up-sum{margin-top:14px;border:1px solid color-mix(in srgb,var(--pine) 30%,transparent);background:var(--pine-soft);border-radius:14px;padding:14px 16px}
+  .up-sum-h{font-size:13px;color:var(--pine-deep);font-weight:600}.up-sum-h b{color:var(--ink)}.up-sum-h svg{vertical-align:-3px;margin-right:4px}
+  .up-grid{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:9px;font-size:12px;color:var(--ink-2)}
+  .up-deps{margin-top:12px;border-top:1px solid color-mix(in srgb,var(--pine) 22%,transparent)}
+  .up-dep{display:flex;gap:12px;align-items:baseline;padding:7px 0;border-bottom:1px solid color-mix(in srgb,var(--pine) 14%,transparent);font-size:12.5px}
+  .ud-d{flex:none;width:92px;color:var(--muted);font-variant-numeric:tabular-nums}.ud-s{flex:1;min-width:0;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ud-a{flex:none;font-weight:700;font-variant-numeric:tabular-nums;color:var(--pine-deep)}
+  .up-note{font-size:11.5px;color:var(--ink-2);margin-top:11px}
+  .pdt.nog{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:100px;background:var(--paper-2);color:var(--ink-2)}
+  .pdone.support{align-items:flex-start}
+  .pdone.support .pwho{align-self:center}
+  /* print sheet — hidden on screen, one page on print */
+  #payout-print{display:none}
+  @media print{
+    @page{size:landscape;margin:14mm}
+    html,body{background:#fff!important;background-image:none!important}
+    .wrap{display:none!important}
+    #payout-print{display:block!important;color:#000;background:#fff}
+    .pp-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #222;padding-bottom:10px;margin-bottom:14px}
+    .pp-title{font-family:var(--serif);font-size:22px;font-weight:600}
+    .pp-sub{font-size:12px;color:#555;margin-top:3px}
+    .pp-tot-box{text-align:right}.pp-tot-box span{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#666;display:block}.pp-tot-box b{font-family:var(--serif);font-size:24px}
+    .pp-tab{width:100%;border-collapse:collapse;font-size:12.5px}
+    .pp-tab th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:#555;border-bottom:1.5px solid #333;padding:7px 10px}
+    .pp-tab td{padding:8px 10px;border-bottom:1px solid #ddd}
+    .pp-n{text-align:right;font-variant-numeric:tabular-nums}
+    .pp-ac{font-variant-numeric:tabular-nums;color:#333}.pp-c{text-align:center;color:#555}
+    .pp-tot{font-weight:700}
+    .pp-held td{color:#999;font-style:italic}
+    .pp-sum td{border-top:2px solid #333;border-bottom:none;font-weight:700;padding-top:11px}
+    .pp-foot{margin-top:16px;font-size:10.5px;color:#666;border-top:1px solid #ccc;padding-top:8px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="mark">MPD</div>
+      <div>
+        <div class="kicker">Josiah Venture</div>
+        <h1>Ministry Partner Development App</h1>
+        <div class="sub">One place for the whole journey — staff, coaches, and leaders</div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="roles" id="roles"></nav>
+  <div class="idbar"><label id="idlabel">I am</label><select id="idsel"></select><span class="idnote" id="idnote"></span></div>
+  <div id="view"></div>
+
+  <footer>A concept for Josiah Venture · names, funding, coach &amp; uplink assignments and runway are live from the Ministry Partner Development Airtable base. The <b>weekly update</b> and <b>homework</b> panels mirror the real forms staff submit; the staff view never shows a "risk score" — that stays with coaches and leaders, who see it framed as care, not judgment. Messages are a working demo of the staff-and-coach loop.</footer>
+</div>
+
+<script>
+const S = [
+  {n:"Ionut & Nicoleta Lerca", co:"Romania", coach:"Dominik", uplink:"Flaviu", lead:"Flaviu", risk:87, lvl:"High", pct:.075, tgt:4000, wk:8, mo:11, don2:0, sub:0, hw:100},
+  {n:"Zuzana Belancová", co:"Slovakia", coach:"Lukáš", uplink:"Benjamín", lead:"Timotej", risk:82, lvl:"High", pct:.197, tgt:2760, wk:4, mo:12, don2:0, sub:0, hw:100},
+  {n:"Matouš Krajník", co:"Czech Republic", coach:"Geoff", uplink:"Kateřina", lead:"Jakub", risk:79, lvl:"High", pct:.244, tgt:2561, wk:4, mo:12, don2:0, sub:0, hw:100},
+  {n:"Kayla Śnieżek", co:"Poland", coach:"Adam", uplink:"Bartek", lead:"Dawid", risk:76, lvl:"High", pct:.276, tgt:2971, wk:4, mo:12, don2:0, sub:0, hw:100},
+  {n:"Danail Ventsislavov", co:"Bulgaria", coach:"Petar", uplink:"Petar", lead:"Tsvetan", risk:69, lvl:"High", pct:.018, tgt:2706, wk:30, mo:6, don2:0, sub:0, hw:82},
+  {n:"Capverde Alexandra", co:"Romania", coach:"Dominik", uplink:"Gabi", lead:"Flaviu", risk:67, lvl:"High", pct:.148, tgt:1700, wk:8, mo:11, don2:1, sub:3, hw:100},
+  {n:"Adam Velebír", co:"Slovakia", coach:"Adrian", uplink:"Miriam", lead:"Timotej", risk:61, lvl:"High", pct:.183, tgt:2800, wk:12, mo:10, don2:0, sub:0, hw:100},
+  {n:"Patryk Gąsior", co:"Poland", coach:"Adam", uplink:"Natalia", lead:"Dawid", risk:56, lvl:"Watch", pct:.542, tgt:2961, wk:8, mo:11, don2:0, sub:0, hw:100},
+  {n:"Vanesa Verčimáková", co:"Slovakia", coach:"Adrian", uplink:"Benjamín", lead:"Timotej", risk:39, lvl:"Watch", pct:.540, tgt:2760, wk:12, mo:10, don2:0, sub:2, hw:100},
+  {n:"Ben Polgui", co:"Ukraine", coach:"Yulia", uplink:"Sviatoslav", lead:"Oleksandr", risk:34, lvl:"Healthy", pct:.235, tgt:2000, wk:34, mo:5, don2:5, sub:2, hw:64},
+  {n:"Khrystyna Trush", co:"Ukraine", coach:"Yulia", uplink:"Yulia", lead:"Oleksandr", risk:22, lvl:"Healthy", pct:.793, tgt:1650, wk:17, mo:9, don2:3, sub:3, hw:100},
+  {n:"Anna Dyka", co:"Ukraine", coach:"Yulia", uplink:"Olena", lead:"Oleksandr", risk:11, lvl:"Healthy", pct:.839, tgt:1650, wk:4, mo:12, don2:0, sub:2, hw:100},
+];
+S.forEach(s=>{ s.moAmt=Math.round(s.pct*s.tgt); s.first=s.n.split(/[ &]/)[0]; });
+
+/* ---- grant money (live from Grant Budget 20/12 + Staff Members) ---- */
+const CYCLES=[ /* pool = paidStaff + fees + winter + unspent */
+  {cy:"2025-26", state:"active",  pool:200000, paidStaff:141707, committed:168000, fees:20000, winter:5598, unspent:32695},
+  {cy:"2024-25", state:"winding down", pool:260000, paidStaff:102210, committed:132556, fees:26000, winter:4708, unspent:127082},
+  {cy:"2023-24", state:"closed",  pool:315000, paidStaff:217644, committed:217644, fees:31500, winter:2871, unspent:62985},
+];
+/* Authoritative JV grant tracking sheet (Grant Amt / Payout YTD / status).
+   remaining = grant - paid. status: active=Still on grant, complete=fully paid, dropped=left program. */
+const GRANT_ADJ=-1328; /* reconciling adjustment so YTD total = 246,214 */
+const GRANTS=[
+  {n:"Anna Dyka",co:"Ukraine",grant:12000,paid:6547,status:"active"},
+  {n:"Capverde Alexandra",co:"Romania",grant:12000,paid:8698,status:"active"},
+  {n:"Khrystyna Trush",co:"Ukraine",grant:12000,paid:4857,status:"active"},
+  {n:"Ben Polgui",co:"Ukraine",grant:12000,paid:3053,status:"active"},
+  {n:"Dóra Klauz",co:"Hungary",grant:12000,paid:0,status:"active"},
+  {n:"Vasi & Sara Cristea",co:"Romania",grant:18000,paid:12666,status:"dropped"},
+  {n:"Matouš Krajník",co:"Czech Republic",grant:12000,paid:10507,status:"dropped"},
+  {n:"Danail Ventsislavov",co:"Bulgaria",grant:12000,paid:2801,status:"dropped"},
+  {n:"Veronika Suchá",co:"Czech Republic",grant:12000,paid:12000,status:"complete"},
+  {n:"Karolina Szafran",co:"Poland",grant:12000,paid:12000,status:"complete"},
+  {n:"Adina Oaie",co:"Romania",grant:12000,paid:10498,status:"complete"},
+  {n:"Alexandru Herghelegiu",co:"Romania",grant:12000,paid:12000,status:"complete"},
+  {n:"Benjamin Šramo",co:"Slovakia",grant:12000,paid:12000,status:"complete"},
+  {n:"Alex Tománek",co:"Slovakia",grant:12000,paid:12000,status:"complete"},
+  {n:"Klemen Furlan",co:"Slovenia",grant:12000,paid:12000,status:"complete"},
+  {n:"Anna Kročková",co:"Czech Republic",grant:12000,paid:10820,status:"complete"},
+  {n:"Francis Badau",co:"Romania",grant:12000,paid:10455,status:"complete"},
+  {n:"Patryk Gąsior",co:"Poland",grant:12000,paid:12000,status:"complete"},
+  {n:"Kayla Śnieżek",co:"Poland",grant:12000,paid:12000,status:"complete"},
+  {n:"Janis & Emija Milevski",co:"Latvia",grant:18000,paid:16640,status:"complete"},
+  {n:"Ionut & Nicoleta Lerca",co:"Romania",grant:18000,paid:18000,status:"complete"},
+  {n:"Zuzana Belancová",co:"Slovakia",grant:12000,paid:12000,status:"complete"},
+  {n:"Vanesa Verčimáková",co:"Slovakia",grant:12000,paid:12000,status:"complete"},
+  {n:"Adam Velebír",co:"Slovakia",grant:12000,paid:12000,status:"complete"},
+];
+GRANTS.forEach(g=>{g.remaining=g.grant-g.paid;});
+
+const HW=[
+  {wk:"Week 1 · Getting started",tasks:[{l:"Register for Foundations (MPD online training) with your JV / national email",link:"Register"},{l:"Begin reading The God Ask (Section 1)",link:"God Ask questions"},{l:"Complete Parts 1–3 of Foundations"},{l:"Read and sign the coaching agreement",link:"Coaching agreement"},{l:"Add 25 contacts in Sola & choose your top 10"},{l:"Create and order prayer cards"},{l:"Enter your budget goal in Sola"},{l:"Find an accountability partner & a plan to stay accountable"},{l:"Personal reflection: highs, lows, prayer requests, where you'd love help"},{l:"Meet with your coach"},{l:"Schedule the week-4 meeting with your uplink & coach"}]},
+  {wk:"Week 2 · Building the list",tasks:[{l:"Complete Parts 4–6 of Foundations"},{l:"Read The God Ask (Section 2)"},{l:"Add 20 more names to Sola"},{l:"Pray & journal to prepare your heart"},{l:"Personal reflection"},{l:"Meet with your coach"}]},
+  {wk:"Week 3 · Deepening",tasks:[{l:"Complete Parts 7–8 of Foundations"},{l:"The God Ask (Section 3)"},{l:"Add more names to Sola"},{l:"Pray & journal"},{l:"Personal reflection"},{l:"Meet with your coach"}]},
+  {wk:"Week 4 · Your story",tasks:[{l:"Finish anything left from weeks 1–3"},{l:"The God Ask (Section 4)"},{l:"Namestorming — everyone you know into Sola"},{l:"Write your support letter",link:"Letter template"},{l:"Letter reviewed by your coach"},{l:"Draft your first message to potential partners"},{l:"Message reviewed by your coach"},{l:"Plan support-raising trips & put dates on the calendar"},{l:"Complete your monthly recap & send to coach + uplink",link:"Monthly reflection"},{l:"Meet with your uplink AND coach"},{l:"Schedule the week-8 meeting"}]},
+  {wk:"Week 5 · Ready to share",tasks:[{l:"Create your presentation",link:"Presentation templates"},{l:"The God Ask (Section 5)"},{l:"Practice your presentation with your coach"},{l:"Set up 5 appointments"},{l:"Begin tracking your conversations"},{l:"Finalize materials: slides, videos, brochures, prayer cards"},{l:"Personal reflection"},{l:"Meet with your coach"}]},
+  {wk:"Week 6 · First asks",tasks:[{l:"US/UK: practice with an A-Team member"},{l:"US/UK: practice with the MPD Directors"},{l:"Finish The God Ask (Section 6)"},{l:"Learn Mailchimp — save 2 supporter-care templates",link:"Mailchimp templates"},{l:"Schedule a presentation with local church leaders"},{l:"Practice responding to a gentle 'no'"},{l:"Practice with a close friend"},{l:"Set up your next tracking dates"},{l:"Complete your first support appointment!"},{l:"Personal reflection"},{l:"Pause, celebrate, and give thanks"}]},
+];
+const HW_TOTAL=HW.reduce((a,w)=>a+w.tasks.length,0);
+const FREQ=["One Time","Monthly","Quarterly","Bi Annual","Annual"];
+const WORDS=[
+  {q:"And my God will meet all your needs according to the riches of his glory in Christ Jesus.",ref:"Philippians 4:19"},
+  {q:"Commit to the Lord whatever you do, and he will establish your plans.",ref:"Proverbs 16:3"},
+  {q:"Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up.",ref:"Galatians 6:9"},
+];
+const hwState={};
+function seedHw(name){ if(hwState[name])return hwState[name]; const s=S.find(x=>x.n===name),target=Math.round(s.hw/100*HW_TOTAL),done=new Set(); let i=0;
+  outer:for(let w=0;w<HW.length;w++)for(let t=0;t<HW[w].tasks.length;t++){if(i>=target)break outer;done.add(w+"-"+t);i++;} hwState[name]=done;return done;}
+const threads={
+  "Khrystyna Trush":[{from:"staff",text:"Hit 79% this week! Two new monthly partners said yes.",t:"Mon 9:14"},{from:"coach",text:"That's wonderful, Khrystyna — you're so close. Free Tuesday to plan the final asks together?",t:"Mon 10:02"}],
+  "Matouš Krajník":[{from:"coach",text:"Matouš, I've been thinking of you — haven't seen an update in a couple weeks. No pressure, just want to hear how you're really doing. Coffee call this week?",t:"Tue 8:40"}],
+  "Kayla Śnieżek":[{from:"coach",text:"Kayla, you've got about a month left in the grant window and I'd love to help you finish strong. Could you send me your top 15 names and we'll build a plan together?",t:"Wed 15:20"}],
+};
+/* director <-> coach channel (restricted view) */
+const coachThreads={
+  "Geoff":[{from:"coach",text:"Dave — Matouš has gone quiet two weeks running. I've reached out twice. Could use a second set of eyes.",t:"Tue 8:52"},{from:"dir",text:"Thanks for flagging, Geoff. Let's jump on a call Thursday — I'll help you shape the next conversation.",t:"Tue 9:20"}],
+  "Adam":[{from:"dir",text:"Adam, you're carrying Kayla and Patryk both near their finish. Anything you need from us to help them land it?",t:"Mon 16:05"}],
+  "Yulia":[{from:"coach",text:"Good news — Khrystyna's nearly there and Anna crossed 80%. Ben's the one I'm watching now.",t:"Wed 11:10"}],
+};
+let coachChat=null, coachOpen={};
+const initials=n=>n.split(/[ &]/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
+const tone=l=>l==="High"?"crit":l==="Watch"?"warn":"good";
+const warmLevel=l=>l==="High"?"Needs care":l==="Watch"?"Building":"Thriving";
+const money=v=>"$"+Math.round(v).toLocaleString();
+const toneColor=t=>t==="crit"?"var(--flame)":t==="warn"?"var(--honey)":"var(--pine)";
+
+/* line-icon set — single stroke, currentColor */
+const ICON={
+  route:'<circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 18h6a3 3 0 0 0 0-6H10a3 3 0 0 1 0-6h6"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="M15.6 8.4 13 13l-4.6 2.6L11 11z"/>',
+  link:'<path d="M9.6 14.4l4.8-4.8"/><path d="M11 6.8l1.3-1.3a3.7 3.7 0 0 1 5.2 5.2L16.2 12"/><path d="M13 17.2l-1.3 1.3a3.7 3.7 0 0 1-5.2-5.2L7.8 12"/>',
+  home:'<path d="M4 11.5 12 5l8 6.5"/><path d="M6 10.5V19h12v-8.5"/>',
+  scope:'<path d="M5 20V11"/><path d="M12 20V4"/><path d="M19 20v-6"/><path d="M4 20h16"/>',
+  send:'<path d="M21 4 3 11l6.5 2.5L12 20l3-6.5z"/><path d="M21 4 9.5 13.5"/>',
+  list:'<rect x="5" y="4" width="14" height="16" rx="2.4"/><path d="M9 9.2h6M9 13h6M9 16.8h3.5"/>',
+  check:'<path d="M5 12.5l4.2 4L19 7"/>',
+  checkCircle:'<circle cx="12" cy="12" r="9"/><path d="M8.4 12.4l2.6 2.6 4.6-5.2"/>',
+  chevron:'<path d="M9.5 6l6 6-6 6"/>',
+  external:'<path d="M14 4h6v6"/><path d="M20 4l-8.5 8.5"/><path d="M18 14.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4.5"/>',
+  pencil:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  heart:'<path d="M12 20C7 16.4 3 13.3 3 9.6 3 7 5 5 7.5 5c1.7 0 3.1.9 3.6 2 .5-1.1 1.9-2 3.6-2C17.1 5 19 7 19 9.6c0 3.7-4 6.8-9 10.4z"/>',
+  message:'<path d="M20 4H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3v3.4L11.7 16H20a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5.4"/><path d="M12 7.6h.01"/>',
+  users:'<circle cx="9.5" cy="9" r="3.1"/><path d="M3.6 19.4c0-3.2 3-5.1 5.9-5.1s5.9 1.9 5.9 5.1"/><path d="M16 6.1a3 3 0 0 1 0 5.9"/><path d="M17.4 14.4c1.9.5 3.2 2 3.2 4.4"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7.4V12l3 2"/>',
+  inbox:'<path d="M4 13v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/><path d="M4 13l2.2-7.1a1 1 0 0 1 1-.7h9.6a1 1 0 0 1 1 .7L21 13h-5l-1.3 2.2H9.3L8 13H4z"/>',
+  stamp:'<path d="M9 9a3 3 0 1 1 6 0c0 2-2 2.6-2 4h-2c0-1.4-2-2-2-4z" transform="translate(0 -1)"/><path d="M5 20h14"/><path d="M6.5 17h11l.6 2.5a.4.4 0 0 1-.4.5H6.3a.4.4 0 0 1-.4-.5z"/>',
+  coins:'<ellipse cx="9" cy="7" rx="6" ry="3"/><path d="M3 7v5c0 1.7 2.7 3 6 3"/><path d="M15 10.5c3.3 0 6 1.3 6 3v4c0 1.7-2.7 3-6 3s-6-1.3-6-3"/>',
+  gift:'<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M4 13h16M12 9v11M12 9C10 9 7.5 8 8 5.5 8.3 4 10 4.5 12 9c2-4.5 3.7-5 4-3.5C16.5 8 14 9 12 9Z"/>',
+};
+function ic(name,size=18){return `<svg class="i" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[name]||""}</svg>`;}
+
+const ROLES=[{id:"mel",icon:"inbox",label:"My desk"},{id:"staff",icon:"route",label:"Staff"},{id:"coach",icon:"compass",label:"Coach"},{id:"uplink",icon:"link",label:"Uplink"},{id:"leader",icon:"home",label:"Country Leader"},{id:"director",icon:"scope",label:"MPD Director"}];
+let role="mel",who=null,chatWith=null,staffTab="home",mpdRating=0,mpdCoachMtg="Yes",mpdSubmitted=false,donorRows=1,wordIdx=0,dirTab="care",grantFilter="all",deskOpen={},deskGrant={},melTab="approvals";
+
+const MELQUEUE=[
+  {n:"Stanislav Chlebek", also:"applying with his wife, Debbie", co:"Czech Republic", dob:"22 Mar 1996", age:30,
+   coach:"Geoff Hammond", coachEmail:"ghammond@josiahventure.com",
+   uplink:"Honza Rokosz", uplinkEmail:"jrokosz@kam.cz",
+   lead:"Kuba Vejmělka", leadEmail:"jvejmelka@kam.cz",
+   budget:2116, salary:1775, cedarstone:"410216",
+   start:"1 Oct 2026", met:"3 Sep 2026", email:"schlebek@kam.cz", emailOk:true,
+   approve:"https://hook.us2.make.com/skx1uaptm5mt54xw2vfjg8pbubyg5m6b?recordId=recOEYaSAkDAVKcfA&approver=Mel&decision=approve",
+   record:"https://airtable.com/appZoeYCd8dlQfV7C/tblRlieYQq691CpZy/recOEYaSAkDAVKcfA",
+   overview:"Onboarding session for Stacho &amp; Debbie, a Czech couple joining KAM's ministry and entering MPD. A strong foundation: seven years serving youth in Olomouc, hosting student groups at home, and a network of about 140 potential supporters across denominations in Silesia. Stacho joins full-time; Debbie part-time (she recently passed the bar and plans self-employed law alongside ministry).",
+   notes:[
+     ["Faith journeys","Stacho came to faith at 14 at a worship conference; Debbie at age 6 through a missionary's presentation. They met at a Christian camp at 17 and moved to Olomouc to serve in youth ministry together."],
+     ["Ministry background","Ten years with a student group; Stacho now serves on a denominational youth board in Silesia. Debbie focuses on biblical counseling and mentoring girl youth leaders."],
+     ["Financial picture","Currently living on savings and some state support. Some uncertainty about denominational support (they're not used to backing lay ministers), but growing prayer and encouragement from the community. Dave reassured them the MPD process aligns with discipleship."],
+     ["The grant","JV covers 100% of salary in month one (from Oct 1); they raise 10% of salary that first month, with support declining after. Recurring gifts are matched once. First payment processes in early November — after your approval."],
+     ["Expectations set","20–30 hrs/week on MPD through January, then reevaluate. Weekly reporting and bi-weekly task submissions via Sola/Airtable. Not attending Fall Conference; will leverage Winter Academy for networking."],
+   ],
+   next:["Honza + Geoff: set Stacho's specific weekly MPD hours","Stacho: begin MPD training Oct 1, at least 20 hrs/week through January","Track progress in Sola; submit weekly MPD emails on time","Raise 10% of salary in October to meet the grant requirement","Add committed supporters for Geoff to confirm (enables matching)","Attend Winter Academy; approach Norway and other networks"]},
+];
+/* still on the 2025-26 grant (no 2026-27 grant received); fund cash from ledger 31 Jul 2026 */
+const POOL={cycle:"2025-26",total:200000,committed:168000,paid:141707,remaining:32000,fundCash:186975,asOf:"31 Jul 2026"};
+
+/* the grant fund — restricted to Mel + MPD directors */
+let ACCOUNT=186975, SPOKEN=36845, FREE=150130, acctAsOf="31 Jul 2026", ledger=null;
+/* tiny CSV parser: handles quoted fields + newlines inside quotes */
+function parseCSV(text){
+  const rows=[];let f="",row=[],q=false;
+  text=text.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else { if(c==='"')q=true; else if(c===','){row.push(f);f="";} else if(c==='\n'){row.push(f);rows.push(row);f="";row=[];} else f+=c; }
+  }
+  if(f.length||row.length){row.push(f);rows.push(row);}
+  const head=rows.shift().map(h=>h.trim());
+  return rows.filter(r=>r.some(x=>x.trim())).map(r=>{const o={};head.forEach((h,i)=>o[h]=(r[i]||"").trim());return o;});
+}
+function num(v){return parseFloat((v||"").replace(/[^0-9.\-]/g,""))||0;}
+function ingestLedger(text){
+  const data=parseCSV(text);
+  const col=k=>Object.keys(data[0]||{}).find(h=>h.toLowerCase().replace(/[^a-z]/g,"").includes(k));
+  const cD=col("date"),cCr=col("credit"),cDb=col("debit"),cBal=col("balance"),cDesc=col("description");
+  let totalIn=0,totalOut=0,payouts=0,fees=0,winter=0,deposits=[];let latest=null,balance=null;
+  data.forEach(r=>{const cr=num(r[cCr]),db=num(r[cDb]),bal=num(r[cBal]),d=r[cD]||"",desc=(r[cDesc]||"");
+    totalIn+=cr;totalOut+=db;
+    if(cr>0) deposits.push({date:d,amount:cr,desc:desc});
+    if(/payout/i.test(desc)) payouts+=db;
+    else if(/service fee/i.test(desc)) fees+=db;
+    else if(/winter academy/i.test(desc)) winter+=db;
+    const dt=Date.parse(d); if(dt && (latest===null||dt>latest)){latest=dt;balance=bal;}
+  });
+  if(balance===null && data.length) balance=num(data[0][cBal]);
+  deposits.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
+  return {rows:data.length,totalIn,totalOut,payouts,fees,winter,deposits,balance,
+    asOf: latest?new Date(latest).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):""};
+}
+const CYC=[
+  {cy:"2025-26",dep:200000,date:"9 Jul 2025",src:"Int'l Generosity Foundation Trust / Cornerstone Wire",paid:114463,fees:20000,wa:5598,active:true,
+   ppl:[["Ionut & Nicoleta Lerca",18000,"done"],["Patryk Gąsior",12000,"done"],["Kayla Śnieżek",12000,"done"],["Zuzana Belancová",12000,"done"],["Vanesa Verčimáková",12000,"done"],["Adam Velebír",12000,"done"],["Matouš Krajník",10507,"left"],["Capverde Alexandra",8698,"on"],["Anna Dyka",6547,"on"],["Khrystyna Trush",4857,"on"],["Ben Polgui",3053,"on"],["Danail Ventsislavov",2801,"left"],["Dóra Klauz",0,"on"]]},
+  {cy:"2024-25",dep:260000,date:"22 Jul 2024",src:"New Staff Acceleration – Salary",paid:133079,fees:26000,wa:4708,
+   ppl:[["Janis & Emija Milevski",16640,"done"],["Vasi & Sara Cristea",12666,"left"],["Veronika Suchá",12000,"done"],["Karolina Szafran",12000,"done"],["Alexandru Herghelegiu",12000,"done"],["Benjamin Šramo",12000,"done"],["Alex Tománek",12000,"done"],["Klemen Furlan",12000,"done"],["Anna Kročková",10820,"done"],["Adina Oaie",10498,"done"],["Francis Badau",10455,"done"]]},
+  {cy:"2023-24",dep:315000,date:"20 Jul 2023",src:"New Staff Acceleration – Salary (opening)",paid:217644,fees:31500,wa:2871,
+   ppl:[["Killian Spieß",12000,"done"],["Sasha Kovalov",12000,"done"],["Sven Muller",12000,"done"],["Karina Taracińska",12000,"done"],["Zuzanna Smolarczyk",12000,"done"],["Gabriel Boldura",12000,"done"],["Grega Vauhnik",12000,"done"],["Gabi Nicolae",12000,"done"],["Lukáš Večerík",12000,"done"],["Damaris Iordache",11240,"done"],["Šimon Kolesár",11000,"done"],["Timotei Moldovan",9950,"done"],["Serhii Bielov",8500,"done"],["Andriy Ivaniuk",8500,"done"],["Liudmyla Rubtsova",8500,"done"],["Yuliia Yablonska",8500,"done"],["Ivan Slobodnychenko",8500,"done"],["Serhii Skyba",8500,"done"],["Ioani Dhima",8400,"done"],["Saimir Brazhdi",8400,"done"],["Sam Šenigl",2454,"done"]]},
+];
+let fundOpen={}, projGrant=12000, projN=8;
+
+/* monthly payout worksheet — restricted. match = coach-confirmed MONTHLY givers only. */
+const PAYOUT=[{"n": "Ben Polgui", "co": "Ukraine", "acct": "410213", "mo": 5, "sal": 1030, "fac": 70, "base": 721.0, "match": 320, "givers": [["Pizhik Dmitro", 112], ["Bilokin Vasil", 50], ["Kulik Valentin", 50], ["Kasparov Andriy", 25], ["Nechuk Valentin", 25], ["Sidorishin Serhiy", 12], ["Vitalik Bakylich", 12], ["Kushnir Olena", 12], ["Anton Meliohin", 12], ["Dariia Kasprova", 10]], "other": 3, "nosub": false, "pend": false, "paid": 6052, "max": 12000, "capped": false, "ft": "Grant", "ps": "Active"}, {"n": "Khrystyna Trush", "co": "Ukraine", "acct": "410210", "mo": 9, "sal": 825, "fac": 30, "base": 247.5, "match": 1208.43, "givers": [["Howard&Carol Rand", 833], ["Ben&Kristy Williams", 83], ["Anastasiia-Mariia Antonyk", 50], ["Zoriana Trush", 45], ["Scott & Kim Cordes", 37], ["Taras&Ira Haidar", 25], ["Victoriia Cherevko", 25], ["Renata&Tim Hinrichs", 25], ["Leszek Procner", 22], ["Hayley Arnold", 20], ["Sofiia&Adrian Yavorski", 17], ["Anastasiia Ponomarenko", 15], ["Sofiia Kosarevych", 11.43]], "other": 14, "nosub": false, "pend": false, "paid": 7523.43, "max": 12000, "capped": false, "ft": "Grant", "ps": "Active"}, {"n": "Danail Ventsislavov", "co": "Bulgaria", "acct": "410211", "mo": 6, "sal": 1474, "fac": 60, "base": 884.4, "match": 0, "givers": [], "other": 1, "nosub": false, "pend": true, "paid": 6485.6, "max": 12000, "capped": false, "ft": "Grant", "ps": "Active"}, {"n": "Capverde Alexandra", "co": "Romania", "acct": "410120", "mo": 11, "sal": 1500, "fac": 10, "base": 150.0, "match": 226, "givers": [["Cristina Paval", 70], ["Levi", 50], ["Mironese Narcisa", 45], ["Anel Jimenez", 25], ["Ardeleanu Vasile-Iulian", 24], ["Iasmin Elena Wagner", 12]], "other": 1, "nosub": true, "pend": false, "paid": 0, "max": 12000, "capped": false, "ft": "Grant", "ps": "Active"}, {"n": "Kayla Śnieżek", "co": "Poland", "acct": "410205", "mo": 12, "sal": 2361, "fac": 0, "base": 0.0, "match": 819, "givers": [["Anna Cieszyńska", 138], ["Nazar Bachuk", 137], ["Angel Noel", 100], ["Slavik i Weronika", 100], ["Adam Procner", 55], ["Sebastian Famulski", 53], ["Brad Janiszewski", 50], ["Agnieszka Biedrzycka-Wierzba", 40], ["Krzysiek Wilkoński", 28], ["Nondu", 27], ["Basia", 26], ["Becca and Jacob Hash", 25], ["Samuel", 14], ["Alicja Ryńska", 14], ["Ania Ryńska", 7], ["Paweł Tadeuszewski", 5]], "other": 8, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Ionuț & Nicoleta Lerca", "co": "Romania", "acct": "410199", "mo": 11, "sal": 2889, "fac": 10, "base": 288.9, "match": 100, "givers": [["Dominik Meili", 100]], "other": 1, "nosub": false, "pend": false, "paid": 18000.0, "max": 18000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Anna Dyka", "co": "Ukraine", "acct": "410204", "mo": 12, "sal": 825, "fac": 0, "base": 0.0, "match": 1385, "givers": [["Daniel and Moriah Johnson", 175], ["Moriah and Daniel Johnson", 175], ["John and Dinah Law", 150], ["Journey church", 65], ["Lee and Katie Humerian", 50], ["Dov Nimratz", 50], ["Ira", 50], ["Pavol and Vladislava Kadlecovy", 50], ["Vladislava Kadlecova", 50], ["Cath Leech", 50], ["Kristy and Ben Williams", 50], ["Sasha Dubovyk", 50], ["Bodya and Yulia", 25], ["Kendra Patty", 25], ["Miguel Silva", 25], ["Nia", 25], ["Nadya Vorobyoba", 25], ["Serhiy Skyba", 25], ["Marc and Olya Meland", 25], ["Jill and Noah Ellenwood", 25], ["Khrystya Trush and Peter Hinrichs", 25], ["Luida Rubtsova", 25], ["Hayley", 25], ["Edyard and Lena Kurat", 25], ["Randi Scott", 20], ["Valeriia Poberezhna", 20], ["Lena and Evan", 20], ["Sofia Ifantidu", 17], ["Sofia Ifantidu", 17], ["Sasha Hordiychuk", 15], ["Max Yakymovych", 11]], "other": 5, "nosub": false, "pend": false, "paid": 6632.5, "max": 12000, "capped": false, "ft": "Grant", "ps": ""}, {"n": "Matouš Krajník", "co": "Czech Republic", "acct": "410203", "mo": 12, "sal": 2164, "fac": 0, "base": 0.0, "match": 367, "givers": [["Jan Chalupa", 98], ["Šimon Ondráček", 80], ["Jakub Šejba", 60], ["Šimon Piksa", 48], ["Štěpánka Krišicová", 48], ["Allen Garuba", 21], ["Lucie Medřická", 12]], "other": 8, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Adam Velebír", "co": "Slovakia", "acct": "410198", "mo": 10, "sal": 2100, "fac": 20, "base": 420.0, "match": 512.43, "givers": [["The Branch Church", 300], ["Emília Velebírová", 58.93], ["Anna Velebírová", 57], ["Samuel Foľta", 34], ["Tomáš Valocký", 34], ["Anna Grešová", 12], ["Kristína Marková", 11.5], ["Erika Petrášová", 5]], "other": 3, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Vanesa Verčimáková", "co": "Slovakia", "acct": "410208", "mo": 10, "sal": 2040, "fac": 20, "base": 408.0, "match": 1490.91, "givers": [["Michal Pončák", 118.53], ["Michal Pončák", 118.53], ["Danka Surmiková", 117.32], ["Slavomír Verčimák", 116.21], ["Isaac Dolan", 100], ["Miroslav Hricko", 93.57], ["Pavol Garaj", 92.09], ["Oliver a Laura Slivkovci", 92], ["Kristína Vyhonská", 58.93], ["Ivana Argayova", 58.41], ["Matúš Poloha", 58.1], ["Peter a Anna Urbancovci", 58.1], ["Lýdia Kerestešová", 58], ["Branislav Puzder", 35.56], ["Branislav Puzder", 35.56], ["Marek Mačuga", 35.52], ["Alexandra Motyľ", 34.91], ["Peter Korinek", 29.6], ["Jana Olejárová", 29.1], ["Aneta Kišová", 28.75], ["Viktoria Timkova", 23.68], ["Natália Hadbavná", 23.18], ["Viktor Šimco", 23.13], ["Michal Pasierb", 17.25], ["Kristína Sedláková", 11.79], ["Andrea Jakubčinová", 11.59], ["Anna Petrušková", 11.5]], "other": 1, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Patryk Gąsior", "co": "Poland", "acct": "410202", "mo": 11, "sal": 2361, "fac": 10, "base": 236.1, "match": 1605.02, "givers": [["Jennone  Casser", 250], ["Grantma Ash", 250], ["Kyle Williams", 200], ["church", 200], ["Dustin and Lindsay Ash", 100], ["Dustin Ash", 100], ["Redelsperdel", 100], ["Hamm", 100], ["Abby Glasser", 50], ["Jess", 50], ["Janice", 50], ["Amelia", 41.41], ["Jagoda", 27.61], ["Polina", 27], ["Graham Chambers", 25], ["Karina", 14], ["Sniegon", 10], ["Aneta&Tomek", 10]], "other": 4, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Zuzana Belancová", "co": "Slovakia", "acct": "410207", "mo": 12, "sal": 2040, "fac": 0, "base": 0.0, "match": 309.66, "givers": [["Žák", 117.53], ["Patrik Čeginik", 116.78], ["Cathy Cook", 25.15], ["Lydia, Adam Rajčan", 23.46], ["Meščan", 15], ["Valentína Kuceljová", 11.74]], "other": 4, "nosub": true, "pend": false, "paid": 0, "max": 12000, "capped": false, "ft": "Grant", "ps": ""}];
+/* director controls: per-staff status override active|paused|finished; window rule = month>12 leaves active */
+let payoutOpen={}, payoutStatus={};
+function payoutAuto(p){ if(p.mo>12) return 'ended'; if(p.capped) return 'finished'; if(p.mo>=12 && p.base<=0) return 'ended'; return 'active'; }
+/* Source of truth = Airtable fields Funding Type (p.ft) + Payout Status (p.ps).
+   A director action this session (payoutStatus[name]) overrides until it's written back. */
+function payoutStat(p){
+  if(payoutStatus[p.n]) return payoutStatus[p.n];
+  if(p.ft==='Support-only') return 'support';
+  if(p.ps==='Paused') return 'paused';
+  if(p.ps==='Finished') return 'finished';
+  return payoutAuto(p);
+}
+
+const rolesNav=document.getElementById("roles");
+rolesNav.innerHTML=ROLES.map(r=>`<button class="role" data-r="${r.id}"><span class="ic" style="display:flex">${ic(r.icon,17)}</span>${r.label}</button>`).join("");
+rolesNav.querySelectorAll(".role").forEach(b=>b.onclick=()=>{role=b.dataset.r;who=null;chatWith=null;staffTab="home";mpdSubmitted=false;syncRoles();buildId();render();});
+function syncRoles(){rolesNav.querySelectorAll(".role").forEach(b=>b.classList.toggle("on",b.dataset.r===role));}
+
+const idsel=document.getElementById("idsel");
+const uniq=a=>[...new Set(a)];
+function buildId(){
+  const lab=document.getElementById("idlabel");let opts=[];
+  if(role==="mel"){lab.textContent="Signed in as";opts=["Mel Ellenwood"];}
+  else if(role==="staff"){lab.textContent="I am";opts=S.map(s=>s.n);}
+  else if(role==="coach"){lab.textContent="Coach";opts=uniq(S.map(s=>s.coach)).sort();}
+  else if(role==="uplink"){lab.textContent="Uplink";opts=uniq(S.map(s=>s.uplink)).sort();}
+  else if(role==="leader"){lab.textContent="Country";opts=uniq(S.map(s=>s.co)).sort();}
+  else{lab.textContent="Team";opts=["Dave & Geri"];}
+  idsel.innerHTML=opts.map(o=>`<option>${o}</option>`).join("");
+  const def={mel:"Mel Ellenwood",staff:"Kayla Śnieżek",coach:"Yulia",uplink:"Benjamín",leader:"Slovakia",director:"Dave & Geri"}[role];
+  who=opts.includes(def)?def:opts[0];idsel.value=who;
+}
+idsel.onchange=()=>{who=idsel.value;chatWith=null;staffTab="home";mpdSubmitted=false;render();};
+
+function thermo(pct,t){
+  const p=Math.min(1,pct),deg=p*100,col=toneColor(t);
+  return `<div class="thermo"><svg viewBox="0 0 36 36" style="transform:rotate(-90deg)"><circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--card-2)" stroke-width="3.2"/><circle cx="18" cy="18" r="15.9" fill="none" stroke="${col}" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="${deg} 100" pathLength="100"/></svg><div class="cap"><b>${Math.round(pct*100)}%</b><span>toward home</span></div></div>`;
+}
+function greetTime(){const h=new Date().getHours();return h<12?"Good morning":h<18?"Good afternoon":"Good evening";}
+
+/* ===== MY DESK (Mel) ===== */
+function viewMel(){
+  const q=MELQUEUE;
+  const mnav=`<div class="subnav"><button class="sn ${melTab==='approvals'?'on':''}" data-m="approvals">${ic('inbox',16)} Approvals${q.length?` <span class="tag due">${q.length}</span>`:''}</button><button class="sn ${melTab==='payout'?'on':''}" data-m="payout">${ic('coins',16)} Monthly payout</button><button class="sn ${melTab==='fund'?'on':''}" data-m="fund">${ic('scope',16)} Grant fund</button></div>`;
+  if(melTab==='fund') return mnav+fundView();
+  if(melTab==='payout') return mnav+payoutView();
+  const head=`<div class="greeting"><div><div class="hi">${greetTime()}, <b>Mel</b>.</div>
+    <div class="said">${q.length?`${q.length} applicant${q.length>1?'s':''} approved by Dave &amp; Geri, waiting on your final yes.`:"You're all caught up — nothing waiting for approval."}</div></div></div>`;
+  const pool=`<section class="grid stats" style="margin-top:16px">
+    <div class="card stat-c" style="border:1.5px solid color-mix(in srgb,var(--honey) 50%,transparent)"><div class="l">Grant left to give out</div><div class="v" style="color:var(--honey-deep)">${money(POOL.remaining)}</div><div class="f">of the ${POOL.cycle} grant · uncommitted</div></div>
+    <div class="card stat-c"><div class="l">Committed to staff</div><div class="v">${money(POOL.committed)}</div><div class="f">of the ${money(POOL.total)} ${POOL.cycle} grant</div></div>
+    <div class="card stat-c"><div class="l">Cash in the fund</div><div class="v">${money(POOL.fundCash)}</div><div class="f">incl. prior-year rollover · ${POOL.asOf}</div></div>
+  </section>`;
+  if(!q.length) return head+pool+`<section class="card pad" style="margin-top:16px"><div class="empty-chat">Nothing in your queue right now.</div></section>`;
+  const cards=q.map((p,i)=>{
+    const open=deskOpen[i], first=p.n.split(" ")[0];
+    const couple=/wife|husband|&| and /i.test(p.also||"");
+    const gAmt=deskGrant[i]??(couple?18000:12000);
+    const after=POOL.remaining-gAmt;
+    return `<section class="card pad" style="margin-top:16px">
+      <div class="desk-top">
+        <div><div class="eyebrow">Awaiting your approval</div>
+          <div class="desk-name">${p.n}</div><div class="desk-sub">${p.also} · ${p.co}</div></div>
+        <div class="desk-badge"><span class="okpill">${ic('check',13)} Approved by Dave &amp; Geri</span><small>met ${p.met}</small></div>
+      </div>
+      <div class="deskfacts">
+        <div class="df"><span>Preferred start</span><b>${p.start}</b></div>
+        <div class="df"><span>Monthly support</span><b>$${p.budget.toLocaleString()}</b></div>
+        <div class="df"><span>Salary</span><b>$${p.salary.toLocaleString()}</b></div>
+        <div class="df"><span>Age</span><b>${p.age}</b></div>
+        <div class="df"><span>Cedarstone #</span><b>${p.cedarstone}</b></div>
+        <div class="df"><span>Email</span><b style="color:var(--pine-deep);font-size:12.5px">${p.email}</b></div>
+      </div>
+      <div class="team" style="margin-top:14px">
+        ${[["Coach",p.coach,p.coachEmail],["Uplink",p.uplink,p.uplinkEmail],["Country leader",p.lead,p.leadEmail]].map(([r,nm,em])=>`<div class="friend"><div class="av t-good">${initials(nm)}</div><div class="in"><div class="role-l">${r}</div><div class="nm">${nm}</div></div><span style="font-size:11.5px;color:var(--muted)">${em}</span></div>`).join("")}
+      </div>
+      <div class="notesblock">
+        <div class="nb-h">${ic('inbox',16)} Dave &amp; Geri's meeting notes <span style="color:var(--muted);font-weight:500;font-size:12px">· ${p.met}</span></div>
+        <p class="nb-over">${p.overview}</p>
+        ${open?`${p.notes.map(([h,t])=>`<div class="nb-item"><b>${h}.</b> ${t}</div>`).join("")}
+          <div class="nb-next"><div class="nb-nexth">Next steps agreed</div><ul>${p.next.map(n=>`<li>${n}</li>`).join("")}</ul></div>`:''}
+        <button class="nb-toggle" data-toggle="${i}">${open?'Show less':'Read the full notes &amp; next steps'} ${ic('chevron',13)}</button>
+      </div>
+      <div class="grantset">
+        <div class="gs-h">${ic('stamp',16)} Grant amount for ${couple?first+" &amp; Debbie":first}</div>
+        <div class="gs-row">
+          <div class="gs-in"><span class="cur">$</span><input id="gin-${i}" inputmode="numeric" autocomplete="off" value="${gAmt.toLocaleString()}"></div>
+          <div class="gs-note">Sets their <b>Max Possible Payout</b> — the cap JV will pay over 12 months${couple?". Couples are typically $18,000":". Typically $12,000"}.</div>
+        </div>
+        <div class="gs-after" id="grem-${i}">Leaves <b>${money(Math.max(after,0))}</b> of the ${POOL.cycle} grant after this.</div>
+        <div class="gs-warn" id="gwarn-${i}"${after>=0?' hidden':''}>That's ${money(Math.abs(after))} past the ${POOL.cycle} grant's budget — you'd be dipping into the fund's rollover.</div>
+        <div class="gs-warn2">No 2026-27 grant came in, so ${first} draws from the <b>${POOL.cycle}</b> grant. His record should be tagged ${POOL.cycle}, not 2026-27. (The fund still holds ${money(POOL.fundCash)} in rollover cash if needed.)</div>
+      </div>
+      <div class="desk-actions">
+        <a class="btn-primary" href="${p.approve}" target="_blank" rel="noopener">${ic('check',16)} Approve ${first}</a>
+        <a class="btn-ghost" href="${p.record}" target="_blank" rel="noopener">Open full application</a>
+      </div>
+      <div class="desk-note">Approving records your yes in the base and starts the grant &amp; onboarding for an Oct 1 start. Nothing is sent until you click.</div>
+    </section>`;
+  }).join("");
+  return mnav+head+pool+cards;
+}
+
+/* ===== STAFF ===== */
+function viewStaff(){
+  const s=S.find(x=>x.n===who);
+  const nav=`<div class="subnav">
+    <button class="sn ${staffTab==='home'?'on':''}" data-s="home">${ic('home',16)} My journey</button>
+    <button class="sn ${staffTab==='mpd'?'on':''}" data-s="mpd">${ic('send',16)} This week's update ${s.sub===0?'<span class="tag due">to share</span>':'<span class="tag done">shared</span>'}</button>
+    <button class="sn ${staffTab==='hw'?'on':''}" data-s="hw">${ic('list',16)} My checklist <span class="tag">${s.hw}%</span></button>
+  </div>`;
+  let inner = staffTab==="home"?staffHome(s):staffTab==="mpd"?staffMpd(s):staffHw(s);
+  return nav+inner;
+}
+function staffHome(s){
+  const t = s.pct>=.75 ? 'good' : 'warn'; /* staff's own ring is never a warning colour */
+  let line,enc;
+  if(s.pct>=.75){line="You're nearly home.";enc="What a picture of faithfulness. Confirm your pledges are set to recurring, then take a moment to thank the people who got you here.";}
+  else if(s.pct>=.4){line="It's really building.";enc="Every yes is adding up. Keep your appointment rhythm going this week — momentum is on your side.";}
+  else if(s.pct>=.2){line="You're on your way.";enc="The early stretch is the hardest and you're moving through it. Three clear asks this week is a full, faithful week.";}
+  else {line="The beginning takes courage.";enc="Starting is the bravest part, and you've started. You're not doing this alone — your coach and your people are with you.";}
+  const w=WORDS[wordIdx%WORDS.length];
+  const circle=[["Coach",s.coach,"say"],["Uplink",s.uplink,"ghost"],["Country leader",s.lead,"ghost"]];
+  return `<div class="greeting">
+      <div><div class="hi">${greetTime()}, <b>${s.first}</b>.</div>
+      <div class="said">${s.pct>=.75?"You're so close to fully funded — this is a season to celebrate.":s.sub===0?"When you have a few minutes, your coach would love to hear how your week went.":"Here's where your journey stands today."}</div></div>
+    </div>
+  <section class="grid two" style="margin-top:16px">
+    <div class="card pad">
+      <div class="journey">${thermo(s.pct,t)}
+        <div class="jmeta">
+          <div class="line">${line}</div>
+          <div class="encourage">${enc}</div>
+          <div class="facts">
+            <div class="fact"><b>${money(s.moAmt)}</b>raised / month</div>
+            <div class="fact"><b>${money(s.tgt)}</b>monthly goal</div>
+            <div class="fact"><b>${s.wk}</b>weeks of grant</div>
+          </div>
+        </div>
+      </div>
+      <div class="invite ${s.sub===0?'':'done'}">
+        <div class="em">${s.sub===0?ic('send',22):ic('checkCircle',22)}</div>
+        <div class="txt"><b>${s.sub===0?"Share this week's update":"This week's update is in — thank you"}</b>
+          <div>${s.sub===0?"A few quick questions. It keeps your coach in step with you.":"Your coach and uplink can see how you're doing."}</div></div>
+        <button class="go" data-goto="mpd">${s.sub===0?'Start':'View'}</button>
+      </div>
+      <div class="word"><div class="e">A word for today</div><div class="q">"${w.q}"</div><div class="ref">${w.ref}</div></div>
+    </div>
+    <div class="card pad" id="chatcard">${chatPanel(s,"staff")}</div>
+  </section>
+  <section class="card pad">
+    <div class="sec-head"><div><div class="eyebrow">Your circle</div><h2>The people walking with you</h2></div></div>
+    <div class="circle">${circle.map(([r,nm,k])=>`<div class="friend"><div class="av t-good">${initials(nm)}</div><div class="in"><div class="role-l">${r}</div><div class="nm">${nm}</div></div><button class="say ${k}" ${k==='say'?'data-scroll="1"':''}>${k==='say'?'Message':ic('message',16)}</button></div>`).join("")}</div>
+  </section>
+  <div class="hint">${ic('info',16)} <b>Notice what's not here:</b> no "risk score," no red warning labels. ${s.first} sees encouragement and a clear next step. The health signal still exists — it just lives with the coach and leaders, so staff feel supported, not surveilled.</div>`;
+}
+function staffMpd(s){
+  if(mpdSubmitted) return `<section class="card pad"><div class="success"><div class="h">${ic('checkCircle',22)} Thank you, ${s.first}</div>
+    <p>Your update is in. In the live base this adds a row to <b>MPD Updates</b>, refreshes your funding, and gently lets your coach know how your week went — including any new partners you added.</p></div>
+    <div class="submit"><button class="btn-primary" data-reset="1">Share another</button></div></section>`;
+  return `<section class="card pad">
+    <div class="sec-head"><div><div class="eyebrow">Weekly rhythm</div><h2>How was your week?</h2></div></div>
+    <div class="intro">A few honest questions — this is how your coach walks with you. Sharing as <b>${s.n}</b>, week ${s.mo} of 12. <span class="req">*</span> means the live form requires it.</div>
+    <div class="fgrid">
+      <div class="field"><label>Face-to-face meetings this week <span class="req">*</span></label><input type="number" min="0" placeholder="0"></div>
+      <div class="field"><label>Clear asks you made <span class="req">*</span></label><input type="number" min="0" placeholder="0"></div>
+    </div>
+    <div class="fgrid" style="margin-top:15px">
+      <div class="field"><label>Did you meet with your coach this week? <span class="req">*</span></label>
+        <div class="seg" id="coachmtg"><button class="on" data-v="Yes">Yes</button><button data-v="No">Not yet</button></div></div>
+      <div class="field"><label>Are you finding time to pray over your support raising? <span class="req">*</span></label>
+        <div class="rate" id="rate">${[1,2,3,4,5].map(i=>`<div class="star" data-v="${i}">${ic('heart',16)}</div>`).join("")}</div></div>
+    </div>
+    <div class="field" style="margin-top:15px"><label>Hours you gave to MPD each day <span class="req">*</span></label>
+      <div class="hours">${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d=>`<div class="d"><span>${d}</span><input type="number" min="0" placeholder="0"></div>`).join("")}</div></div>
+    <div class="fgrid" style="margin-top:15px">
+      <div class="field"><label>New partners this week <span class="req">*</span></label><input type="number" min="0" max="20" placeholder="0"></div>
+      <div class="field"><label>Anything on your heart? (highs, lows, where you need help)</label><textarea placeholder="Tell your coach how you're really doing…"></textarea></div>
+    </div>
+    <div class="sec-head" style="margin-top:22px"><div><div class="eyebrow">Good news to celebrate</div><h2>New partners who said yes</h2></div><span class="note">name · amount · frequency · start date</span></div>
+    <div id="donors">${donorRowHtml()}</div>
+    <button class="addbtn" id="adddonor">+ Add another partner</button>
+    <div class="submit"><button class="btn-primary" id="mpdsend">Share my week</button><span class="meta">saves to the MPD Updates table</span></div>
+  </section>
+  <div class="hint">${ic('info',16)} Same questions as the real Airtable form — reframed so it feels like a conversation with someone who cares, not a compliance report. That reframe is the whole point: a form people <b>want</b> to open.</div>`;
+}
+function donorRowHtml(){return Array.from({length:donorRows}).map((_,i)=>`<div class="donor-row"><input type="text" placeholder="Partner name ${i+1}"><input type="text" inputmode="decimal" placeholder="$ / month"><select>${FREQ.map(f=>`<option ${f==="Monthly"?"selected":""}>${f}</option>`).join("")}</select><input type="date"></div>`).join("");}
+function staffHw(s){
+  const done=seedHw(s.n),total=HW_TOTAL,dn=done.size,pct=Math.round(dn/total*100);
+  const firstOpen=HW.findIndex((ww,ii)=>ww.tasks.some((_,tt)=>!done.has(ii+"-"+tt)));
+  return `<section class="card pad">
+    <div class="sec-head"><div><div class="eyebrow">Your first six weeks</div><h2>${pct>=100?"You finished the whole track":"Your onboarding checklist"}</h2></div></div>
+    <div class="hwbar"><div class="row"><b>${dn} of ${total} done</b><span style="color:var(--muted)">${pct}%${pct>=100?' — every single one':''}</span></div><div class="t"><div class="f" style="width:${pct}%"></div></div></div>
+    ${HW.map((w,wi)=>{const wt=w.tasks.length,wd=w.tasks.filter((_,ti)=>done.has(wi+"-"+ti)).length,full=wd===wt;
+      return `<div class="wk ${wi===firstOpen?'open':''}" data-wk="${wi}"><div class="wk-h"><span class="chev">${ic('chevron',14)}</span><span class="wn">${w.wk}</span><span class="wc ${full?'wdone':''}">${full?ic('check',13)+' '+wt+'/'+wt:wd+'/'+wt}</span></div>
+        <div class="wk-body">${w.tasks.map((t,ti)=>{const on=done.has(wi+"-"+ti);return `<div class="task ${on?'done':''}"><div class="cb ${on?'on':''}" data-t="${wi}-${ti}">${on?ic('check',14):''}</div><div class="tl">${t.l}${t.link?`<br><a href="#" onclick="return false">${ic('external',12)} ${t.link}</a>`:''}</div></div>`;}).join("")}</div></div>`;}).join("")}
+    <div class="callout">${ic('users',16)} Your coach can see this too — so if you get stuck on something like the Week 4 support letter, they already know where to help. You never have to figure it out alone.</div>
+  </section>`;
+}
+
+/* ===== COACH ===== */
+function viewCoach(){
+  const mine=S.filter(s=>s.coach===who).sort((a,b)=>b.risk-a.risk);
+  if(!chatWith||!mine.find(s=>s.n===chatWith))chatWith=mine[0]?.n;
+  const need=mine.filter(s=>s.lvl==="High").length,quiet=mine.filter(s=>s.sub===0).length,sel=S.find(s=>s.n===chatWith);
+  return `<div style="margin-bottom:4px"><div class="eyebrow">Coaching ${who}'s people</div><h2 style="font-size:19px">${mine.length} staff you're walking with</h2></div>
+  <section class="grid stats" style="margin-top:14px">
+    <div class="card stat-c"><div class="l">Could use extra care</div><div class="v" style="color:${need?'var(--flame)':'var(--pine-deep)'}">${need}</div><div class="f">let's reach out first</div></div>
+    <div class="card stat-c"><div class="l">Haven't shared this week</div><div class="v">${quiet}</div><div class="f">a gentle nudge helps</div></div>
+    <div class="card stat-c"><div class="l">Average funded</div><div class="v">${Math.round(mine.reduce((a,s)=>a+s.pct,0)/mine.length*100)}<small>%</small></div><div class="f">across your people</div></div>
+  </section>
+  <section class="grid two-b">
+    <div class="card pad"><div class="sec-head"><div><div class="eyebrow">Sorted by who to reach first</div><h2>My people</h2></div></div>
+      <div class="plist">${mine.map(s=>{const un=(threads[s.n]||[]).slice(-1)[0],unread=un&&un.from==="staff";
+        return `<div class="prow ${s.n===chatWith?'sel':''}" data-chat-n="${s.n}"><div class="face t-${tone(s.lvl)}">${initials(s.n)}${unread?`<span class="ping"></span>`:""}</div>
+        <div class="pin"><div class="pn">${s.n}</div><div class="pm">${Math.round(s.pct*100)}% funded · ${s.wk} weeks of grant left</div>
+          <div class="flags"><span class="fl ${s.sub>0?'ok':'no'}">${s.sub>0?ic('check',13)+' shared this week':ic('pencil',13)+' update due'}</span><span class="fl hw">${ic('list',13)} ${s.hw}%</span></div></div>
+        <div class="pr"><span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span></div></div>`;}).join("")}</div></div>
+    <div class="card pad" id="chatcard">${sel?chatPanel(sel,"coach"):`<div class="empty-chat">No one assigned yet.</div>`}</div>
+  </section>
+  <div class="hint">${ic('info',16)} Same funding, weeks and homework the staff see — plus a warm read on who needs you first (<b>${warmLevel("High")}</b>, not "high risk"). The person who hasn't shared in a while is usually the one to call, not scold.</div>`;
+}
+
+/* ===== UPLINK ===== */
+function viewUplink(){
+  const mine=S.filter(s=>s.uplink===who).sort((a,b)=>b.risk-a.risk);
+  return `<div style="margin-bottom:4px"><div class="eyebrow">${who}'s people</div><h2 style="font-size:19px">Walking alongside ${mine.length} on the journey</h2></div>
+  <section class="grid stats" style="margin-top:14px">
+    <div class="card stat-c"><div class="l">Thriving</div><div class="v" style="color:var(--pine-deep)">${mine.filter(s=>s.lvl==="Healthy").length}<small>/${mine.length}</small></div><div class="f">funded & steady</div></div>
+    <div class="card stat-c"><div class="l">Could use care</div><div class="v" style="color:${mine.filter(s=>s.lvl==="High").length?'var(--flame)':'var(--ink)'}">${mine.filter(s=>s.lvl==="High").length}</div><div class="f">worth a personal call</div></div>
+    <div class="card stat-c"><div class="l">Average funded</div><div class="v">${Math.round(mine.reduce((a,s)=>a+s.pct,0)/mine.length*100)}<small>%</small></div><div class="f">of monthly goal</div></div>
+  </section>
+  <section class="card pad"><div class="sec-head"><div><div class="eyebrow">The trajectory, not the mechanics</div><h2>How my people are really doing</h2></div></div>
+    <div class="plist">${mine.map(s=>{const talking=(threads[s.n]||[]).length>0;
+      return `<div class="prow"><div class="face t-${tone(s.lvl)}">${initials(s.n)}</div>
+        <div class="pin"><div class="pn">${s.n}</div><div class="pm">${s.co} · coached by ${s.coach}</div>
+          <div class="flags"><span class="fl ${s.sub>0?'ok':'no'}">${s.sub>0?ic('check',13)+' staying in rhythm':ic('clock',13)+' gone a bit quiet'}</span><span class="fl ${talking?'ok':'no'}">${talking?ic('check',13)+' coach is close':ic('clock',13)+' check coaching'}</span></div></div>
+        <div class="pr"><span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span><small>${Math.round(s.pct*100)}% · ${s.wk}w</small></div></div>`;}).join("")}</div>
+    <div class="callout">${ic('heart',16)} The uplink's role is pastoral, not operational. You mainly need to know who's thriving, who's quiet, and whether the coaching relationship is alive — so you can step in <b>relationally</b> when someone starts to withdraw.</div>
+  </section>`;
+}
+
+/* ===== COUNTRY LEADER ===== */
+function viewLeader(){
+  const mine=S.filter(s=>s.co===who).sort((a,b)=>b.risk-a.risk),lead=mine[0]?.lead||"—";
+  return `<div style="margin-bottom:4px"><div class="eyebrow">${who} · led by ${lead}</div><h2 style="font-size:19px">Our team's support raising</h2></div>
+  <section class="grid stats" style="margin-top:14px">
+    <div class="card stat-c"><div class="l">On the journey</div><div class="v">${mine.length}</div><div class="f">active in ${who}</div></div>
+    <div class="card stat-c"><div class="l">Average funded</div><div class="v">${Math.round(mine.reduce((a,s)=>a+s.pct,0)/mine.length*100)}<small>%</small></div><div class="f">of monthly goal</div></div>
+    <div class="card stat-c"><div class="l">Need care first</div><div class="v" style="color:${mine.filter(s=>s.lvl==="High").length?'var(--flame)':'var(--pine-deep)'}">${mine.filter(s=>s.lvl==="High").length}</div><div class="f">worth your time this week</div></div>
+    <div class="card stat-c"><div class="l">Secured monthly</div><div class="v" style="font-size:22px">${money(mine.reduce((a,s)=>a+s.moAmt,0))}</div><div class="f">of ${money(mine.reduce((a,s)=>a+s.tgt,0))}</div></div>
+  </section>
+  <section class="card pad"><div class="sec-head"><div><div class="eyebrow">Sorted by who needs you most</div><h2>My people & a next step for each</h2></div></div>
+    <div class="plist">${mine.map(s=>{let act;
+      if(s.pct>=.75)act="Nearly home — celebrate them and free them for ministry.";
+      else if(s.sub===0&&s.don2===0)act="Gone quiet — a warm personal check-in matters more than tips right now.";
+      else if(s.wk<=12&&s.pct<.35)act=`Tight window (~${s.wk} wks) — sit with ${s.coach} and make a simple 2-week plan.`;
+      else act="Building steadily — protect their appointment rhythm.";
+      return `<div class="prow"><div class="face t-${tone(s.lvl)}">${initials(s.n)}</div>
+        <div class="pin"><div class="pn">${s.n}</div><div class="pm">${act}</div><div class="thermo-mini"><i style="width:${Math.min(100,s.pct*100)}%;background:${toneColor(tone(s.lvl))}"></i></div></div>
+        <div class="pr"><span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span><small>${Math.round(s.pct*100)}% · coach ${s.coach}</small></div></div>`;}).join("")}</div>
+  </section>`;
+}
+
+/* ===== DIRECTOR ===== */
+function viewDirector(){
+  const nav=`<div class="subnav"><button class="sn ${dirTab==='care'?'on':''}" data-d="care">${ic('users',16)} Who to reach</button><button class="sn ${dirTab==='coaches'?'on':''}" data-d="coaches">${ic('compass',16)} Coaches</button><button class="sn ${dirTab==='payout'?'on':''}" data-d="payout">${ic('coins',16)} Monthly payout</button><button class="sn ${dirTab==='grants'?'on':''}" data-d="grants">${ic('scope',16)} Grant fund</button></div>`;
+  return nav + (dirTab==='care'?dirCare():dirTab==='coaches'?dirCoaches():dirTab==='payout'?payoutView():fundView());
+}
+function dirCare(){
+  const all=[...S].sort((a,b)=>b.risk-a.risk),need=all.filter(s=>s.lvl==="High").length,quiet=all.filter(s=>s.sub===0).length;
+  const coaches={};S.forEach(s=>(coaches[s.coach]=coaches[s.coach]||[]).push(s));
+  const order=Object.entries(coaches).sort((a,b)=>b[1].filter(s=>s.lvl==="High").length-a[1].filter(s=>s.lvl==="High").length||b[1].length-a[1].length);
+  return `<div style="margin-bottom:4px"><div class="eyebrow">Dave & Geri · the whole cohort</div><h2 style="font-size:19px">Where to spend our care this week</h2></div>
+  <section class="grid stats" style="margin-top:14px">
+    <div class="card stat-c"><div class="l">Need care first</div><div class="v" style="color:var(--flame)">${need}</div><div class="f">of ${S.length} staff</div></div>
+    <div class="card stat-c"><div class="l">Quiet this week</div><div class="v" style="color:${quiet>4?'var(--flame)':'var(--ink)'}">${quiet}</div><div class="f">haven't shared an update</div></div>
+    <div class="card stat-c"><div class="l">Coaches carrying them</div><div class="v">${Object.keys(coaches).length}</div><div class="f">across the cohort</div></div>
+    <div class="card stat-c"><div class="l">Cohort funded</div><div class="v">${Math.round(S.reduce((a,s)=>a+s.pct,0)/S.length*100)}<small>%</small></div><div class="f">on average</div></div>
+  </section>
+  <section class="grid two-b">
+    <div class="card pad"><div class="sec-head"><div><div class="eyebrow">A short, kind list</div><h2>Reach out this week</h2></div></div>
+      <div class="plist">${all.slice(0,6).map(s=>{let why=s.sub===0&&s.don2===0?"Gone quiet — no update, no new partners":s.wk<=12?`~${s.wk} weeks left at ${Math.round(s.pct*100)}%`:`${Math.round(s.pct*100)}% funded, momentum easing`;
+        return `<div class="prow"><div class="face t-${tone(s.lvl)}">${initials(s.n)}</div><div class="pin"><div class="pn">${s.n}</div><div class="pm">${why}</div></div><div class="pr"><span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span><small>coach ${s.coach}</small></div></div>`;}).join("")}</div></div>
+    <div class="card pad"><div class="sec-head"><div><div class="eyebrow">Is anyone carrying too much?</div><h2>Coaching load</h2></div></div>
+      <div class="plist">${order.map(([c,list])=>{const h=list.filter(s=>s.lvl==="High").length,w=list.filter(s=>s.lvl==="Watch").length,g=list.filter(s=>s.lvl==="Healthy").length;
+        const segs=[...Array(h).fill('crit'),...Array(w).fill('warn'),...Array(g).fill('good')].map(x=>`<span style="width:${100/list.length}%;background:${toneColor(x)}"></span>`).join("");
+        return `<div class="prow" style="cursor:default"><div class="face" style="background:linear-gradient(135deg,var(--honey),var(--honey-deep))">${c[0]}</div><div class="pin"><div class="pn">${c}</div><div class="pm">${list.length} staff${h?` · ${h} needing care`:""}</div><div class="load">${segs}</div></div></div>`;}).join("")}</div></div>
+  </section>
+  <div class="callout">${ic('info',16)} <b>First move:</b> ${quiet} of ${S.length} staff haven't shared this week. Reviving the rhythm — a warm nudge, not a report request — comes before any coaching on technique. People share when they feel cared for.</div>`;
+}
+function dirGrants(){
+  const paidYTD=GRANTS.reduce((a,g)=>a+g.paid,0)+GRANT_ADJ;
+  const active=GRANTS.filter(g=>g.status==="active"),dropped=GRANTS.filter(g=>g.status==="dropped"),complete=GRANTS.filter(g=>g.status==="complete");
+  const toGo=active.reduce((a,g)=>a+g.remaining,0),droppedPaid=dropped.reduce((a,g)=>a+g.paid,0),committed=GRANTS.reduce((a,g)=>a+g.grant,0);
+  const counts={all:GRANTS.length,active:active.length,complete:complete.length,dropped:dropped.length};
+  const spLabel={active:"Still on grant",complete:"Complete",dropped:"Dropped out"};
+  const rows=GRANTS.filter(g=>grantFilter==="all"||g.status===grantFilter).sort((a,b)=>{const o={active:0,dropped:1,complete:2};return o[a.status]-o[b.status]||b.paid-a.paid;});
+  const rowGrant=rows.reduce((a,g)=>a+g.grant,0),rowRem=rows.reduce((a,g)=>a+g.remaining,0);
+  const footPaid=grantFilter==="all"?paidYTD:rows.reduce((a,g)=>a+g.paid,0);
+  const cy=CYCLES[0];
+  return `<div style="margin-bottom:4px"><div class="eyebrow">Dave & Geri · JV grant tracking</div><h2 style="font-size:19px">Every dollar of grant, and who's still drawing it</h2></div>
+  <section class="grid stats" style="margin-top:14px">
+    <div class="card stat-c"><div class="l">Paid out to date</div><div class="v" style="font-size:24px">${money(paidYTD)}</div><div class="f">to ${GRANTS.length} grant recipients</div></div>
+    <div class="card stat-c"><div class="l">Still on grant</div><div class="v" style="color:var(--honey-deep)">${active.length}</div><div class="f">${money(toGo)} left to draw</div></div>
+    <div class="card stat-c"><div class="l">Dropped out</div><div class="v" style="color:var(--flame)">${dropped.length}</div><div class="f">${money(droppedPaid)} already paid</div></div>
+    <div class="card stat-c"><div class="l">Total committed</div><div class="v" style="font-size:24px">${money(committed)}</div><div class="f">grant caps assigned</div></div>
+  </section>
+  <section class="card pad">
+    <div class="sec-head"><div><div class="eyebrow">Where this year's pool goes</div><h2>${cy.cy} grant pool · ${money(cy.pool)}</h2></div></div>
+    <div class="alloc"><span class="a-paid" style="flex:${cy.paidStaff}">${money(cy.paidStaff)}</span><span class="a-fees" style="flex:${cy.fees}">${money(cy.fees)}</span><span class="a-win" style="flex:${cy.winter}"></span><span class="a-free" style="flex:${cy.unspent}">${money(cy.unspent)}</span></div>
+    <div class="alloc-legend"><span><i style="background:var(--pine)"></i>Paid to staff ${money(cy.paidStaff)}</span><span><i style="background:var(--honey-deep)"></i>Service fees ${money(cy.fees)}</span><span><i style="background:var(--flame)"></i>Winter Academy ${money(cy.winter)}</span><span><i style="background:var(--muted)"></i>Unspent ${money(cy.unspent)}</span></div>
+  </section>
+  <section class="card pad">
+    <div class="sec-head"><div><div class="eyebrow">Every recipient · newest cohort</div><h2>Grant ledger</h2></div></div>
+    <div class="filterchips">${["all","active","complete","dropped"].map(f=>`<button class="fc ${grantFilter===f?'on':''}" data-f="${f}">${f==="all"?"Everyone":spLabel[f]}<span class="n">${counts[f]}</span></button>`).join("")}</div>
+    <div class="gtwrap"><table class="gtable">
+      <thead><tr><th>Name</th><th class="num">Grant cap</th><th>Payout to date</th><th class="num hide-sm">Remaining</th><th>Status</th></tr></thead>
+      <tbody>${rows.map(g=>{const p=g.paid/g.grant,col=g.status==="dropped"?"var(--flame)":g.status==="active"?"var(--honey)":"var(--pine)";
+        return `<tr><td class="gname">${g.n}<small>${g.co}</small></td><td class="num">${money(g.grant)}</td>
+        <td class="paidcell"><div style="display:flex;justify-content:space-between;font-variant-numeric:tabular-nums"><b>${money(g.paid)}</b><span style="color:var(--muted);font-size:11px">${Math.round(p*100)}%</span></div><div class="paidbar"><i style="width:${p*100}%;background:${col}"></i></div></td>
+        <td class="num hide-sm">${g.remaining>0?money(g.remaining):"—"}</td><td><span class="spill sp-${g.status}">${spLabel[g.status]}</span></td></tr>`;}).join("")}</tbody>
+      <tfoot><tr class="gtotal"><td>${grantFilter==="all"?"All recipients":spLabel[grantFilter]} (${rows.length})</td><td class="num">${money(rowGrant)}</td><td>${money(footPaid)}${grantFilter==="all"?` <span style="font-weight:500;color:var(--muted);font-size:11px">net of $1,328 adj.</span>`:""}</td><td class="num hide-sm">${money(rowRem)}</td><td></td></tr></tfoot>
+    </table></div>
+  </section>
+  <div class="callout">${ic('info',16)} <b>Two things worth watching:</b> ${money(droppedPaid)} has gone to ${dropped.length} people who since dropped out — the grant's biggest leak. And because the grant is a <b>declining match</b>, the ${active.length} still on grant will likely draw less than the ${money(toGo)} left: the more they raise, the less JV pays. Anna Dyka is 84% self-funded, so her grant has all but stopped.</div>`;
+}
+
+/* ===== GRANT FUND (Mel + MPD directors only) ===== */
+function fundView(){
+  let unspentSum=0; const stLabel={done:"Complete",on:"On grant",left:"Left"};
+  const cycHtml=CYC.map((c,i)=>{
+    const other=c.fees+c.wa, unspent=c.dep-c.paid-other; unspentSum+=unspent;
+    const still=c.ppl.filter(p=>p[2]==="on").length, left=c.ppl.filter(p=>p[2]==="left").length, open=fundOpen[i];
+    return `<div class="fcyc">
+      <div class="fcyc-h">
+        <div class="fcyc-top"><div><div class="fcyc-name">${c.cy} <span class="badge ${c.active?'b-active':'b-closed'}">${c.active?'Active':'Closed'}</span></div>
+          <div class="fcyc-dep">Deposit ${money(c.dep)} · ${c.date} · ${c.src}</div></div>
+          <div class="fcyc-u"><div class="u">${money(unspent)}</div><div class="ul">unspent</div></div></div>
+        <div class="alloc"><span class="a-paid" style="flex:${c.paid}">${money(c.paid)}</span><span class="a-other" style="flex:${other}">${other/c.dep>0.08?money(other):''}</span><span class="a-left" style="flex:${unspent}">${unspent/c.dep>0.1?money(unspent):''}</span></div>
+        <div class="alloc-leg"><span><i style="background:var(--pine)"></i>Paid to staff ${money(c.paid)}</span><span><i style="background:var(--honey-deep)"></i>Fees + Winter Academy ${money(other)}</span><span><i style="background:var(--muted)"></i>Unspent ${money(unspent)}</span></div>
+        <button class="toggle ${open?'open':''}" data-fund="${i}">${ic('chevron',13)} Who was paid from ${c.cy} — ${c.ppl.length} staff${still?` · ${still} on grant`:''}${left?` · ${left} left`:''}</button>
+      </div>
+      ${open?`<div class="ppl-list">${c.ppl.map(p=>`<div class="frow"><span class="st s-${p[2]}">${stLabel[p[2]]}</span><span class="nm">${p[0]}</span><span class="amt">${money(p[1])}</span></div>`).join("")}</div>`:''}
+    </div>`;
+  }).join("");
+  const shared=unspentSum-ACCOUNT, projTotal=projGrant*projN, projLeft=FREE-projTotal, canFund=projGrant?Math.floor(FREE/projGrant):0;
+  const dep=ledger?`<div class="up-sum"><div class="up-sum-h">${ic('checkCircle',16)} Read <b>${ledger.rows}</b> rows · <b>${ledger.deposits.length}</b> deposit${ledger.deposits.length===1?'':'s'} · balance <b>${money(ledger.balance)}</b> as of ${ledger.asOf||'—'}</div>
+    <div class="up-grid"><span>Total in ${money(ledger.totalIn)}</span><span>Payouts ${money(ledger.payouts)}</span><span>Service fees ${money(ledger.fees)}</span><span>Winter Academy ${money(ledger.winter)}</span></div>
+    <div class="up-deps">${ledger.deposits.map(d=>`<div class="up-dep"><span class="ud-d">${d.date}</span><span class="ud-s">${d.desc.replace(/\n/g,' ').slice(0,52)||'Deposit'}</span><span class="ud-a">${money(d.amount)}</span></div>`).join("")}</div>
+    <div class="up-note">Applied to “In the account today” and the free-to-work-with figures below. Each credit is treated as a grant-cycle deposit.</div></div>`:"";
+  const uploadCard=`<section class="card pad up-card">
+    <div class="sec-head"><div><div class="eyebrow">Update from the bank</div><h2 style="font-size:17px">Upload account export (CSV)</h2></div></div>
+    <label class="up-drop" for="ledger-csv">${ic('external',18)}<div><b>Choose a CSV export from Sola</b><span>Your Sola grant/account export with a date, amount and running balance. It updates the balance, deposits and payouts here.</span></div><span class="up-btn">Choose file</span></label>
+    <input type="file" id="ledger-csv" accept=".csv,text/csv" hidden>
+    <div id="up-err" class="up-err" hidden></div>
+    ${dep}
+  </section>`;
+  return `<div style="margin-bottom:4px"><div class="eyebrow">Restricted · Mel &amp; MPD directors</div><h2 style="font-size:19px">The grant fund</h2></div>
+  ${uploadCard}
+  <section class="grid stats" style="margin-top:14px">
+    <div class="card stat-c"><div class="l">In the account today</div><div class="v">${money(ACCOUNT)}</div><div class="f">#510168 · ${acctAsOf}</div></div>
+    <div class="card stat-c"><div class="l">Spoken for</div><div class="v" style="color:var(--honey-deep)">${money(SPOKEN)}</div><div class="f">still owed to 5 on grant</div></div>
+    <div class="card stat-c" style="border:1.5px solid color-mix(in srgb,var(--pine) 45%,transparent)"><div class="l">Free to work with</div><div class="v" style="color:var(--pine-deep)">${money(FREE)}</div><div class="f">to allocate to new grants</div></div>
+  </section>
+  <section class="card pad"><div class="fsplit"><div class="fcap"><span>How today's balance splits</span><span>${money(ACCOUNT)}</span></div>
+    <div class="ftrack"><span class="t-free" style="flex:${FREE}">Free ${money(FREE)}</span><span class="t-spoken" style="flex:${SPOKEN}">${money(SPOKEN)}</span></div>
+    <div class="ffoot">Green is yours to allocate; amber is promised to staff still drawing their grant.</div></section>
+  <section><div class="sec-head" style="margin-top:6px"><div><div class="eyebrow">Each deposit is a cycle</div><h2 style="font-size:17px">By grant cycle — who was paid, what's left</h2></div></div>${cycHtml}</section>
+  <section class="card pad"><div class="sec-head"><div><div class="eyebrow">Plan ahead</div><h2 style="font-size:17px">How far does the free money stretch?</h2></div></div>
+    <div class="proj">
+      <div class="proj-in"><label>Grant per staff</label><div class="gs-in"><span class="cur">$</span><input id="proj-grant" inputmode="numeric" autocomplete="off" value="${projGrant.toLocaleString()}"></div></div>
+      <div class="proj-in"><label>New staff to fund</label><div class="gs-in"><input id="proj-n" inputmode="numeric" autocomplete="off" value="${projN}" style="width:56px"></div></div>
+    </div>
+    <div class="proj-out" id="proj-out">Committing <b>${projN} × ${money(projGrant)} = ${money(projTotal)}</b> leaves <b style="color:${projLeft>=0?'var(--pine-deep)':'var(--flame)'}">${money(projLeft)}</b> of your ${money(FREE)} free.</div>
+    <div class="proj-ref" id="proj-ref">At ${money(projGrant)} each, your ${money(FREE)} covers about <b>${canFund}</b> new grants.</div>
+  </section>
+  <section class="card pad"><div class="sec-head"><div><div class="eyebrow">Reconciles to the bank</div><h2 style="font-size:17px">Cycle budgets → cash in hand</h2></div></div>
+    <div class="recon">
+      <div class="rr"><span>Unspent across all three cycles</span><b>${money(unspentSum)}</b></div>
+      <div class="rr"><span>Less shared costs (25/12, Moldova, admin)</span><b style="color:var(--flame)">−${money(shared)}</b></div>
+      <div class="rr"><span>= In the account today</span><b>${money(ACCOUNT)}</b></div>
+      <div class="rr"><span>Less still owed to staff on grant</span><b style="color:var(--flame)">−${money(SPOKEN)}</b></div>
+      <div class="rr tot"><span>= Free to work with</span><b>${money(FREE)}</b></div>
+    </div></section>`;
+}
+function wireFund(scope){
+  scope.querySelectorAll("[data-fund]").forEach(b=>b.onclick=()=>{fundOpen[b.dataset.fund]=!fundOpen[b.dataset.fund];render();});
+  const g=scope.querySelector("#proj-grant"), n=scope.querySelector("#proj-n");
+  const upd=()=>{
+    projGrant=parseInt((g.value||"").replace(/[^0-9]/g,""))||0;
+    projN=parseInt((n.value||"").replace(/[^0-9]/g,""))||0;
+    const total=projGrant*projN, left=FREE-total, can=projGrant?Math.floor(FREE/projGrant):0;
+    const o=scope.querySelector("#proj-out"), r=scope.querySelector("#proj-ref");
+    if(o) o.innerHTML=`Committing <b>${projN} × ${money(projGrant)} = ${money(total)}</b> leaves <b style="color:${left>=0?'var(--pine-deep)':'var(--flame)'}">${money(left)}</b> of your ${money(FREE)} free.`;
+    if(r) r.innerHTML=`At ${money(projGrant)} each, your ${money(FREE)} covers about <b>${can}</b> new grants.`;
+  };
+  if(g){g.addEventListener("input",upd);g.addEventListener("blur",()=>{g.value=(parseInt((g.value||"").replace(/[^0-9]/g,""))||0).toLocaleString();});}
+  if(n) n.addEventListener("input",upd);
+  const file=scope.querySelector("#ledger-csv"), err=scope.querySelector("#up-err");
+  if(file) file.addEventListener("change",e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const rd=new FileReader();
+    rd.onload=()=>{ try{
+        const L=ingestLedger(rd.result);
+        if(!L.rows||L.balance===null){ throw new Error("Couldn't find Balance/Credit columns."); }
+        ledger=L; ACCOUNT=Math.round(L.balance); if(L.asOf) acctAsOf=L.asOf; FREE=ACCOUNT-SPOKEN;
+        render();
+      }catch(ex){ if(err){err.hidden=false;err.textContent="Couldn't read that file — "+ex.message+" Expected a Sola CSV export with date, amount/credit and balance columns."; } }
+    };
+    rd.onerror=()=>{ if(err){err.hidden=false;err.textContent="Couldn't open that file.";} };
+    rd.readAsText(f);
+  });
+}
+
+/* ===== monthly payout worksheet (restricted) ===== */
+function m2(v){return "$"+v.toLocaleString(undefined,{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});}
+function payoutHeld(p){ return p.nosub||p.pend||payoutStat(p)==='paused'; }
+const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+function sMatch(name){ return S.find(s=>norm(s.n)===norm(name)); }
+function payoutView(){
+  const active=PAYOUT.filter(p=>['active','paused'].includes(payoutStat(p)));
+  const done=PAYOUT.filter(p=>['finished','ended'].includes(payoutStat(p))).sort((a,b)=>b.paid-a.paid);
+  const support=PAYOUT.filter(p=>payoutStat(p)==='support');
+  let gT=0,mT=0,tT=0;
+  active.forEach(p=>{if(!payoutHeld(p)){gT+=p.base;mT+=p.match;tT+=p.base+p.match;}});
+  const cards=active.map(p=>{
+    const i=PAYOUT.indexOf(p), st=payoutStat(p), paused=st==='paused', total=p.base+p.match, open=payoutOpen[i];
+    const rows=p.givers.length?p.givers.map(g=>`<div class="pg-row"><span class="pg-n">${g[0]}</span><span class="pg-a">${m2(g[1])}</span></div>`).join("")
+      :`<div class="pg-row"><span class="pg-n" style="color:var(--muted)">No coach-confirmed monthly givers yet.</span></div>`;
+    const banner = paused
+      ? `<div class="pay-hold paused">${ic('info',15)} Paused by the MPD directors — no payout runs until resumed.</div>`
+      : p.nosub ? `<div class="pay-hold nosub">${ic('info',15)} Not submitting weekly updates — payout on hold until they resume.</div>`
+      : p.pend ? `<div class="pay-hold pend">${ic('clock',15)} Pending until this month's MPD update is in and the giver is coach-confirmed.</div>` : "";
+    const amt = paused?`<span class="pamt"><b style="color:var(--muted)">Paused</b><span>held</span></span>`
+      : `<span class="pamt"><b>${money(total)}</b><span>this month</span></span>`;
+    const controls = paused
+      ? `<div class="pctrl"><button class="pbtn resume" data-pstat="active" data-pn="${p.n}">${ic('check',14)} Resume payouts</button><button class="pbtn fin" data-pstat="finished" data-pn="${p.n}">Mark finished</button><button class="pbtn nog" data-pstat="support" data-pn="${p.n}">No grant</button></div>`
+      : `<div class="pctrl"><button class="pbtn pause" data-pstat="paused" data-pn="${p.n}">${ic('clock',14)} Pause</button><button class="pbtn fin" data-pstat="finished" data-pn="${p.n}">${ic('check',14)} Mark finished</button><button class="pbtn nog" data-pstat="support" data-pn="${p.n}">No grant (support-only)</button></div>`;
+    return `<div class="pcard ${open?'open':''} ${paused?'is-paused':''}">
+      <button class="phead" data-pay="${i}">
+        <span class="av t-good">${initials(p.n)}</span>
+        <span class="pwho"><b>${p.n}</b><span>${p.co} &middot; #${p.acct} &middot; month ${p.mo} of 12</span></span>
+        ${amt}
+        <span class="pchev">${ic('chevron',16)}</span>
+      </button>
+      <div class="pbody">
+        ${banner}
+        <div class="peq">
+          <div class="pe grant"><span class="pl">${ic('coins',13)} Grant this month</span><b>${money(p.base)}</b><i>${p.fac}% of ${money(p.sal)} salary</i></div>
+          <div class="pop">+</div>
+          <div class="pe match"><span class="pl">${ic('gift',13)} Match this month</span><b>${money(p.match)}</b><i>${p.givers.length} coach-confirmed monthly giver${p.givers.length===1?'':'s'}</i></div>
+          <div class="pop">=</div>
+          <div class="pe tot"><span class="pl">Total payout</span><b>${money(total)}</b><i>grant + match</i></div>
+        </div>
+        <div class="pg-lab">${ic('check',13)} Coach-confirmed monthly givers — this is the match</div>
+        <div class="pg-list">${rows}<div class="pg-row sum"><span class="pg-n">Match subtotal</span><span class="pg-a">${money(p.match)}</span></div></div>
+        ${p.other?`<div class="pg-ex">Not counted toward the match: ${p.other} one-time / annual / pending gift${p.other===1?'':'s'}.</div>`:''}
+        ${controls}
+      </div>
+    </div>`;
+  }).join("");
+  const doneHtml=done.map(p=>{
+    const st=payoutStat(p), manual=payoutStatus[p.n]==='finished';
+    const tag=manual?`<span class="pdt full">${ic('check',12)} Finished by directors</span>`
+      :st==='ended'?`<span class="pdt win">${ic('check',12)} 12-month window ended</span>`
+      :p.capped?`<span class="pdt full">${ic('check',12)} Grant complete</span>`
+      :`<span class="pdt win">${ic('check',12)} Complete</span>`;
+    return `<div class="pdone"><span class="av t-mute">${initials(p.n)}</span>
+      <span class="pwho"><b>${p.n}</b><span>${p.co} &middot; #${p.acct} &middot; ${money(p.paid)} paid of ${money(p.max)}</span></span>${tag}
+      <button class="pbtn reactivate" data-pstat="active" data-pn="${p.n}">Reactivate</button></div>`;
+  }).join("");
+  const supportHtml=support.map(p=>{const s=sMatch(p.n), hw=s?s.hw:null, shared=s?s.sub>0:false;
+    const hwflag = hw!==null?`<span class="fl hw">${ic('list',12)} homework ${hw}%</span><span class="fl ${shared?'ok':'no'}">${shared?ic('check',12)+' shared this week':ic('pencil',12)+' update due'}</span>`:'';
+    return `<div class="pdone support"><span class="av t-mute">${initials(p.n)}</span>
+      <span class="pwho"><b>${p.n}</b><span>${p.co} &middot; #${p.acct} &middot; raising their own support</span>
+        ${hwflag?`<span class="flags" style="margin-top:6px">${hwflag}</span>`:''}</span>
+      <span class="pdt nog">${ic('info',12)} No grant &middot; $0 payout</span>
+      <button class="pbtn reactivate" data-pstat="active" data-pn="${p.n}">Put on grant</button></div>`;}).join("");
+  return `<div class="pay-top"><div><div class="eyebrow">Restricted &middot; Mel &amp; MPD directors</div><h2 style="font-size:19px">Monthly payout worksheet</h2>
+    <div class="said" style="margin-top:6px;max-width:58ch">Grant this month + the match — each person's coach-confirmed monthly givers — = total payout. Directors can pause or finish anyone; staff past month 12 leave the active window automatically.</div></div>
+    <button class="dl-btn" id="payout-pdf">${ic('external',15)} Download PDF</button></div>
+  <section class="grid stats" style="margin-top:6px">
+    <div class="card stat-c" style="border:1.5px solid color-mix(in srgb,var(--pine) 45%,transparent)"><div class="l">Grant this month</div><div class="v" style="color:var(--pine-deep)">${money(gT)}</div><div class="f">across ${active.filter(p=>!payoutHeld(p)).length} receiving</div></div>
+    <div class="card stat-c"><div class="l">Confirmed match</div><div class="v" style="color:var(--honey-deep)">${money(mT)}</div><div class="f">coach-confirmed monthly</div></div>
+    <div class="card stat-c"><div class="l">Total payout</div><div class="v">${money(tT)}</div><div class="f">grant + match this month</div></div>
+  </section>
+  <div class="sec-head" style="margin-top:16px"><div><div class="eyebrow">In the 12-month window</div><h2 style="font-size:17px">Active staff</h2></div></div>
+  ${cards||'<div class="empty-chat">No one is in an active payout window right now.</div>'}
+  ${support.length?`<div class="sec-head" style="margin-top:20px"><div><div class="eyebrow">Raising support, not on the grant</div><h2 style="font-size:17px">Support-only &middot; no grant money</h2></div></div>
+  <div class="pdone-wrap">${supportHtml}</div>`:''}
+  <div class="sec-head" style="margin-top:20px"><div><div class="eyebrow">No payout — window ended, finished or complete</div><h2 style="font-size:17px">Off the active window</h2></div></div>
+  <div class="pdone-wrap">${doneHtml||'<div class="empty-chat">No one here yet.</div>'}</div>
+  <div class="pay-foot">Only monthly recurring gifts marked <b>Confirmed</b> by the coach count toward the match. Grant is salary &times; the month's declining share (100, 100, 90&hellip;0%). Anyone past <b>month 12</b> leaves the active window automatically. A <b>support-only</b> person raises their own support and receives <b>no grant money</b> — they still do their weekly updates and homework, but never appear in a payout or draw from the grant fund. Totals exclude anyone held, paused or support-only.</div>`;
+}
+function payoutPrint(active){
+  const rows=active.map(p=>{const held=payoutHeld(p),total=p.base+p.match;
+    return `<tr class="${held?'pp-held':''}"><td>${p.n}</td><td class="pp-ac">#${p.acct}</td><td>${p.co}</td><td class="pp-c">${p.mo}/12</td><td class="pp-n">${money(p.base)}</td><td class="pp-n">${money(p.match)}</td><td class="pp-n pp-tot">${held?'—':money(total)}</td></tr>`;}).join("");
+  const g=active.reduce((a,p)=>a+(payoutHeld(p)?0:p.base),0),m=active.reduce((a,p)=>a+(payoutHeld(p)?0:p.match),0),t=g+m;
+  const d=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  return `<div id="payout-print"><div class="pp-head"><div><div class="pp-title">Ministry Partner Development &middot; Monthly Payout</div><div class="pp-sub">Josiah Venture &middot; New Staff Acceleration — Salary #510168 &middot; ${d}</div></div><div class="pp-tot-box"><span>Total this month</span><b>${money(t)}</b></div></div>
+    <table class="pp-tab"><thead><tr><th>Staff</th><th>Account</th><th>Country</th><th>Mo</th><th class="pp-n">Grant</th><th class="pp-n">Match</th><th class="pp-n">Total payout</th></tr></thead>
+    <tbody>${rows}<tr class="pp-sum"><td colspan="4">Total — ${active.filter(p=>!payoutHeld(p)).length} staff receiving</td><td class="pp-n">${money(g)}</td><td class="pp-n">${money(m)}</td><td class="pp-n">${money(t)}</td></tr></tbody></table>
+    <div class="pp-foot">Match = coach-confirmed monthly recurring support only. Held / paused staff shown for reference with no payout. Prepared for the MPD directors.</div></div>`;
+}
+function wirePayout(scope){
+  scope.querySelectorAll("[data-pay]").forEach(b=>b.onclick=()=>{payoutOpen[b.dataset.pay]=!payoutOpen[b.dataset.pay];render();});
+  scope.querySelectorAll("[data-pstat]").forEach(b=>b.onclick=(e)=>{e.stopPropagation();
+    const n=b.dataset.pn, s=b.dataset.pstat, p=PAYOUT.find(x=>x.n===n);
+    if(s==='active' && payoutAuto(p)==='active') delete payoutStatus[n]; else payoutStatus[n]=s;
+    render();});
+  // (re)build the one-page print sheet at the body level so it prints alone
+  const active=PAYOUT.filter(p=>['active','paused'].includes(payoutStat(p)));
+  document.getElementById("payout-print")?.remove();
+  document.body.insertAdjacentHTML("beforeend", payoutPrint(active));
+  const dl=scope.querySelector("#payout-pdf"); if(dl) dl.onclick=()=>window.print();
+}
+
+/* ===== DIRECTOR · Coaches ===== */
+function coachFocus(s){ // what the coach is working on with this staff member
+  if(s.pct>=.75) return {t:"Finishing well",d:"Nearly funded — plan the last asks and the handoff to full ministry."};
+  if(s.sub===0 && s.don2===0) return {t:"Re-engaging",d:"Gone quiet — rebuilding the weekly rhythm before any technique."};
+  if(s.hw<70) return {t:"On the training",d:`Homework at ${s.hw}% — working the Foundations plan and namestorming.`};
+  if(s.wk<=12 && s.pct<.4) return {t:"Racing the window",d:`~${s.wk} wks left at ${Math.round(s.pct*100)}% — building a tight 2-week ask plan.`};
+  if(s.don2>0) return {t:"Building momentum",d:`${s.don2} new partner${s.don2>1?'s':''} lately — keeping the ask cadence up.`};
+  return {t:"Holding rhythm",d:"Steady — protecting the appointment cadence week to week."};
+}
+function coachRead(list){ // director's read on how this coach is doing
+  const h=list.filter(s=>s.lvl==="High").length, quiet=list.filter(s=>s.sub===0).length;
+  if(h>=2) return {tone:"crit",t:`Carrying a heavy load — ${h} of ${list.length} need care`,d:"Worth a check-in; help them triage who to reach first."};
+  if(h===1) return {tone:"warn",t:`One person needs extra care`,d:quiet?`Also ${quiet} quiet this week — a nudge from you helps.`:"Otherwise steady."};
+  if(quiet>=2) return {tone:"warn",t:`${quiet} quiet this week`,d:"Rhythm is slipping — encourage a warm re-engage."};
+  return {tone:"good",t:"Steady and healthy",d:"People are in rhythm — affirm and protect what's working."};
+}
+function dirCoachChat(coach){
+  const th=coachThreads[coach]||[];
+  const body=th.length?th.map(m=>{const mine=m.from==="dir";return `<div class="bub ${mine?'me':'them'}">${m.text}<span class="t">${m.t}</span></div>`;}).join(""):`<div class="empty-chat">No messages with ${coach} yet.<br>Open a line — a word of encouragement goes far.</div>`;
+  return `<div class="chat"><div class="chat-h"><div class="av" style="background:linear-gradient(135deg,var(--honey),var(--honey-deep))">${coach[0]}</div><div class="nm">${coach}<small>MPD coach</small></div></div>
+    <div class="msgs" id="cmsgs">${body}</div>
+    <div class="composer"><input id="cmi" placeholder="Message ${coach}…" autocomplete="off"><button id="csend">Send</button></div>
+    <div class="whoami">as Dave &amp; Geri · MPD directors</div></div>`;
+}
+function dirCoaches(){
+  const coaches={}; S.forEach(s=>(coaches[s.coach]=coaches[s.coach]||[]).push(s));
+  const entries=Object.entries(coaches).map(([c,list])=>[c,list,coachRead(list)])
+    .sort((a,b)=>({crit:0,warn:1,good:2}[a[2].tone]-{crit:0,warn:1,good:2}[b[2].tone]) || b[1].length-a[1].length);
+  if(!coachChat||!coaches[coachChat]) coachChat=entries[0]?.[0];
+  const support=entries.filter(e=>e[2].tone!=="good").length;
+  const totalStaff=S.length;
+  const cards=entries.map(([c,list,read],i)=>{
+    const open=coachOpen[i];
+    const h=list.filter(s=>s.lvl==="High").length,w=list.filter(s=>s.lvl==="Watch").length,g=list.filter(s=>s.lvl==="Healthy").length;
+    const segs=[...Array(h).fill('crit'),...Array(w).fill('warn'),...Array(g).fill('good')].map(x=>`<span style="width:${100/list.length}%;background:${toneColor(x)}"></span>`).join("");
+    const avg=Math.round(list.reduce((a,s)=>a+s.pct,0)/list.length*100);
+    const quiet=list.filter(s=>s.sub===0).length;
+    const staffRows=list.sort((a,b)=>b.risk-a.risk).map(s=>{const f=coachFocus(s);
+      return `<div class="cf-row"><div class="face t-${tone(s.lvl)}" style="width:34px;height:34px;font-size:12.5px">${initials(s.n)}</div>
+        <div class="cf-in"><div class="cf-n">${s.n} <span class="cf-mo">mo ${s.mo}/12</span></div>
+          <div class="cf-work"><b>${f.t}:</b> ${f.d}</div>
+          <div class="flags"><span class="fl ${s.sub>0?'ok':'no'}">${s.sub>0?ic('check',12)+' shared':ic('pencil',12)+' update due'}</span><span class="fl hw">${ic('list',12)} hw ${s.hw}%</span><span class="fl">${ic('coins',12)} ${Math.round(s.pct*100)}%</span></div></div>
+        <span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span></div>`;}).join("");
+    return `<div class="ccard ${open?'open':''}">
+      <button class="chead" data-coach="${i}">
+        <span class="face" style="width:40px;height:40px;background:linear-gradient(135deg,var(--honey),var(--honey-deep))">${c[0]}</span>
+        <span class="cwho"><b>${c}</b><span>${list.length} staff · ${avg}% avg funded${quiet?` · ${quiet} quiet`:""}</span>
+          <span class="load" style="margin-top:7px">${segs}</span></span>
+        <span class="cread lc-${read.tone}">${read.tone==='good'?ic('check',13):ic('info',13)} ${read.tone==='crit'?'Needs support':read.tone==='warn'?'Keep an eye':'Steady'}</span>
+        <span class="pchev">${ic('chevron',16)}</span>
+      </button>
+      <div class="cbody">
+        <div class="cread-full lc-${read.tone}">${read.tone==='good'?ic('heart',15):ic('info',15)}<div><b>${read.t}.</b> ${read.d}</div></div>
+        <div class="cf-lab">${ic('compass',13)} What ${c} is working on with each person</div>
+        ${staffRows}
+        <div class="cf-msg">
+          <button class="cf-open ${coachChat===c?'on':''}" data-coachchat="${c}">${ic('message',14)} ${coachChat===c?'Messaging '+c:'Message '+c}</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+  const sel=coachChat;
+  return `<div style="margin-bottom:4px"><div class="eyebrow">Dave &amp; Geri · caring for the carers</div><h2 style="font-size:19px">Our coaches</h2>
+    <div class="said" style="margin-top:6px;max-width:62ch">Every coach, the people they're walking with, and what they're working on with each one — so you can see who's carrying a heavy load and open a line to help.</div></div>
+  <section class="grid stats" style="margin-top:14px">
+    <div class="card stat-c"><div class="l">Coaches</div><div class="v">${entries.length}</div><div class="f">carrying ${totalStaff} staff</div></div>
+    <div class="card stat-c"><div class="l">Could use your support</div><div class="v" style="color:${support?'var(--flame)':'var(--pine-deep)'}">${support}</div><div class="f">heavier loads right now</div></div>
+    <div class="card stat-c"><div class="l">Widest caseload</div><div class="v">${Math.max(...entries.map(e=>e[1].length))}<small> staff</small></div><div class="f">one coach</div></div>
+  </section>
+  <section class="grid two-b" style="margin-top:16px">
+    <div class="ccard-wrap">${cards}</div>
+    <div class="card pad" id="coachchatcard">${sel?dirCoachChat(sel):`<div class="empty-chat">Pick a coach to open a conversation.</div>`}</div>
+  </section>
+  <div class="callout">${ic('heart',16)} Directors care for the cohort <b>through</b> the coaches. When a coach is carrying two or three who need care at once, the most useful thing you can do is lighten their triage and remind them they're not alone.</div>`;
+}
+function wireCoaches(scope){
+  scope.querySelectorAll("[data-coach]").forEach(b=>b.onclick=()=>{coachOpen[b.dataset.coach]=!coachOpen[b.dataset.coach];render();});
+  scope.querySelectorAll("[data-coachchat]").forEach(b=>b.onclick=()=>{coachChat=b.dataset.coachchat;render();});
+  const inp=scope.querySelector("#cmi"),btn=scope.querySelector("#csend"),box=scope.querySelector("#cmsgs");
+  if(inp){
+    const send=()=>{const v=inp.value.trim();if(!v)return;(coachThreads[coachChat]=coachThreads[coachChat]||[]).push({from:"dir",text:v,t:"now"});inp.value="";
+      const card=document.getElementById("coachchatcard");if(card){card.innerHTML=dirCoachChat(coachChat);wireCoaches(scope);}const m=document.getElementById("cmsgs");if(m)m.scrollTop=m.scrollHeight;};
+    btn.onclick=send;inp.addEventListener("keydown",e=>{if(e.key==="Enter")send();});if(box)box.scrollTop=box.scrollHeight;
+  }
+}
+
+/* ===== chat ===== */
+function chatPanel(s,asRole){
+  const th=threads[s.n]||[],partner=asRole==="staff"?s.coach:s.first,partnerRole=asRole==="staff"?"your coach":"you're walking with",meIsStaff=asRole==="staff";
+  const body=th.length?th.map(m=>{const mine=meIsStaff?m.from==="staff":m.from==="coach";return `<div class="bub ${mine?'me':'them'}">${m.text}<span class="t">${m.t}</span></div>`;}).join(""):`<div class="empty-chat">No messages yet.<br>A kind word goes a long way — say hello.</div>`;
+  return `<div class="chat"><div class="chat-h"><div class="av t-good">${initials(partner)}</div><div class="nm">${partner}<small>${partnerRole}</small></div></div>
+    <div class="msgs" id="msgs">${body}</div>
+    <div class="composer"><input id="mi" placeholder="Write to ${partner}…" autocomplete="off"><button id="send">Send</button></div>
+    <div class="whoami">as ${meIsStaff?s.first:who}</div></div>`;
+}
+function wireChat(s,asRole){
+  const inp=document.getElementById("mi"),btn=document.getElementById("send"),box=document.getElementById("msgs");if(!inp)return;
+  const send=()=>{const v=inp.value.trim();if(!v)return;(threads[s.n]=threads[s.n]||[]).push({from:asRole==="staff"?"staff":"coach",text:v,t:"now"});inp.value="";
+    const card=document.getElementById("chatcard");card.innerHTML=chatPanel(s,asRole);wireChat(s,asRole);const m=document.getElementById("msgs");if(m)m.scrollTop=m.scrollHeight;};
+  btn.onclick=send;inp.addEventListener("keydown",e=>{if(e.key==="Enter")send();});if(box)box.scrollTop=box.scrollHeight;
+}
+
+function render(){
+  document.getElementById("payout-print")?.remove();
+  document.getElementById("idnote").innerHTML={mel:"— your approvals &amp; what needs you",staff:"— a home, not a dashboard",coach:"— your people, warmly",uplink:"— the pastoral view",leader:"— our country team",director:"— the whole cohort"}[role];
+  const v=document.getElementById("view");
+  if(role==="mel"){
+    v.innerHTML=viewMel();
+    v.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{melTab=b.dataset.m;render();});
+    if(melTab==='fund'){ wireFund(v); return; }
+    if(melTab==='payout'){ wirePayout(v); return; }
+    v.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{deskOpen[b.dataset.toggle]=!deskOpen[b.dataset.toggle];render();});
+    MELQUEUE.forEach((p,i)=>{
+      const inp=document.getElementById("gin-"+i); if(!inp) return;
+      inp.addEventListener("input",()=>{
+        const n=parseInt(inp.value.replace(/[^0-9]/g,""))||0; deskGrant[i]=n;
+        const after=POOL.remaining-n, rem=document.getElementById("grem-"+i), w=document.getElementById("gwarn-"+i);
+        if(rem) rem.innerHTML=`Leaves <b>${money(Math.max(after,0))}</b> of the ${POOL.cycle} grant after this.`;
+        if(w){ w.hidden=after>=0; if(after<0) w.textContent=`That's ${money(Math.abs(after))} past the ${POOL.cycle} grant's budget — you'd be dipping into the fund's rollover.`; }
+      });
+      inp.addEventListener("blur",()=>{ inp.value=(parseInt(inp.value.replace(/[^0-9]/g,""))||0).toLocaleString(); });
+    });
+  }
+  else if(role==="staff"){
+    v.innerHTML=viewStaff();const s=S.find(x=>x.n===who);
+    v.querySelectorAll(".sn").forEach(b=>b.onclick=()=>{staffTab=b.dataset.s;mpdSubmitted=false;donorRows=1;render();});
+    if(staffTab==="home"){v.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>{staffTab=b.dataset.goto;render();});
+      v.querySelectorAll("[data-scroll]").forEach(b=>b.onclick=()=>document.getElementById("msgs")?.scrollIntoView({behavior:"smooth"}));wireChat(s,"staff");}
+    if(staffTab==="mpd"){
+      const rate=document.getElementById("rate");if(rate)rate.querySelectorAll(".star").forEach(st=>st.onclick=()=>{mpdRating=+st.dataset.v;rate.querySelectorAll(".star").forEach((x,i)=>x.classList.toggle("on",i<mpdRating));});
+      const cm=document.getElementById("coachmtg");if(cm)cm.querySelectorAll("button").forEach(b=>b.onclick=()=>{mpdCoachMtg=b.dataset.v;cm.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));});
+      const add=document.getElementById("adddonor");if(add)add.onclick=()=>{if(donorRows<20){donorRows++;document.getElementById("donors").innerHTML=donorRowHtml();}};
+      const send=document.getElementById("mpdsend");if(send)send.onclick=()=>{mpdSubmitted=true;render();};
+      const rb=v.querySelector("[data-reset]");if(rb)rb.onclick=()=>{mpdSubmitted=false;donorRows=1;render();};
+    }
+    if(staffTab==="hw"){
+      v.querySelectorAll(".wk-h").forEach(h=>h.onclick=()=>h.parentElement.classList.toggle("open"));
+      v.querySelectorAll(".cb").forEach(c=>c.onclick=e=>{e.stopPropagation();const done=seedHw(s.n),k=c.dataset.t;if(done.has(k))done.delete(k);else done.add(k);s.hw=Math.round(done.size/HW_TOTAL*100);render();});
+    }
+  }
+  else if(role==="coach"){v.innerHTML=viewCoach();v.querySelectorAll("[data-chat-n]").forEach(r=>r.onclick=()=>{chatWith=r.dataset.chatN;render();});const sel=S.find(s=>s.n===chatWith);if(sel)wireChat(sel,"coach");}
+  else if(role==="uplink")v.innerHTML=viewUplink();
+  else if(role==="leader")v.innerHTML=viewLeader();
+  else { v.innerHTML=viewDirector();
+    v.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{dirTab=b.dataset.d;render();});
+    if(dirTab==='grants') wireFund(v);
+    if(dirTab==='payout') wirePayout(v);
+    if(dirTab==='coaches') wireCoaches(v);
+  }
+}
+wordIdx=new Date().getDay();
+syncRoles();buildId();render();
+</script>
+</body>
+</html>
