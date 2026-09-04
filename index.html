@@ -410,6 +410,31 @@
   .cf-open{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:12.5px;font-weight:600;color:var(--honey-deep);background:var(--honey-soft);border:1px solid color-mix(in srgb,var(--honey) 28%,transparent);border-radius:11px;padding:9px 14px;cursor:pointer}
   .cf-open.on{background:var(--honey-deep);color:#fff;border-color:var(--honey-deep)}
   @media(max-width:760px){.cread{display:none}}
+  /* director · emails sent */
+  .em-search{width:100%;max-width:340px;font:inherit;font-size:13.5px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;margin:6px 0 12px;box-shadow:var(--shadow-soft)}
+  .em-search:focus{outline:none;border-color:var(--pine)}
+  .em-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:0;max-height:210px;overflow:auto}
+  .em-chip{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:12px;font-weight:600;color:var(--ink-2);background:var(--card);border:1.5px solid var(--line);border-radius:100px;padding:6px 12px 6px 7px;cursor:pointer}
+  .em-chip>span:first-child,.em-chip{}
+  .em-chip span{font-weight:600}
+  .em-chip:hover{border-color:var(--honey)}
+  .em-chip.on{background:var(--pine);border-color:var(--pine);color:#fff}
+  .em-chip::first-letter{}
+  .em-empty{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:var(--muted);font-size:13px;padding:26px 16px;line-height:1.5}
+  .em-empty svg{color:var(--honey-deep)}
+  .em-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1.5px solid var(--line);padding-bottom:10px;margin-bottom:4px}
+  .em-head b{font-family:var(--serif);font-size:16px}.em-head span{font-size:12px;color:var(--muted);font-weight:600}
+  .em-list{max-height:none}
+  .em-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-soft)}
+  .em-row:last-child{border-bottom:none}
+  .em-date{flex:none;width:104px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:1px}
+  .em-main{flex:1;min-width:0}
+  .em-subj{display:block;font-size:13.5px;font-weight:600;color:var(--ink)}
+  .em-to{display:block;font-size:11.5px;color:var(--ink-2);margin-top:2px;overflow:hidden;text-overflow:ellipsis}
+  .em-sent{flex:none;display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:100px}
+  .em-sent.yes{background:var(--pine-soft);color:var(--pine-deep)}
+  .em-sent.no{background:var(--flame-soft);color:var(--flame)}
+  @media(max-width:600px){.em-date{width:74px}}
   /* payout controls + download */
   .pay-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px;flex-wrap:wrap}
   .dl-btn{flex:none;display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:13px;font-weight:600;color:#fff;background:var(--pine);border:none;border-radius:12px;padding:10px 16px;cursor:pointer;box-shadow:0 3px 12px color-mix(in srgb,var(--pine) 28%,transparent)}
@@ -603,6 +628,7 @@ function ic(name,size=18){return `<svg class="i" width="${size}" height="${size}
 
 const ROLES=[{id:"mel",icon:"inbox",label:"My desk"},{id:"staff",icon:"route",label:"Staff"},{id:"coach",icon:"compass",label:"Coach"},{id:"uplink",icon:"link",label:"Uplink"},{id:"leader",icon:"home",label:"Country Leader"},{id:"director",icon:"scope",label:"MPD Director"}];
 let role="mel",who=null,chatWith=null,staffTab="home",mpdRating=0,mpdCoachMtg="Yes",mpdSubmitted=false,donorRows=1,wordIdx=0,dirTab="care",grantFilter="all",deskOpen={},deskGrant={},melTab="approvals";
+let emailStaff=null,emailData=null,emailLoading=false,emailErr=false,emailAllStaff=null;
 
 const MELQUEUE=[
   {n:"Stanislav Chlebek", also:"applying with his wife, Debbie", co:"Czech Republic", dob:"22 Mar 1996", age:30,
@@ -676,14 +702,18 @@ let payoutOpen={}, payoutStatus={}, LIVE=false;
 /* Pull live payout data from the Netlify function (which reads Airtable server-side).
    Falls back silently to the baked snapshot when opened as a local file / offline. */
 async function loadLive(){
+  const api='/.netlify/functions/airtable?action=';
   try{
-    const r=await fetch('/.netlify/functions/airtable?action=payout',{headers:{'Accept':'application/json'}});
-    if(!r.ok) return;
-    const j=await r.json();
-    if(j && Array.isArray(j.payout) && j.payout.length){
-      PAYOUT.length=0; j.payout.forEach(p=>PAYOUT.push(p));
-      payoutStatus={}; LIVE=true; render();
-    }
+    const [pR,gR,mR]=await Promise.all([
+      fetch(api+'payout').catch(()=>null),
+      fetch(api+'grantfund').catch(()=>null),
+      fetch(api+'messages').catch(()=>null)
+    ]);
+    let changed=false;
+    if(pR&&pR.ok){ const j=await pR.json(); if(Array.isArray(j.payout)&&j.payout.length){ PAYOUT.length=0; j.payout.forEach(p=>PAYOUT.push(p)); payoutStatus={}; LIVE=true; changed=true; } }
+    if(gR&&gR.ok){ const j=await gR.json(); if(Array.isArray(j.cycles)&&j.cycles.length){ CYC.length=0; j.cycles.forEach(c=>CYC.push(c)); if(typeof j.spoken==='number'){ SPOKEN=j.spoken; FREE=Math.max(0,ACCOUNT-SPOKEN); } changed=true; } }
+    if(mR&&mR.ok){ const j=await mR.json(); if(j.messages&&typeof j.messages==='object'){ Object.keys(coachThreads).forEach(k=>delete coachThreads[k]); Object.assign(coachThreads,j.messages); changed=true; } }
+    if(changed) render();
   }catch(e){ /* stay on baked snapshot */ }
 }
 function payoutAuto(p){ if(p.mo>12) return 'ended'; if(p.capped) return 'finished'; if(p.mo>=12 && p.base<=0) return 'ended'; return 'active'; }
@@ -950,8 +980,8 @@ function viewLeader(){
 
 /* ===== DIRECTOR ===== */
 function viewDirector(){
-  const nav=`<div class="subnav"><button class="sn ${dirTab==='care'?'on':''}" data-d="care">${ic('users',16)} Who to reach</button><button class="sn ${dirTab==='coaches'?'on':''}" data-d="coaches">${ic('compass',16)} Coaches</button><button class="sn ${dirTab==='payout'?'on':''}" data-d="payout">${ic('coins',16)} Monthly payout</button><button class="sn ${dirTab==='grants'?'on':''}" data-d="grants">${ic('scope',16)} Grant fund</button></div>`;
-  return nav + (dirTab==='care'?dirCare():dirTab==='coaches'?dirCoaches():dirTab==='payout'?payoutView():fundView());
+  const nav=`<div class="subnav"><button class="sn ${dirTab==='care'?'on':''}" data-d="care">${ic('users',16)} Who to reach</button><button class="sn ${dirTab==='coaches'?'on':''}" data-d="coaches">${ic('compass',16)} Coaches</button><button class="sn ${dirTab==='payout'?'on':''}" data-d="payout">${ic('coins',16)} Monthly payout</button><button class="sn ${dirTab==='emails'?'on':''}" data-d="emails">${ic('message',16)} Emails sent</button><button class="sn ${dirTab==='grants'?'on':''}" data-d="grants">${ic('scope',16)} Grant fund</button></div>`;
+  return nav + (dirTab==='care'?dirCare():dirTab==='coaches'?dirCoaches():dirTab==='payout'?payoutView():dirTab==='emails'?dirEmails():fundView());
 }
 function dirCare(){
   const all=[...S].sort((a,b)=>b.risk-a.risk),need=all.filter(s=>s.lvl==="High").length,quiet=all.filter(s=>s.sub===0).length;
@@ -1294,10 +1324,54 @@ function wireCoaches(scope){
   scope.querySelectorAll("[data-coachchat]").forEach(b=>b.onclick=()=>{coachChat=b.dataset.coachchat;render();});
   const inp=scope.querySelector("#cmi"),btn=scope.querySelector("#csend"),box=scope.querySelector("#cmsgs");
   if(inp){
-    const send=()=>{const v=inp.value.trim();if(!v)return;(coachThreads[coachChat]=coachThreads[coachChat]||[]).push({from:"dir",text:v,t:"now"});inp.value="";
-      const card=document.getElementById("coachchatcard");if(card){card.innerHTML=dirCoachChat(coachChat);wireCoaches(scope);}const m=document.getElementById("cmsgs");if(m)m.scrollTop=m.scrollHeight;};
+    const send=()=>{const v=inp.value.trim();if(!v)return;const coach=coachChat;(coachThreads[coach]=coachThreads[coach]||[]).push({from:"dir",text:v,t:"now"});inp.value="";
+      const card=document.getElementById("coachchatcard");if(card){card.innerHTML=dirCoachChat(coach);wireCoaches(scope);}const m=document.getElementById("cmsgs");if(m)m.scrollTop=m.scrollHeight;
+      if(LIVE){ fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:{coach,from:"dir",text:v}})}).catch(()=>{}); }};
     btn.onclick=send;inp.addEventListener("keydown",e=>{if(e.key==="Enter")send();});if(box)box.scrollTop=box.scrollHeight;
   }
+}
+
+/* ===== DIRECTOR · Emails sent ===== */
+function fmtEmailDate(s){const d=Date.parse(s);return d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):s;}
+function dirEmails(){
+  const names=(emailAllStaff&&emailAllStaff.length?emailAllStaff:[...new Set(PAYOUT.map(p=>p.n))]).slice().sort((a,b)=>a.localeCompare(b));
+  const search=`<input id="em-search" class="em-search" placeholder="Search all staff by name…" autocomplete="off">`;
+  const chips=names.map(n=>`<button class="em-chip ${emailStaff===n?'on':''}" data-emstaff="${n}" data-emname="${n.toLowerCase()}">${initials(n)} <span>${n}</span></button>`).join("");
+  let panel;
+  if(!emailStaff) panel=`<div class="em-empty">${ic('message',20)}<div>Pick a staff person to see every email the system sent about them — to whom, and confirmation it went out.</div></div>`;
+  else if(!LIVE) panel=`<div class="em-empty">${ic('info',20)}<div>The email log reads live from Airtable — it appears here once the app is opened on the deployed site (jv-mpd-app.netlify.app), not the local file.</div></div>`;
+  else if(emailLoading) panel=`<div class="em-empty">${ic('clock',20)}<div>Loading ${emailStaff}'s email history…</div></div>`;
+  else if(emailErr) panel=`<div class="em-empty">${ic('info',20)}<div>Couldn't load the email log just now. Try again.</div></div>`;
+  else if(!emailData||!emailData.length) panel=`<div class="em-empty">${ic('info',20)}<div>No emails logged for ${emailStaff} yet.</div></div>`;
+  else{
+    const sent=emailData.filter(e=>e.sent).length;
+    const rows=emailData.map(e=>`<div class="em-row">
+      <span class="em-date">${fmtEmailDate(e.date)}</span>
+      <span class="em-main"><span class="em-subj">${e.subject||'(no subject)'}</span><span class="em-to">to ${e.to||'—'}${e.cc?` · cc ${e.cc}`:''}</span></span>
+      <span class="em-sent ${e.sent?'yes':'no'}">${e.sent?ic('check',13)+' sent':'not sent'}</span></div>`).join("");
+    panel=`<div class="em-head"><b>${emailStaff}</b><span>${emailData.length} emails · ${sent} confirmed sent</span></div><div class="em-list">${rows}</div>`;
+  }
+  return `<div style="margin-bottom:4px"><div class="eyebrow">Restricted · Mel &amp; MPD directors</div><h2 style="font-size:19px">Emails sent</h2>
+    <div class="said" style="margin-top:6px;max-width:60ch">Every automated email the system sent around each staff person — the recipient, the subject, and a check that it actually went out.</div></div>
+  ${search}
+  <div class="em-chips">${chips}</div>
+  <section class="card pad" style="margin-top:14px">${panel}</section>`;
+}
+function loadEmails(name){
+  emailStaff=name; emailData=null; emailErr=false; emailLoading=LIVE; render();
+  if(!LIVE) return;
+  fetch('/.netlify/functions/airtable?action=emails&staff='+encodeURIComponent(name))
+    .then(r=>r.ok?r.json():Promise.reject()).then(j=>{ emailData=j.emails||[]; emailLoading=false; render(); })
+    .catch(()=>{ emailErr=true; emailLoading=false; render(); });
+}
+function wireEmails(scope){
+  scope.querySelectorAll("[data-emstaff]").forEach(b=>b.onclick=()=>loadEmails(b.dataset.emstaff));
+  const s=scope.querySelector("#em-search");
+  if(s) s.addEventListener("input",()=>{const q=s.value.trim().toLowerCase();
+    scope.querySelectorAll("[data-emname]").forEach(c=>{c.hidden = q && !c.dataset.emname.includes(q);});});
+  // pull the full staff directory once (live) so directors can look up anyone
+  if(LIVE && !emailAllStaff){ fetch('/.netlify/functions/airtable?action=staff').then(r=>r.ok?r.json():null)
+    .then(j=>{ if(j&&Array.isArray(j.staff)&&j.staff.length){ emailAllStaff=j.staff; if(dirTab==='emails'&&role==='director') render(); } }).catch(()=>{}); }
 }
 
 /* ===== chat ===== */
@@ -1362,6 +1436,7 @@ function render(){
     if(dirTab==='grants') wireFund(v);
     if(dirTab==='payout') wirePayout(v);
     if(dirTab==='coaches') wireCoaches(v);
+    if(dirTab==='emails') wireEmails(v);
   }
 }
 wordIdx=new Date().getDay();

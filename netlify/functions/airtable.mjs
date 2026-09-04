@@ -20,6 +20,14 @@ const F = {
 };
 const D = { name:"fldO3kLf4ThXF2yMA", amt:"fldwUQJrh9QNIOr4L", freq:"fldnzW8Z3m8WtyyK8",
   dstatus:"fldbFqZCHBSRZf02e", stafflink:"fldtMNFYggmi8IbnL" };
+const T_GRANT = "tblx9H88s1h73dYFo";
+const G = { name:"fldGo5dMQbEWl1qOQ", dep:"fldHiaTsly9kKS4vS", paid:"fldm3PndZVKK8EYpA",
+  wa:"fldv5Kaik45nsU4o3", fees:"fldaDkQcCa67uPpoc", date:"fldrmE8b5OGNjwNBm", src:"fld4qITAJvCzEt0yV" };
+const T_MSG = "tblfd2a3hx8x0NdSe";
+const M = { coach:"fld34KByNlXMGYg3Q", from:"fldyEklsaH2Bk2tus", text:"fldbrw0nZTI2LYjlb" };
+const T_EMAIL = "tblWigjcOuSvDmpuO";
+const E = { date:"fldwofjb5avf41aeB", subject:"fldDAu0dyYO8OCmeO", to:"fldfkxhP69eA7cZe0",
+  cc:"fldnF9i00jD8TmO2F", sent:"fldJ3ii3DRlc0k6MK" };
 
 const FACTOR = [100,100,90,80,70,60,50,40,30,20,10,0];
 const H = { Authorization:`Bearer ${process.env.AIRTABLE_TOKEN}`, "Content-Type":"application/json" };
@@ -82,25 +90,89 @@ async function buildPayout(){
   }).sort((a,b)=>a.n.localeCompare(b.n));
 }
 
+function fmtDate(s){ const d=Date.parse(s); return d?new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):(s||""); }
+
+async function buildGrantFund(){
+  const [budgets, staff] = await Promise.all([
+    listAll(T_GRANT, [G.name,G.dep,G.paid,G.wa,G.fees,G.date,G.src]),
+    listAll(T_STAFF, [F.name,F.cycle,F.paid,F.max,F.month]),
+  ]);
+  const byCycle={};
+  for(const r of staff){ const c=r.cellValuesByFieldId||{}; const cy=sel(c[F.cycle]); if(!cy) continue;
+    const paid=Math.round(Number(c[F.paid])||0), max=Number(c[F.max])||0, mo=Number(c[F.month])||0;
+    const status=((max>0&&paid>=max-1)||mo>12)?"done":"on";
+    (byCycle[cy]=byCycle[cy]||[]).push([(c[F.name]||"").trim(), paid, status]);
+  }
+  const cycles=budgets.map(r=>{ const c=r.cellValuesByFieldId||{}; const cy=sel(c[G.name]);
+    return { cy, dep:Number(c[G.dep])||0, paid:Math.round(Number(c[G.paid])||0), fees:Number(c[G.fees])||0,
+      wa:Number(c[G.wa])||0, date:fmtDate(c[G.date]), src:(c[G.src]||""), ppl:(byCycle[cy]||[]).sort((a,b)=>b[1]-a[1]) };
+  }).sort((a,b)=>(b.dep)-(a.dep));
+  if(cycles.length) cycles[0].active=true;
+  let spoken=0;
+  for(const r of staff){ const c=r.cellValuesByFieldId||{}; const paid=Number(c[F.paid])||0, max=Number(c[F.max])||0, mo=Number(c[F.month])||0;
+    if(max>0 && !((paid>=max-1)||mo>12)) spoken+=Math.max(0,max-paid); }
+  return { cycles, spoken:Math.round(spoken) };
+}
+
+async function buildMessages(){
+  const rows=await listAll(T_MSG, [M.coach,M.from,M.text]);
+  rows.sort((a,b)=>Date.parse(a.createdTime)-Date.parse(b.createdTime));
+  const out={};
+  for(const r of rows){ const c=r.cellValuesByFieldId||{}; const coach=(c[M.coach]||"").trim(); if(!coach) continue;
+    const from = sel(c[M.from])==="Director"?"dir":"coach";
+    const t = new Date(r.createdTime).toLocaleString('en-US',{weekday:'short',hour:'numeric',minute:'2-digit'});
+    (out[coach]=out[coach]||[]).push({from, text:c[M.text]||"", t});
+  }
+  return out;
+}
+
+async function buildEmails(name){
+  if(!name) return [];
+  const u=new URL(`https://api.airtable.com/v0/${BASE}/${T_EMAIL}`);
+  u.searchParams.set("returnFieldsByFieldId","true");
+  u.searchParams.set("pageSize","50");
+  u.searchParams.set("filterByFormula", `SEARCH("${name.replace(/"/g,"")}", ARRAYJOIN({Staff Members}))`);
+  u.searchParams.append("sort[0][field]","Date");
+  u.searchParams.append("sort[0][direction]","desc");
+  const r=await fetch(u,{headers:H});
+  if(!r.ok) throw new Error(`Airtable emails ${r.status}: ${await r.text()}`);
+  const j=await r.json();
+  return j.records.map(rec=>{ const c=rec.cellValuesByFieldId||{};
+    return { date:c[E.date]||"", subject:c[E.subject]||"", to:c[E.to]||"", cc:c[E.cc]||"", sent: !!c[E.sent] }; });
+}
+
 export default async (req) => {
   try{
     if(!process.env.AIRTABLE_TOKEN) return json({error:"AIRTABLE_TOKEN not set on the site."},500);
     if(req.method==="GET"){
-      const url=new URL(req.url);
-      if(url.searchParams.get("action")==="payout") return json({payout: await buildPayout()});
-      return json({ok:true, hint:"use ?action=payout, or POST {id, funding?, payout?}"});
+      const url=new URL(req.url), action=url.searchParams.get("action");
+      if(action==="payout") return json({payout: await buildPayout()});
+      if(action==="grantfund") return json(await buildGrantFund());
+      if(action==="messages") return json({messages: await buildMessages()});
+      if(action==="emails") return json({emails: await buildEmails(url.searchParams.get("staff"))});
+      if(action==="staff"){ const rows=await listAll(T_STAFF,[F.name]);
+        const names=[...new Set(rows.map(r=>((r.cellValuesByFieldId||{})[F.name]||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+        return json({staff:names}); }
+      return json({ok:true, hint:"?action=payout|grantfund|messages|emails|staff, or POST {id,funding?,payout?} / {message:{coach,from,text}}"});
     }
     if(req.method==="POST"){
       const b = await req.json();
+      // append a coach<->director message
+      if(b.message){
+        const m=b.message;
+        const r = await fetch(`https://api.airtable.com/v0/${BASE}/${T_MSG}`, { method:"POST", headers:H,
+          body: JSON.stringify({records:[{fields:{[M.coach]:m.coach, [M.from]:(m.from==="dir"?"Director":"Coach"), [M.text]:m.text}}]}) });
+        if(!r.ok) return json({error:`Airtable message ${r.status}: ${await r.text()}`},502);
+        return json({ok:true});
+      }
+      // update a staff record's Funding Type / Payout Status
       if(!b.id) return json({error:"missing record id"},400);
       const fields={};
-      if(b.funding!==undefined) fields[F.funding]=b.funding;   // "Grant" | "Support-only"
-      if(b.payout!==undefined)  fields[F.status]=b.payout;     // "Active" | "Paused" | "Finished"
+      if(b.funding!==undefined) fields[F.funding]=b.funding;
+      if(b.payout!==undefined)  fields[F.status]=b.payout;
       if(!Object.keys(fields).length) return json({error:"nothing to update"},400);
-      const r = await fetch(`https://api.airtable.com/v0/${BASE}/${T_STAFF}`, {
-        method:"PATCH", headers:H,
-        body: JSON.stringify({returnFieldsByFieldId:true, records:[{id:b.id, fields}]})
-      });
+      const r = await fetch(`https://api.airtable.com/v0/${BASE}/${T_STAFF}`, { method:"PATCH", headers:H,
+        body: JSON.stringify({returnFieldsByFieldId:true, records:[{id:b.id, fields}]}) });
       if(!r.ok) return json({error:`Airtable PATCH ${r.status}: ${await r.text()}`},502);
       return json({ok:true});
     }
