@@ -539,6 +539,19 @@
   .btn-ghost{font:inherit;font-weight:650;font-size:13.5px;color:var(--ink-2);text-decoration:none;border:1.5px solid var(--line);border-radius:13px;padding:12px 18px;background:var(--card)}
   .btn-ghost:hover{border-color:var(--honey)}
   .desk-note{font-size:12px;color:var(--muted);margin-top:10px}
+  .desk-actions .btn-primary[disabled]{opacity:.5;cursor:not-allowed;filter:grayscale(.3)}
+  /* email verification gate */
+  .vchip{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;border-radius:999px;padding:1px 7px;vertical-align:middle}
+  .vchip.ok{color:var(--pine-deep);background:var(--pine-soft)}
+  .vchip.pend{color:var(--flame);background:var(--flame-soft)}
+  .vbox{margin-top:16px;border-radius:14px;padding:14px 16px;border:1px solid var(--line)}
+  .vbox.pend{background:var(--flame-soft);border-color:color-mix(in srgb,var(--flame) 30%,transparent)}
+  .vbox.ok{background:var(--pine-soft);border-color:color-mix(in srgb,var(--pine) 30%,transparent)}
+  .vbox-h{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink)}
+  .vbox-b{font-size:12.5px;line-height:1.55;color:var(--ink-2);margin-top:6px}
+  .vsend{margin-top:11px;font:inherit;font-size:12.5px;font-weight:700;color:#fff;background:var(--pine);border:none;border-radius:10px;padding:9px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .vsend:hover{background:var(--pine-deep)}
+  .vsend:disabled{opacity:.7;cursor:default}
   /* grant fund */
   .fcyc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:13px;overflow:hidden}
   .fcyc-h{padding:17px 19px}
@@ -637,6 +650,12 @@
   .cf-work{font-size:12px;color:var(--ink-2);margin:2px 0 5px;line-height:1.4}.cf-work b{color:var(--ink)}
   .cf-row .lvl{flex:none}
   .cf-msg{margin-top:12px}
+  .cf-chat{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+  /* paused / archived / withheld status chip */
+  .stchip{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;border-radius:999px;padding:1px 8px;vertical-align:middle;white-space:nowrap}
+  .stchip.paused{color:#fff;background:var(--flame)}
+  .stchip.arch{color:var(--ink-2);background:var(--sand-3, #e7ddc9);border:1px solid var(--line)}
+  .stchip.warn{color:var(--honey-deep);background:var(--honey-soft)}
   .cf-open{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:12.5px;font-weight:600;color:var(--honey-deep);background:var(--honey-soft);border:1px solid color-mix(in srgb,var(--honey) 28%,transparent);border-radius:11px;padding:9px 14px;cursor:pointer}
   .cf-open.on{background:var(--honey-deep);color:#fff;border-color:var(--honey-deep)}
   @media(max-width:760px){.cread{display:none}}
@@ -1310,6 +1329,9 @@ PAYOUT.forEach(p=>{
   if(p.archived===undefined) p.archived=false;
   if(p.withhold===undefined) p.withhold=false;
   if(p.stopAll===undefined)  p.stopAll=false;
+  // demo (offline preview only): show one paused and one archived so the status chips are visible
+  if(p.n==="Danail Ventsislavov") p.stopAll=true;
+  if(p.n==="Ionuț & Nicoleta Lerca") p.archived=true;
 });
 /* director controls: per-staff status override active|paused|finished; window rule = month>12 leaves active */
 let payoutOpen={}, payoutStatus={}, LIVE=false;
@@ -1346,8 +1368,21 @@ function payoutStat(p){
   if(p.ps==='Finished') return 'finished';
   return payoutAuto(p);
 }
-/* Any staff who is archived — excluded from every stat, roster, and care cohort. */
+/* Any staff who is archived — excluded from every stat and active roster. */
 function isArchivedName(n){ return PAYOUT.some(p=>p.archived && norm(p.n)===norm(n)); }
+function isPausedName(n){ return PAYOUT.some(p=>p.stopAll && norm(p.n)===norm(n)); }
+function isWithheldName(n){ return PAYOUT.some(p=>p.withhold && norm(p.n)===norm(n)); }
+/* row-level status: prefer the person's own live flags, fall back to their payout record */
+function rowArchived(s){ return !!(s&&s.archived) || isArchivedName(s&&s.n); }
+function rowPaused(s){ return !!(s&&s.paused) || isPausedName(s&&s.n); }
+function rowWithheld(s){ return !!(s&&s.withhold) || isWithheldName(s&&s.n); }
+/* a small status chip for a person, or '' when there's nothing to flag */
+function statusChip(s){
+  if(rowArchived(s)) return `<span class="stchip arch">${ic('info',11)} Archived</span>`;
+  if(rowPaused(s))   return `<span class="stchip paused">${ic('info',11)} Paused</span>`;
+  if(rowWithheld(s)) return `<span class="stchip warn">${ic('clock',11)} Not paid this month</span>`;
+  return '';
+}
 
 const rolesNav=document.getElementById("roles");
 rolesNav.innerHTML=ROLES.map(r=>`<button class="role" data-r="${r.id}"><span class="ic" style="display:flex">${ic(r.icon,17)}</span>${r.label}</button>`).join("");
@@ -1359,7 +1394,7 @@ const uniq=a=>[...new Set(a)];
 function buildId(){
   const lab=document.getElementById("idlabel");let opts=[];
   if(role==="mel"){lab.textContent="Signed in as";opts=["Mel Ellenwood"];}
-  else if(role==="staff"){lab.textContent="I am";opts=roster().filter(s=>!isArchivedName(s.n)).map(s=>s.n);}
+  else if(role==="staff"){lab.textContent="I am";opts=roster().filter(s=>!rowArchived(s)).map(s=>s.n);}
   else if(role==="coach"){lab.textContent="Coach";opts=uniq(roster().map(s=>s.coach)).sort();}
   else if(role==="uplink"){lab.textContent="Uplink";opts=uniq(roster().map(s=>s.uplink)).sort();}
   else if(role==="leader"){lab.textContent="Country";opts=uniq(roster().map(s=>s.co)).sort();}
@@ -1392,6 +1427,7 @@ function viewMel(){
   if(!q.length) return head+pool+`<section class="card pad" style="margin-top:16px"><div class="empty-chat">Nothing in your queue right now.</div></section>`;
   const cards=q.map((p,i)=>{
     const open=deskOpen[i], first=p.n.split(" ")[0];
+    const ver=!!p.verified, hasEmail=!!(p.email&&p.email.trim());
     const couple=/wife|husband|&| and /i.test(p.also||"");
     const gAmt=deskGrant[i]??(couple?18000:12000);
     const after=POOL.remaining-gAmt;
@@ -1407,7 +1443,7 @@ function viewMel(){
         <div class="df"><span>Salary</span><b>$${p.salary.toLocaleString()}</b></div>
         <div class="df"><span>Age</span><b>${p.age}</b></div>
         <div class="df"><span>Cedarstone #</span><b>${p.cedarstone}</b></div>
-        <div class="df"><span>Email</span><b style="color:var(--pine-deep);font-size:12.5px">${p.email}</b></div>
+        <div class="df"><span>JV email</span><b style="font-size:12.5px">${hasEmail?p.email:'<span style="color:var(--muted)">not added yet</span>'} ${hasEmail?(ver?'<span class="vchip ok">'+ic('check',11)+' verified</span>':'<span class="vchip pend">'+ic('clock',11)+' not verified</span>'):''}</b></div>
       </div>
       <div class="team" style="margin-top:14px">
         ${[["Coach",p.coach,p.coachEmail],["Uplink",p.uplink,p.uplinkEmail],["Country leader",p.lead,p.leadEmail]].map(([r,nm,em])=>`<div class="friend"><div class="av t-good">${initials(nm)}</div><div class="in"><div class="role-l">${r}</div><div class="nm">${nm}</div></div><span style="font-size:11.5px;color:var(--muted)">${em}</span></div>`).join("")}
@@ -1429,8 +1465,17 @@ function viewMel(){
         <div class="gs-warn" id="gwarn-${i}"${after>=0?' hidden':''}>That's ${money(Math.abs(after))} past the ${POOL.cycle} grant's budget — you'd be dipping into the fund's rollover.</div>
         <div class="gs-warn2">No 2026-27 grant came in, so ${first} draws from the <b>${POOL.cycle}</b> grant. His record should be tagged ${POOL.cycle}, not 2026-27. (The fund still holds ${money(POOL.fundCash)} in rollover cash if needed.)</div>
       </div>
+      <div class="vbox ${ver?'ok':'pend'}">
+        <div class="vbox-h">${ver?ic('check',15):ic('info',15)} <b>${ver?'Email confirmed — safe to start':'Email must be confirmed before you can start'}</b></div>
+        <div class="vbox-b">${ver
+          ? `${first} opened the confirmation link, so we know the JV mailbox is real and theirs. The grant flow can begin.`
+          : hasEmail
+            ? `A one-time link goes to <b>${p.email}</b>. Onboarding can't start until ${first} opens it — that's how we know the address is real and not a placeholder.`
+            : `No JV email on the record yet. Add it once ${first}'s mailbox exists, then send the confirmation.`}</div>
+        ${!ver&&hasEmail?`<button class="vsend" data-sendverify="${i}">${ic('send',14)} Send confirmation email</button>`:''}
+      </div>
       <div class="desk-actions">
-        <button class="btn-primary" data-approve="${i}">${ic('check',16)} Approve ${first}</button>
+        <button class="btn-primary" data-approve="${i}"${ver?'':' disabled aria-disabled="true"'}>${ic('check',16)} ${ver?`Approve ${first}`:`Confirm email to start`}</button>
         <a class="btn-ghost" href="${p.record}" target="_blank" rel="noopener">Open full application</a>
       </div>
       <div class="desk-note">Approving records your yes in the base, sets their grant cap, and starts onboarding${LIVE?'':' (demo — connect live to record it)'}.</div>
@@ -1713,7 +1758,7 @@ function coachPersonPage(sel){
     <div class="pp-bar"><button class="pp-back" data-close="1">${ic('chevron',15)} My people</button><button class="pp-close" data-close="1">Close</button></div>
     <div class="pp-hd">
       <span class="av t-${dx.tone}">${initials(sel.n)}</span>
-      <div class="pp-id"><h2>${sel.n}</h2><div class="pp-sub">${sel.co} &middot; month ${sel.mo}${sel.wk>0?` &middot; ${sel.wk} weeks of grant left`:''}</div></div>
+      <div class="pp-id"><h2>${sel.n} ${statusChip(sel)}</h2><div class="pp-sub">${sel.co} &middot; month ${sel.mo}${sel.wk>0?` &middot; ${sel.wk} weeks of grant left`:''}</div></div>
     </div>
     <div class="pp-pair" style="margin-top:14px">
       <div class="pp-card pp-graph"><div class="pp-ch"><span>Monthly pace</span>${vals.length?`<span class="pp-cs">${hit} of ${vals.length} at pace</span>`:''}</div>${paceChartBody(sel, sel.first)}</div>
@@ -1740,8 +1785,9 @@ function coachPersonPage(sel){
   </div>`;
 }
 function viewCoach(){
-  const mine=roster().filter(s=>s.coach===who&&!isArchivedName(s.n)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]);
-  const sel=chatWith && mine.find(s=>s.n===chatWith);
+  const mine=roster().filter(s=>s.coach===who&&!rowArchived(s)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]);
+  const held=roster().filter(s=>s.coach===who&&(rowArchived(s)||rowPaused(s)));
+  const sel=chatWith && (mine.find(s=>s.n===chatWith)||held.find(s=>s.n===chatWith));
   if(personOpen && sel) return coachPersonPage(sel);
   const th=(coachThreads[who]||[]).length;
   return `<div style="margin-bottom:4px"><div class="eyebrow">Coaching ${who}'s people</div><h2 style="font-size:19px">${mine.length} staff you're walking with</h2></div>
@@ -1753,15 +1799,21 @@ function viewCoach(){
     <div class="sec-head"><div><div class="eyebrow">Tap a name to open their page</div><h2>My people</h2></div></div>
     <div class="roster">${mine.map(s=>{const un=(threads[s.n]||[]).slice(-1)[0],unread=un&&un.from==="staff";const dx=sDx(s);
       return `<button class="rrow" data-open="${s.n}"><span class="face t-${dx.tone}">${initials(s.n)}${unread?`<span class="ping"></span>`:""}</span>
-        <span class="rin"><span class="rn">${s.n}</span><span class="rm">${s.co} &middot; ${Math.round(s.pct*100)}% funded &middot; month ${s.mo}</span></span>
+        <span class="rin"><span class="rn">${s.n} ${statusChip(s)}</span><span class="rm">${s.co} &middot; ${Math.round(s.pct*100)}% funded &middot; month ${s.mo}</span></span>
         <span class="rlvl lc-${dx.tone}">${dx.label}</span><span class="rchev">${ic('chevron',16)}</span></button>`;}).join("")}</div>
   </section>
+  ${held.length?`<section class="card pad" style="margin-top:14px">
+    <div class="sec-head"><div><div class="eyebrow">Held — not in the active list or stats above</div><h2>Paused &amp; archived</h2></div></div>
+    <div class="roster">${held.map(s=>`<button class="rrow" data-open="${s.n}"><span class="face t-mute">${initials(s.n)}</span>
+      <span class="rin"><span class="rn">${s.n} ${statusChip(s)}</span><span class="rm">${s.co} &middot; month ${s.mo}</span></span>
+      <span class="rchev">${ic('chevron',16)}</span></button>`).join("")}</div>
+  </section>`:''}
   <div class="hint">${ic('info',16)} Tap anyone to open their full page — a graph of their monthly pace, their weekly-report stats, this month's givers, and your coaching notes. Close it to come back here.</div>`;
 }
 
 /* ===== UPLINK ===== */
 function viewUplink(){
-  const mine=roster().filter(s=>s.uplink===who&&!isArchivedName(s.n)).sort((a,b)=>b.risk-a.risk);
+  const mine=roster().filter(s=>s.uplink===who&&!rowArchived(s)).sort((a,b)=>b.risk-a.risk);
   return `<div style="margin-bottom:4px"><div class="eyebrow">${who}'s people</div><h2 style="font-size:19px">Walking alongside ${mine.length} on the journey</h2></div>
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">Thriving</div><div class="v" style="color:var(--pine-deep)">${mine.filter(s=>s.lvl==="Healthy").length}<small>/${mine.length}</small></div><div class="f">funded & steady</div></div>
@@ -1771,7 +1823,7 @@ function viewUplink(){
   <section class="card pad"><div class="sec-head"><div><div class="eyebrow">The trajectory, not the mechanics</div><h2>How my people are really doing</h2></div></div>
     <div class="plist">${mine.map(s=>{const talking=(threads[s.n]||[]).length>0;
       return `<div class="prow"><div class="face t-${tone(s.lvl)}">${initials(s.n)}</div>
-        <div class="pin"><div class="pn">${s.n}</div><div class="pm">${s.co} · coached by ${s.coach}</div>
+        <div class="pin"><div class="pn">${s.n} ${statusChip(s)}</div><div class="pm">${s.co} · coached by ${s.coach}</div>
           <div class="flags"><span class="fl ${s.sub>0?'ok':'no'}">${s.sub>0?ic('check',13)+' staying in rhythm':ic('clock',13)+' gone a bit quiet'}</span><span class="fl ${talking?'ok':'no'}">${talking?ic('check',13)+' coach is close':ic('clock',13)+' check coaching'}</span></div></div>
         <div class="pr"><span class="lvl lc-${tone(s.lvl)}">${warmLevel(s.lvl)}</span><small>${Math.round(s.pct*100)}% · ${s.wk}w</small></div></div>`;}).join("")}</div>
     <div class="callout">${ic('heart',16)} The uplink's role is pastoral, not operational. You mainly need to know who's thriving, who's quiet, and whether the coaching relationship is alive — so you can step in <b>relationally</b> when someone starts to withdraw.</div>
@@ -1780,7 +1832,7 @@ function viewUplink(){
 
 /* ===== COUNTRY LEADER ===== */
 function viewLeader(){
-  const mine=roster().filter(s=>s.co===who&&!isArchivedName(s.n)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]),lead=mine[0]?.lead||"—";
+  const mine=roster().filter(s=>s.co===who&&!rowArchived(s)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]),lead=mine[0]?.lead||"—";
   return `<div style="margin-bottom:4px"><div class="eyebrow">${who} · led by ${lead}</div><h2 style="font-size:19px">Our team's support raising</h2></div>
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">On the journey</div><div class="v">${mine.length}</div><div class="f">active in ${who}</div></div>
@@ -1791,7 +1843,7 @@ function viewLeader(){
   <section class="card pad"><div class="sec-head"><div><div class="eyebrow">Sorted by who needs you most</div><h2>My people & a next step for each</h2></div></div>
     <div class="plist">${mine.map(s=>{const dx=sDx(s);
       return `<div class="prow"><div class="face t-${dx.tone}">${initials(s.n)}</div>
-        <div class="pin"><div class="pn">${s.n}</div><div class="pm"><b>${dx.label}.</b> ${dx.help}</div><div class="thermo-mini"><i style="width:${Math.min(100,s.pct*100)}%;background:${dxCol[dx.tone]}"></i></div></div>
+        <div class="pin"><div class="pn">${s.n} ${statusChip(s)}</div><div class="pm"><b>${dx.label}.</b> ${dx.help}</div><div class="thermo-mini"><i style="width:${Math.min(100,s.pct*100)}%;background:${dxCol[dx.tone]}"></i></div></div>
         <div class="pr"><span class="lvl lc-${dx.tone}">${dx.label}</span><small>${Math.round(s.pct*100)}% · coach ${s.coach}</small></div></div>`;}).join("")}</div>
   </section>`;
 }
@@ -1851,6 +1903,7 @@ function careToS(p){
     ft:p.ft||"Grant", ps:p.ps||"", first:(p.n||"").split(/[ &]/)[0], series:p.series||[],
     newMonthly:p.newMonthly||[], contMonthly:p.contMonthly||[], pendMonthly:p.pendMonthly||[], otherConfirmed:p.otherConfirmed||[],
     last:p.last||null, overall:p.overall||null, lastDate:p.lastDate||"",
+    archived:!!p.archived, paused:!!p.paused, withhold:!!p.withhold,
     fn:{asks:p.asks||0,mtgs:p.mtgs||0,yes:p.yes||0,monthly:p.monthly||0,onetime:p.onetime||0,
         hours:p.hours||0,weeks:p.weeks||0,coachMet:p.coachMet||0,daysSince:(p.daysSince==null?999:p.daysSince),note:p.note||""} };
   const dx=diagnose({weeks:s.fn.weeks,asks:s.fn.asks,monthly:s.fn.monthly,onetime:s.fn.onetime,yes:s.fn.yes,hours:s.fn.hours,daysSince:s.fn.daysSince});
@@ -1861,7 +1914,8 @@ function careToS(p){
   return s;
 }
 /* the roster the coach-facing views read: LIVE care people when available, else the baked demo */
-function roster(){ return (careData&&careData.length) ? careData.flatMap(g=>g.staff).filter(p=>!isArchivedName(p.n)).map(careToS) : S; }
+/* everyone (incl. paused & archived), as S rows carrying status flags. Active views filter with rowArchived(). */
+function roster(){ return (careData&&careData.length) ? careData.flatMap(g=>g.staff).map(careToS) : S; }
 function rosterFind(name){ return roster().find(s=>s.n===name); }
 function fnStat(p){
   const cells=[['Asks',p.asks],['Meetings',p.mtgs],['Yeses',p.yes],['Monthly',p.monthly],['Hours',p.hours]];
@@ -1871,7 +1925,7 @@ function careStaffCard(p){
   const dx=diagnose(p);
   return `<div class="cx-card cx-${dx.tone}">
     <div class="cx-head"><span class="av t-${dx.tone==='good'?'good':dx.tone==='warn'?'warn':'crit'}">${initials(p.n)}</span>
-      <div class="cx-who"><b>${p.n}</b><span>${p.co} &middot; month ${p.mo||'—'} &middot; ${Math.round((p.pct||0)*100)}% funded</span></div>
+      <div class="cx-who"><b>${p.n} ${statusChip(p)}</b><span>${p.co} &middot; month ${p.mo||'—'} &middot; ${Math.round((p.pct||0)*100)}% funded</span></div>
       <span class="cx-tag cx-t-${dx.tone}">${dx.label}</span></div>
     <div class="cx-help">${dx.help}</div>
     ${fnStat(p)}
@@ -1880,7 +1934,7 @@ function careStaffCard(p){
   </div>`;
 }
 function dirCare(){
-  const groups=careGroups();
+  const groups=careGroups().map(g=>({coach:g.coach, staff:g.staff.filter(p=>!rowArchived(p))})).filter(g=>g.staff.length);
   const all=groups.flatMap(g=>g.staff.map(p=>({...p,coach:g.coach,dx:diagnose(p)})));
   const nQuiet=all.filter(p=>p.dx.code==='quiet').length;
   const nAsk=all.filter(p=>['time','asks','convert','monthly'].includes(p.dx.code)).length;
@@ -2206,16 +2260,17 @@ function coachRead(list){ // director's read on a coach — summarized from each
     return {tone:"warn", t:`${w.first||w.n.split(/[ &]/)[0]}: ${d.label.toLowerCase()}`, d:d.help}; }
   return {tone:"good", t:"Everyone in rhythm", d:`${good} ${good===1?'person is':'people are'} asking and converting to monthly — affirm and protect it.`};
 }
-function dirCoachChat(coach){
+function dirCoachChat(coach, uid){
   const th=coachThreads[coach]||[];
   const body=th.length?th.map(m=>{const mine=m.from==="dir";return `<div class="bub ${mine?'me':'them'}">${m.text}<span class="t">${m.t}</span></div>`;}).join(""):`<div class="empty-chat">No messages with ${coach} yet.<br>Open a line — a word of encouragement goes far.</div>`;
-  return `<div class="chat"><div class="chat-h"><div class="av" style="background:linear-gradient(135deg,var(--honey),var(--honey-deep))">${coach[0]}</div><div class="nm">${coach}<small>MPD coach</small></div></div>
-    <div class="msgs" id="cmsgs">${body}</div>
-    <div class="composer"><input id="cmi" placeholder="Message ${coach}…" autocomplete="off"><button id="csend">Send</button></div>
+  return `<div class="chat" data-cchat="${coach}"><div class="chat-h"><div class="av" style="background:linear-gradient(135deg,var(--honey),var(--honey-deep))">${coach[0]}</div><div class="nm">Message ${coach}<small>MPD coach</small></div></div>
+    <div class="msgs" id="cmsgs-${uid}">${body}</div>
+    <div class="composer"><input id="cmi-${uid}" placeholder="Message ${coach}…" autocomplete="off"><button id="csend-${uid}" data-csend="${uid}" data-cco="${coach}">Send</button></div>
     <div class="whoami">as Dave &amp; Geri · MPD directors</div></div>`;
 }
 function dirCoaches(){
-  const coaches={}; roster().forEach(s=>{ if(isArchivedName(s.n)) return; (coaches[s.coach]=coaches[s.coach]||[]).push(s); });
+  const coaches={}; roster().forEach(s=>{ if(rowArchived(s)) return; (coaches[s.coach]=coaches[s.coach]||[]).push(s); });
+  const heldAll=roster().filter(s=>rowArchived(s)||rowPaused(s)).sort((a,b)=>a.coach.localeCompare(b.coach)||a.n.localeCompare(b.n));
   const entries=Object.entries(coaches).map(([c,list])=>[c,list,coachRead(list)])
     .sort((a,b)=>({crit:0,warn:1,good:2}[a[2].tone]-{crit:0,warn:1,good:2}[b[2].tone]) || b[1].length-a[1].length);
   if(!coachChat||!coaches[coachChat]) coachChat=entries[0]?.[0];
@@ -2228,7 +2283,7 @@ function dirCoaches(){
     const quiet=list.filter(s=>sDx(s).code==='quiet').length;
     const staffRows=list.slice().sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]).map(s=>{const dx=sDx(s);
       return `<div class="cf-row"><div class="face t-${dx.tone}" style="width:34px;height:34px;font-size:12.5px">${initials(s.n)}</div>
-        <div class="cf-in"><div class="cf-n">${s.n} <span class="cf-mo">mo ${s.mo}/12</span></div>
+        <div class="cf-in"><div class="cf-n">${s.n} <span class="cf-mo">mo ${s.mo}</span> ${statusChip(s)}</div>
           <div class="cf-work">${dx.help}</div>
           <div class="flags"><span class="fl">${ic('scope',12)} ${s.fn.weeks?s.fn.asks+' asks':'no updates'}</span><span class="fl">${ic('gift',12)} ${s.fn.monthly} monthly</span><span class="fl">${ic('coins',12)} ${Math.round(s.pct*100)}% funded</span></div></div>
         <span class="lvl lc-${dx.tone}">${dx.label}</span></div>`;}).join("");
@@ -2244,13 +2299,10 @@ function dirCoaches(){
         <div class="cread-full lc-${read.tone}">${read.tone==='good'?ic('heart',15):ic('info',15)}<div><b>${read.t}.</b> ${read.d}</div></div>
         <div class="cf-lab">${ic('compass',13)} What ${c} is working on with each person</div>
         ${staffRows}
-        <div class="cf-msg">
-          <button class="cf-open ${coachChat===c?'on':''}" data-coachchat="${c}">${ic('message',14)} ${coachChat===c?'Messaging '+c:'Message '+c}</button>
-        </div>
+        <div class="cf-chat">${open?dirCoachChat(c,i):''}</div>
       </div>
     </div>`;
   }).join("");
-  const sel=coachChat;
   return `<div style="margin-bottom:4px"><div class="eyebrow">Dave &amp; Geri · caring for the carers</div><h2 style="font-size:19px">Our coaches</h2>
     <div class="said" style="margin-top:6px;max-width:62ch">Every coach, the people they're walking with, and what they're working on with each one — so you can see who's carrying a heavy load and open a line to help.</div></div>
   <section class="grid stats" style="margin-top:14px">
@@ -2258,22 +2310,25 @@ function dirCoaches(){
     <div class="card stat-c"><div class="l">Could use your support</div><div class="v" style="color:${support?'var(--flame)':'var(--pine-deep)'}">${support}</div><div class="f">heavier loads right now</div></div>
     <div class="card stat-c"><div class="l">Widest caseload</div><div class="v">${Math.max(...entries.map(e=>e[1].length))}<small> staff</small></div><div class="f">one coach</div></div>
   </section>
-  <section class="grid two-b" style="margin-top:16px">
-    <div class="ccard-wrap">${cards}</div>
-    <div class="card pad" id="coachchatcard">${sel?dirCoachChat(sel):`<div class="empty-chat">Pick a coach to open a conversation.</div>`}</div>
-  </section>
-  <div class="callout">${ic('heart',16)} Directors care for the cohort <b>through</b> the coaches. Each person's read comes straight from their weekly updates — asks made, yeses, and whether they're monthly — so you and the coach can name the one thing to work on instead of a vague "needs care."</div>`;
+  <div class="ccard-wrap" style="margin-top:16px">${cards}</div>
+  ${heldAll.length?`<div class="sec-head" style="margin-top:20px"><div><div class="eyebrow">Held — out of the active rosters &amp; stats above</div><h2 style="font-size:17px">Paused &amp; archived</h2></div></div>
+  <div class="pdone-wrap">${heldAll.map(s=>`<div class="pdone ${rowArchived(s)?'archived':''}"><span class="av t-mute">${initials(s.n)}</span>
+    <span class="pwho"><b>${s.n}</b><span>${s.co} &middot; coach ${s.coach}${rowArchived(s)?' &middot; archived — not counted anywhere':rowPaused(s)?' &middot; paused — payout &amp; emails off':''}</span></span>
+    ${statusChip(s)}</div>`).join("")}</div>`:''}
+  <div class="callout" style="margin-top:16px">${ic('heart',16)} Directors care for the cohort <b>through</b> the coaches. Each person's read comes straight from their weekly updates — asks made, yeses, and whether they're monthly — so you and the coach can name the one thing to work on instead of a vague "needs care."</div>`;
 }
 function wireCoaches(scope){
   scope.querySelectorAll("[data-coach]").forEach(b=>b.onclick=()=>{coachOpen[b.dataset.coach]=!coachOpen[b.dataset.coach];render();});
-  scope.querySelectorAll("[data-coachchat]").forEach(b=>b.onclick=()=>{coachChat=b.dataset.coachchat;render();});
-  const inp=scope.querySelector("#cmi"),btn=scope.querySelector("#csend"),box=scope.querySelector("#cmsgs");
-  if(inp){
-    const send=()=>{const v=inp.value.trim();if(!v)return;const coach=coachChat;(coachThreads[coach]=coachThreads[coach]||[]).push({from:"dir",text:v,t:"now"});inp.value="";
-      const card=document.getElementById("coachchatcard");if(card){card.innerHTML=dirCoachChat(coach);wireCoaches(scope);}const m=document.getElementById("cmsgs");if(m)m.scrollTop=m.scrollHeight;
-      if(LIVE){ fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:{coach,from:"dir",text:v}})}).catch(()=>{}); }};
-    btn.onclick=send;inp.addEventListener("keydown",e=>{if(e.key==="Enter")send();});if(box)box.scrollTop=box.scrollHeight;
-  }
+  // each expanded coach card carries its own "Message <coach>" box
+  scope.querySelectorAll("[data-csend]").forEach(btn=>{
+    const uid=btn.dataset.csend, coach=btn.dataset.cco, inp=scope.querySelector("#cmi-"+uid), box=scope.querySelector("#cmsgs-"+uid);
+    if(!inp) return;
+    const send=()=>{const v=inp.value.trim();if(!v)return;
+      (coachThreads[coach]=coachThreads[coach]||[]).push({from:"dir",text:v,t:"now"}); inp.value="";
+      if(LIVE){ fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:{coach,from:"dir",text:v}})}).catch(()=>{}); }
+      render();};
+    btn.onclick=send; inp.addEventListener("keydown",e=>{if(e.key==="Enter")send();}); if(box)box.scrollTop=box.scrollHeight;
+  });
 }
 
 /* ===== DIRECTOR · Emails sent ===== */
@@ -2360,8 +2415,18 @@ function render(){
     if(melTab==='fund'){ wireFund(v); return; }
     if(melTab==='payout'){ wirePayout(v); return; }
     v.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{deskOpen[b.dataset.toggle]=!deskOpen[b.dataset.toggle];render();});
+    v.querySelectorAll("[data-sendverify]").forEach(btn=>btn.onclick=()=>{
+      const i=+btn.dataset.sendverify, p=MELQUEUE[i]; if(!p) return;
+      btn.disabled=true; btn.textContent="Sending…";
+      if(LIVE && p.id){
+        fetch('/.netlify/functions/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:p.id})})
+          .then(r=>r.ok?r.json():Promise.reject()).then(()=>{ btn.textContent="Confirmation sent ✓"; })
+          .catch(()=>{ btn.disabled=false; btn.textContent="Try again"; alert("Couldn't send the confirmation email. Try again."); });
+      } else { btn.textContent="Confirmation sent ✓ (demo)"; }
+    });
     v.querySelectorAll("[data-approve]").forEach(btn=>btn.onclick=()=>{
       const i=+btn.dataset.approve, p=MELQUEUE[i]; if(!p) return;
+      if(!p.verified){ alert("This person's JV email isn't confirmed yet. Send the confirmation email and wait for them to open it before starting the grant."); return; }
       const gAmt=deskGrant[i] ?? ( /wife|husband|&| and /i.test(p.also||"") ? 18000 : 12000 );
       if(LIVE && p.id){
         btn.disabled=true; btn.textContent="Approving…";

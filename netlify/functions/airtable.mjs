@@ -18,6 +18,7 @@ const F = {
   curPay:"fldovmz5RURLvS3wf", curSub:"fldjAH4OECgBQjgw9",
   funding:"fld3ZAimtplTJ9vIL", status:"fld0xauS1j40Pb74f",
   archived:"fldpY0BNnRumsAUaK", withhold:"fldsduAUEEkSrdo90", stopAll:"fld0glJQgD1jho55Z",
+  verified:"fldfyaLwzSwqm4pM8", verifyLink:"fldfTObVibrzbokcD",
 };
 const D = { name:"fldO3kLf4ThXF2yMA", amt:"fldwUQJrh9QNIOr4L", freq:"fldnzW8Z3m8WtyyK8",
   dstatus:"fldbFqZCHBSRZf02e", stafflink:"fldtMNFYggmi8IbnL", date:"fldzqt7BFCDtQBXZE" };
@@ -170,14 +171,14 @@ async function buildEmails(name){
 
 async function buildApprovals(){
   const staff = await listAll(T_STAFF, [F.name,F.country,F.start,F.salary,F.acct,
-    A.pref,A.budget,A.email,A.age,A.coach,A.coachEmail,A.uplink,A.uplinkEmail,A.lead,A.leadEmail,A.onbNotes,A.onbDate,A.melLink,A.melAppr,A.dirAppr]);
+    A.pref,A.budget,A.email,A.age,A.coach,A.coachEmail,A.uplink,A.uplinkEmail,A.lead,A.leadEmail,A.onbNotes,A.onbDate,A.melLink,A.melAppr,A.dirAppr,F.verified]);
   return staff.filter(r=>{ const c=r.fields||{};
       return sel(c[A.dirAppr])==="Approved" && sel(c[A.melAppr])!=="Approved"; })
     .map(r=>{ const c=r.fields||{};
       return { id:r.id, n:(c[F.name]||"").trim(), also:"", co:sel(c[F.country])||"",
         age:Number(c[A.age])||"", budget:Number(c[A.budget])||0, salary:Number(c[F.salary])||0,
         cedarstone:(c[F.acct]||"").replace(/[^0-9]/g,""), start:fmtDate(c[F.start]||c[A.pref]), met:fmtDate(c[A.onbDate]),
-        email:c[A.email]||"", emailOk:true,
+        email:c[A.email]||"", emailOk:true, verified:!!c[F.verified],
         coach:first1(c[A.coach])||"—", coachEmail:first1(c[A.coachEmail])||"",
         uplink:first1(c[A.uplink])||"—", uplinkEmail:first1(c[A.uplinkEmail])||"",
         lead:first1(c[A.lead])||"—", leadEmail:first1(c[A.leadEmail])||"",
@@ -196,17 +197,17 @@ async function buildCare(){
   const curMK = nowD.getUTCFullYear()*12 + nowD.getUTCMonth();          // this calendar month, as a key
   const mkOf = s => { const t=Date.parse(s); if(!t) return null; const d=new Date(t); return d.getUTCFullYear()*12+d.getUTCMonth(); };
   const [staff, updates, donors] = await Promise.all([
-    listAll(T_STAFF, [F.name,F.country,F.cycle,F.funding,F.status,F.month,F.max,F.paid,F.start,F.archived,C.coach,C.weeks,C.pct,A.uplink,A.lead]),
+    listAll(T_STAFF, [F.name,F.country,F.cycle,F.funding,F.status,F.month,F.max,F.paid,F.start,F.archived,F.stopAll,F.withhold,C.coach,C.weeks,C.pct,A.uplink,A.lead]),
     listAll(T_UPD, [U.name,U.asks,U.mtgs,U.partners,U.hours,U.coachMtg,U.comments,...FREQ]),
     listAll(T_DONORS, [D.name,D.amt,D.freq,D.dstatus,D.stafflink,D.date]),
   ]);
   const cohort = staff.filter(r=>{ const c=r.fields||{};
-    // "Active" is defined by TENURE, not a hardcoded grant cycle: a person shows under
-    // their coach once they've started (month >= 1) and until they pass 18 months in MPD.
-    // Anyone the directors marked Finished, or who's been archived, drops off. This is
-    // what keeps long-tenured (18+ month) people out of the coaches' active rosters.
+    // "Active" is defined by TENURE: a person shows under their coach once they've started
+    // (month >= 1) and until they pass 18 months in MPD, unless the directors marked Finished.
+    // Archived people are KEPT here (flagged archived:true) so the app can still *show* that
+    // they're archived — the app leaves them out of the active stats and rosters itself.
     const mo=Number(c[F.month])||0;
-    return mo>=1 && mo<=18 && sel(c[F.status])!=="Finished" && !c[F.archived];
+    return mo>=1 && mo<=18 && sel(c[F.status])!=="Finished";
   });
   const byStaff={};
   for(const u of updates){ const c=u.fields||{}; const link=c[U.name]||[]; const sid=link[0]; if(!sid) continue;
@@ -268,6 +269,7 @@ async function buildCare(){
       ft:sel(c[F.funding])||"Grant", ps:sel(c[F.status])||"",
       asks, mtgs, yes, monthly, onetime, hours:Math.round(hours), weeks:win.length, coachMet, daysSince, note,
       last, overall, lastDate,
+      archived: !!c[F.archived], paused: !!c[F.stopAll], withhold: !!c[F.withhold],
       moAmt, goal, series, newMonthly, contMonthly, pendMonthly, otherConfirmed };
   });
   const coaches={};

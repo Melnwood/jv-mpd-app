@@ -11,6 +11,12 @@
   to = "/.netlify/functions/notes"
   status = 200
 
+# New-staff email verification -> the verify function (token stays server-side)
+[[redirects]]
+  from = "/api/verify"
+  to = "/.netlify/functions/verify"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
