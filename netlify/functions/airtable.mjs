@@ -17,6 +17,7 @@ const F = {
   max:"fldd2WBCcqqs6tuHf", acct:"flddjBMi71O1qpskH", paid:"fldJp3vB8ngxj5gyA",
   curPay:"fldovmz5RURLvS3wf", curSub:"fldjAH4OECgBQjgw9",
   funding:"fld3ZAimtplTJ9vIL", status:"fld0xauS1j40Pb74f",
+  archived:"fldpY0BNnRumsAUaK", withhold:"fldsduAUEEkSrdo90", stopAll:"fld0glJQgD1jho55Z",
 };
 const D = { name:"fldO3kLf4ThXF2yMA", amt:"fldwUQJrh9QNIOr4L", freq:"fldnzW8Z3m8WtyyK8",
   dstatus:"fldbFqZCHBSRZf02e", stafflink:"fldtMNFYggmi8IbnL" };
@@ -72,10 +73,10 @@ const sel = v => (v && typeof v==="object") ? v.name : v;
 
 async function buildPayout(){
   // staff in the current 2025-26 grant cycle, plus anyone flagged Support-only
-  const staff = await listAll(T_STAFF, [F.name,F.country,F.cycle,F.start,F.month,F.salary,F.max,F.acct,F.paid,F.curPay,F.curSub,F.funding,F.status]);
+  const staff = await listAll(T_STAFF, [F.name,F.country,F.cycle,F.start,F.month,F.salary,F.max,F.acct,F.paid,F.curPay,F.curSub,F.funding,F.status,F.archived,F.withhold,F.stopAll]);
   const cohort = staff.filter(r=>{
     const c = r.fields||{}; const cy = sel(c[F.cycle]);
-    return cy==="2025-26" || sel(c[F.funding])==="Support-only";
+    return (cy==="2025-26" || sel(c[F.funding])==="Support-only");
   });
   // all donors grouped by staff record id
   const donors = await listAll(T_DONORS, [D.name,D.amt,D.freq,D.dstatus,D.stafflink]);
@@ -97,6 +98,10 @@ async function buildPayout(){
                      .map(x=>[(x[D.name]||"").trim(), Number(x[D.amt])||0])
                      .sort((a,b)=>b[1]-a[1]);
     const match = Math.round(givers.reduce((a,g)=>a+g[1],0)*100)/100;
+    // every coach-confirmed gift, with its frequency (Monthly / One Time / Annual / Quarterly)
+    const confirmed = ds.filter(x=>sel(x[D.dstatus])==="Confirmed")
+      .map(x=>({name:(x[D.name]||"").trim(), amt:Number(x[D.amt])||0, freq:sel(x[D.freq])||"One Time"}))
+      .sort((a,b)=>b.amt-a.amt);
     const other = ds.length - givers.length;
     const cur = Number(c[F.curPay])||0;
     const sub = Number(c[F.curSub])||0;
@@ -104,8 +109,9 @@ async function buildPayout(){
     const held = base>0 && !capped && mo<=12 && cur===0;   // waiting on this month's update
     return {
       id:r.id, n:(c[F.name]||"").trim(), co:sel(c[F.country])||"", acct:(c[F.acct]||"").replace(/[^0-9]/g,""),
-      mo, sal, fac, base, match, givers, other, paid, max, capped,
+      mo, sal, fac, base, match, givers, confirmed, other, paid, max, capped,
       nosub: held && sub===0, pend: held && sub>0,
+      archived: !!c[F.archived], withhold: !!c[F.withhold], stopAll: !!c[F.stopAll],
       ft: sel(c[F.funding])||"Grant", ps: sel(c[F.status])||""
     };
   }).sort((a,b)=>a.n.localeCompare(b.n));
@@ -187,14 +193,16 @@ async function buildCare(){
   const WINDOW_MS = 42*864e5;
   const now = Date.now();
   const [staff, updates] = await Promise.all([
-    listAll(T_STAFF, [F.name,F.country,F.cycle,F.funding,F.status,F.month,F.max,F.paid,C.coach,C.weeks,C.pct]),
+    listAll(T_STAFF, [F.name,F.country,F.cycle,F.funding,F.status,F.month,F.max,F.paid,F.archived,C.coach,C.weeks,C.pct]),
     listAll(T_UPD, [U.name,U.asks,U.mtgs,U.partners,U.hours,U.coachMtg,U.comments,...FREQ]),
   ]);
-  const cohort = staff.filter(r=>{ const c=r.fields||{}; const cy=sel(c[F.cycle]);
-    // active fundraisers only: in the current grant cycle (or support-only), still inside the window
-    const paid=Number(c[F.paid])||0, max=Number(c[F.max])||0, mo=Number(c[F.month])||0;
-    const done = (max>0 && paid>=max-1) || mo>12;
-    return (cy==="2025-26" || sel(c[F.funding])==="Support-only") && !done && sel(c[F.status])!=="Finished";
+  const cohort = staff.filter(r=>{ const c=r.fields||{};
+    // "Active" is defined by TENURE, not a hardcoded grant cycle: a person shows under
+    // their coach once they've started (month >= 1) and until they pass 18 months in MPD.
+    // Anyone the directors marked Finished, or who's been archived, drops off. This is
+    // what keeps long-tenured (18+ month) people out of the coaches' active rosters.
+    const mo=Number(c[F.month])||0;
+    return mo>=1 && mo<=18 && sel(c[F.status])!=="Finished" && !c[F.archived];
   });
   const byStaff={};
   for(const u of updates){ const c=u.fields||{}; const link=c[U.name]||[]; const sid=link[0]; if(!sid) continue;
@@ -271,6 +279,9 @@ export default async (req) => {
       if(b.funding!==undefined) fields[F.funding]=b.funding;
       if(b.payout!==undefined)  fields[F.status]=b.payout;
       if(b.maxpay!==undefined)  fields[F.max]=Number(b.maxpay)||0;
+      if(b.archived!==undefined) fields[F.archived]=!!b.archived;
+      if(b.withhold!==undefined) fields[F.withhold]=!!b.withhold;
+      if(b.stopAll!==undefined)  fields[F.stopAll]=!!b.stopAll;
       if(b.approve===true){ fields[A.melAppr]="Approved"; }
       if(!Object.keys(fields).length) return json({error:"nothing to update"},400);
       const r = await fetch(`https://api.airtable.com/v0/${BASE}/${T_STAFF}`, { method:"PATCH", headers:H,

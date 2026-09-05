@@ -296,6 +296,13 @@
   .cs-note svg{flex:none;margin-top:2px;color:var(--muted)}
   .cs-empty{font-size:12.5px;color:var(--muted);padding:6px 0}
   @media(max-width:560px){.cs-fn{grid-template-columns:repeat(3,1fr)}}
+  /* confirmed support, grouped by frequency */
+  .sup-grp{margin-top:12px}.sup-grp:first-child{margin-top:0}
+  .sup-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
+  .sup-h span{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--honey-deep)}
+  .sup-h b{font-size:13.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .sup-foot{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-2);line-height:1.6}
+  .sup-foot b{color:var(--ink);font-variant-numeric:tabular-nums}
 
   /* roster — just the names */
   .roster{display:flex;flex-direction:column;gap:2px;margin-top:4px}
@@ -643,6 +650,12 @@
   .pdone{position:relative}
   .pbtn.reactivate{flex:none;font-size:11.5px;padding:6px 11px;margin-left:auto}
   .pbtn.nog{color:var(--ink-2)}
+  .pbtn.warn{color:var(--honey-deep)}.pbtn.warn:hover{border-color:var(--honey-deep);background:var(--honey-soft)}
+  .pbtn.danger{color:var(--flame)}.pbtn.danger:hover{border-color:var(--flame);background:var(--flame-soft)}
+  .pctrl.pctrl-2{margin-top:9px;padding-top:11px;border-top:1px solid var(--line);align-items:center;gap:8px}
+  .pctrl-lab{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-right:2px}
+  .pcard.is-withheld .phead{background:var(--flame-soft)}
+  .pdone.archived{opacity:.72}
   /* csv upload on grant fund */
   .up-drop{display:flex;align-items:center;gap:13px;padding:16px 18px;border:1.6px dashed var(--line);border-radius:14px;cursor:pointer;background:var(--card-2);transition:.15s}
   .up-drop:hover{border-color:var(--pine);background:color-mix(in srgb,var(--pine-soft) 45%,var(--card-2))}
@@ -1233,6 +1246,24 @@ let fundOpen={}, projGrant=12000, projN=8;
 
 /* monthly payout worksheet — restricted. match = coach-confirmed MONTHLY givers only. */
 const PAYOUT=[{"n": "Ben Polgui", "co": "Ukraine", "acct": "410213", "mo": 5, "sal": 1030, "fac": 70, "base": 721.0, "match": 320, "givers": [["Pizhik Dmitro", 112], ["Bilokin Vasil", 50], ["Kulik Valentin", 50], ["Kasparov Andriy", 25], ["Nechuk Valentin", 25], ["Sidorishin Serhiy", 12], ["Vitalik Bakylich", 12], ["Kushnir Olena", 12], ["Anton Meliohin", 12], ["Dariia Kasprova", 10]], "other": 3, "nosub": false, "pend": false, "paid": 6052, "max": 12000, "capped": false, "ft": "Grant", "ps": "Active"}, {"n": "Khrystyna Trush", "co": "Ukraine", "acct": "410210", "mo": 9, "sal": 825, "fac": 30, "base": 247.5, "match": 1208.43, "givers": [["Howard&Carol Rand", 833], ["Ben&Kristy Williams", 83], ["Anastasiia-Mariia Antonyk", 50], ["Zoriana Trush", 45], ["Scott & Kim Cordes", 37], ["Taras&Ira Haidar", 25], ["Victoriia Cherevko", 25], ["Renata&Tim Hinrichs", 25], ["Leszek Procner", 22], ["Hayley Arnold", 20], ["Sofiia&Adrian Yavorski", 17], ["Anastasiia Ponomarenko", 15], ["Sofiia Kosarevych", 11.43]], "other": 14, "nosub": false, "pend": false, "paid": 7523.43, "max": 12000, "capped": false, "ft": "Grant", "ps": "Active"}, {"n": "Danail Ventsislavov", "co": "Bulgaria", "acct": "410211", "mo": 6, "sal": 1474, "fac": 60, "base": 884.4, "match": 0, "givers": [], "other": 1, "nosub": false, "pend": true, "paid": 6485.6, "max": 12000, "capped": false, "ft": "Grant", "ps": "Active"}, {"n": "Capverde Alexandra", "co": "Romania", "acct": "410120", "mo": 11, "sal": 1500, "fac": 10, "base": 150.0, "match": 226, "givers": [["Cristina Paval", 70], ["Levi", 50], ["Mironese Narcisa", 45], ["Anel Jimenez", 25], ["Ardeleanu Vasile-Iulian", 24], ["Iasmin Elena Wagner", 12]], "other": 1, "nosub": true, "pend": false, "paid": 0, "max": 12000, "capped": false, "ft": "Grant", "ps": "Active"}, {"n": "Kayla Śnieżek", "co": "Poland", "acct": "410205", "mo": 12, "sal": 2361, "fac": 0, "base": 0.0, "match": 819, "givers": [["Anna Cieszyńska", 138], ["Nazar Bachuk", 137], ["Angel Noel", 100], ["Slavik i Weronika", 100], ["Adam Procner", 55], ["Sebastian Famulski", 53], ["Brad Janiszewski", 50], ["Agnieszka Biedrzycka-Wierzba", 40], ["Krzysiek Wilkoński", 28], ["Nondu", 27], ["Basia", 26], ["Becca and Jacob Hash", 25], ["Samuel", 14], ["Alicja Ryńska", 14], ["Ania Ryńska", 7], ["Paweł Tadeuszewski", 5]], "other": 8, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Ionuț & Nicoleta Lerca", "co": "Romania", "acct": "410199", "mo": 11, "sal": 2889, "fac": 10, "base": 288.9, "match": 100, "givers": [["Dominik Meili", 100]], "other": 1, "nosub": false, "pend": false, "paid": 18000.0, "max": 18000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Anna Dyka", "co": "Ukraine", "acct": "410204", "mo": 12, "sal": 825, "fac": 0, "base": 0.0, "match": 1385, "givers": [["Daniel and Moriah Johnson", 175], ["Moriah and Daniel Johnson", 175], ["John and Dinah Law", 150], ["Journey church", 65], ["Lee and Katie Humerian", 50], ["Dov Nimratz", 50], ["Ira", 50], ["Pavol and Vladislava Kadlecovy", 50], ["Vladislava Kadlecova", 50], ["Cath Leech", 50], ["Kristy and Ben Williams", 50], ["Sasha Dubovyk", 50], ["Bodya and Yulia", 25], ["Kendra Patty", 25], ["Miguel Silva", 25], ["Nia", 25], ["Nadya Vorobyoba", 25], ["Serhiy Skyba", 25], ["Marc and Olya Meland", 25], ["Jill and Noah Ellenwood", 25], ["Khrystya Trush and Peter Hinrichs", 25], ["Luida Rubtsova", 25], ["Hayley", 25], ["Edyard and Lena Kurat", 25], ["Randi Scott", 20], ["Valeriia Poberezhna", 20], ["Lena and Evan", 20], ["Sofia Ifantidu", 17], ["Sofia Ifantidu", 17], ["Sasha Hordiychuk", 15], ["Max Yakymovych", 11]], "other": 5, "nosub": false, "pend": false, "paid": 6632.5, "max": 12000, "capped": false, "ft": "Grant", "ps": ""}, {"n": "Matouš Krajník", "co": "Czech Republic", "acct": "410203", "mo": 12, "sal": 2164, "fac": 0, "base": 0.0, "match": 367, "givers": [["Jan Chalupa", 98], ["Šimon Ondráček", 80], ["Jakub Šejba", 60], ["Šimon Piksa", 48], ["Štěpánka Krišicová", 48], ["Allen Garuba", 21], ["Lucie Medřická", 12]], "other": 8, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Adam Velebír", "co": "Slovakia", "acct": "410198", "mo": 10, "sal": 2100, "fac": 20, "base": 420.0, "match": 512.43, "givers": [["The Branch Church", 300], ["Emília Velebírová", 58.93], ["Anna Velebírová", 57], ["Samuel Foľta", 34], ["Tomáš Valocký", 34], ["Anna Grešová", 12], ["Kristína Marková", 11.5], ["Erika Petrášová", 5]], "other": 3, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Vanesa Verčimáková", "co": "Slovakia", "acct": "410208", "mo": 10, "sal": 2040, "fac": 20, "base": 408.0, "match": 1490.91, "givers": [["Michal Pončák", 118.53], ["Michal Pončák", 118.53], ["Danka Surmiková", 117.32], ["Slavomír Verčimák", 116.21], ["Isaac Dolan", 100], ["Miroslav Hricko", 93.57], ["Pavol Garaj", 92.09], ["Oliver a Laura Slivkovci", 92], ["Kristína Vyhonská", 58.93], ["Ivana Argayova", 58.41], ["Matúš Poloha", 58.1], ["Peter a Anna Urbancovci", 58.1], ["Lýdia Kerestešová", 58], ["Branislav Puzder", 35.56], ["Branislav Puzder", 35.56], ["Marek Mačuga", 35.52], ["Alexandra Motyľ", 34.91], ["Peter Korinek", 29.6], ["Jana Olejárová", 29.1], ["Aneta Kišová", 28.75], ["Viktoria Timkova", 23.68], ["Natália Hadbavná", 23.18], ["Viktor Šimco", 23.13], ["Michal Pasierb", 17.25], ["Kristína Sedláková", 11.79], ["Andrea Jakubčinová", 11.59], ["Anna Petrušková", 11.5]], "other": 1, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Patryk Gąsior", "co": "Poland", "acct": "410202", "mo": 11, "sal": 2361, "fac": 10, "base": 236.1, "match": 1605.02, "givers": [["Jennone  Casser", 250], ["Grantma Ash", 250], ["Kyle Williams", 200], ["church", 200], ["Dustin and Lindsay Ash", 100], ["Dustin Ash", 100], ["Redelsperdel", 100], ["Hamm", 100], ["Abby Glasser", 50], ["Jess", 50], ["Janice", 50], ["Amelia", 41.41], ["Jagoda", 27.61], ["Polina", 27], ["Graham Chambers", 25], ["Karina", 14], ["Sniegon", 10], ["Aneta&Tomek", 10]], "other": 4, "nosub": false, "pend": false, "paid": 12000.0, "max": 12000, "capped": true, "ft": "Grant", "ps": ""}, {"n": "Zuzana Belancová", "co": "Slovakia", "acct": "410207", "mo": 12, "sal": 2040, "fac": 0, "base": 0.0, "match": 309.66, "givers": [["Žák", 117.53], ["Patrik Čeginik", 116.78], ["Cathy Cook", 25.15], ["Lydia, Adam Rajčan", 23.46], ["Meščan", 15], ["Valentína Kuceljová", 11.74]], "other": 4, "nosub": true, "pend": false, "paid": 0, "max": 12000, "capped": false, "ft": "Grant", "ps": ""}];
+/* Demo: coach-confirmed support broken out by type (live site gets p.confirmed from the function).
+   A few people get baked one-time/annual gifts so the breakdown is visible offline; the rest derive
+   from their monthly givers. */
+const DEMO_EXTRA={
+ "Khrystyna Trush":[["Peterson family",5000,"One Time"],["Grace Fellowship",1200,"Annual"]],
+ "Kayla Śnieżek":[["A friend's parents",600,"One Time"],["Kraków Community Church",900,"Annual"]],
+ "Ben Polgui":[["A local business",300,"One Time"],["Lviv Church",480,"Annual"]],
+};
+PAYOUT.forEach(p=>{
+  if(!Array.isArray(p.confirmed)){
+    const mo=(p.givers||[]).map(g=>({name:g[0],amt:g[1],freq:"Monthly"}));
+    const ex=(DEMO_EXTRA[p.n]||[]).map(x=>({name:x[0],amt:x[1],freq:x[2]}));
+    p.confirmed=mo.concat(ex);
+  }
+  if(p.archived===undefined) p.archived=false;
+  if(p.withhold===undefined) p.withhold=false;
+  if(p.stopAll===undefined)  p.stopAll=false;
+});
 /* director controls: per-staff status override active|paused|finished; window rule = month>12 leaves active */
 let payoutOpen={}, payoutStatus={}, LIVE=false;
 /* Pull live payout data from the Netlify function (which reads Airtable server-side).
@@ -1260,12 +1291,16 @@ function payoutAuto(p){ if(p.mo>12) return 'ended'; if(p.capped) return 'finishe
 /* Source of truth = Airtable fields Funding Type (p.ft) + Payout Status (p.ps).
    A director action this session (payoutStatus[name]) overrides until it's written back. */
 function payoutStat(p){
+  if(p.archived) return 'archived';
+  if(p.stopAll) return 'paused';
   if(payoutStatus[p.n]) return payoutStatus[p.n];
   if(p.ft==='Support-only') return 'support';
   if(p.ps==='Paused') return 'paused';
   if(p.ps==='Finished') return 'finished';
   return payoutAuto(p);
 }
+/* Any staff who is archived — excluded from every stat, roster, and care cohort. */
+function isArchivedName(n){ return PAYOUT.some(p=>p.archived && norm(p.n)===norm(n)); }
 
 const rolesNav=document.getElementById("roles");
 rolesNav.innerHTML=ROLES.map(r=>`<button class="role" data-r="${r.id}"><span class="ic" style="display:flex">${ic(r.icon,17)}</span>${r.label}</button>`).join("");
@@ -1277,7 +1312,7 @@ const uniq=a=>[...new Set(a)];
 function buildId(){
   const lab=document.getElementById("idlabel");let opts=[];
   if(role==="mel"){lab.textContent="Signed in as";opts=["Mel Ellenwood"];}
-  else if(role==="staff"){lab.textContent="I am";opts=S.map(s=>s.n);}
+  else if(role==="staff"){lab.textContent="I am";opts=S.filter(s=>!isArchivedName(s.n)).map(s=>s.n);}
   else if(role==="coach"){lab.textContent="Coach";opts=uniq(S.map(s=>s.coach)).sort();}
   else if(role==="uplink"){lab.textContent="Uplink";opts=uniq(S.map(s=>s.uplink)).sort();}
   else if(role==="leader"){lab.textContent="Country";opts=uniq(S.map(s=>s.co)).sort();}
@@ -1523,15 +1558,34 @@ function coachDirPanel(coach){
 }
 function normName(x){ return (x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim(); }
 function findPayout(sel){ return PAYOUT.find(p=>p.n===sel.n) || PAYOUT.find(p=>normName(p.n)===normName(sel.n)) || null; }
+/* all coach-confirmed support, grouped by frequency (monthly recurring = the match; one-time / annual / quarterly = one-off) */
+function supportBreakdown(confirmed){
+  confirmed=confirmed||[];
+  if(!confirmed.length) return `<div class="cs-empty">No coach-confirmed support logged yet.</div>`;
+  const ORDER=[["Monthly","Monthly — recurring","/mo",true],["One Time","One-time","",false],["Annual","Annual","",false],["Quarterly","Quarterly","",false]];
+  const groups={}; confirmed.forEach(g=>{ (groups[g.freq]=groups[g.freq]||[]).push(g); });
+  let html=""; let moTot=0,oneTot=0,annTot=0,qTot=0;
+  const seen={};
+  ORDER.forEach(([freq,label,suffix,isMo])=>{ const arr=groups[freq]; seen[freq]=1; if(!arr||!arr.length) return;
+    const sub=arr.reduce((a,g)=>a+g.amt,0);
+    if(freq==="Monthly")moTot=sub; else if(freq==="Annual")annTot+=sub; else if(freq==="Quarterly")qTot+=sub; else oneTot+=sub;
+    html+=`<div class="sup-grp"><div class="sup-h"><span>${label}${isMo?' &middot; the match':''}</span><b>${money(sub)}${suffix}</b></div>`
+      +`<div class="cs-givers">${arr.slice().sort((a,b)=>b.amt-a.amt).map(g=>`<div class="cs-giver"><span>${(g.name||'').replace(/</g,'&lt;')}</span><b>${money(g.amt)}</b></div>`).join("")}</div></div>`;
+  });
+  Object.keys(groups).forEach(freq=>{ if(seen[freq])return; const arr=groups[freq]; const sub=arr.reduce((a,g)=>a+g.amt,0); oneTot+=sub;
+    html+=`<div class="sup-grp"><div class="sup-h"><span>${freq}</span><b>${money(sub)}</b></div><div class="cs-givers">${arr.map(g=>`<div class="cs-giver"><span>${(g.name||'').replace(/</g,'&lt;')}</span><b>${money(g.amt)}</b></div>`).join("")}</div></div>`; });
+  const bits=[]; if(moTot)bits.push(`<b>${money(moTot)}/mo</b> recurring`); if(oneTot)bits.push(`<b>${money(oneTot)}</b> one-time`); if(annTot)bits.push(`<b>${money(annTot)}</b> annual`); if(qTot)bits.push(`<b>${money(qTot)}</b> quarterly`);
+  html+=`<div class="sup-foot">${bits.join(' &middot; ')}</div>`;
+  return html;
+}
 /* a person-page accordion: shut by default, clear header, click to open/close */
 function pAcc(key,title,summary,body){ const open=csOpen[key];
   return `<div class="pa ${open?'open':''}"><button class="pa-h" data-cs="${key}"><span class="pa-title">${title}</span>${summary?`<span class="pa-sum">${summary}</span>`:''}<span class="pa-chev">${ic('chevron',16)}</span></button>${open?`<div class="pa-b">${body}</div>`:''}</div>`; }
 /* full-page view of one staff person the coach is walking with */
 function coachPersonPage(sel){
   const dx=sDx(sel), p=findPayout(sel), givers=p?p.givers:[], match=p?p.match:0, fn=sel.fn, pace=Math.round(sel.tgt/11);
-  const giversHtml = givers.length
-    ? `<div class="cs-givers">${givers.map(g=>`<div class="cs-giver"><span>${g[0]}</span><b>${money(g[1])}</b></div>`).join("")}<div class="cs-giver tot"><span>${givers.length} giving monthly</span><b>${money(match)}</b></div></div>`
-    : `<div class="cs-empty">No coach-confirmed monthly givers logged this month yet.</div>`;
+  const confirmed = Array.isArray(p&&p.confirmed) ? p.confirmed : givers.map(g=>({name:g[0],amt:g[1],freq:"Monthly"}));
+  const giversHtml = supportBreakdown(confirmed);
   const reports = fn.weeks
     ? `<div class="cs-fn"><div class="cs-fc"><b>${fn.asks}</b><span>Asks</span></div><div class="cs-fc"><b>${fn.mtgs}</b><span>Meetings</span></div><div class="cs-fc"><b>${fn.yes}</b><span>Yeses</span></div><div class="cs-fc"><b>${fn.monthly}</b><span>Monthly</span></div><div class="cs-fc"><b>${fn.hours}</b><span>Hours</span></div><div class="cs-fc"><b>${fn.weeks}</b><span>weeks</span></div></div>${fn.note?`<div class="cs-note">${ic('message',13)}<span>“${(fn.note||'').replace(/</g,'&lt;')}”</span></div>`:''}`
     : `<div class="cs-empty">No weekly reports in the last stretch — reaching out is the first step.</div>`;
@@ -1558,7 +1612,7 @@ function coachPersonPage(sel){
       <div class="pp-main">
         ${pAcc('meeting','Coaching meeting &amp; questions', mlog?mlog+' logged':'', coachMeetings(sel.n))}
         ${pAcc('reports','Weekly report stats', fn.weeks?fn.asks+' asks · '+fn.monthly+' monthly':'no recent update', reports)}
-        ${pAcc('givers',"Who's giving this month", givers.length?givers.length+' · '+money(match):'none yet', giversHtml)}
+        ${pAcc('givers','Confirmed support', confirmed.length?money(confirmed.filter(g=>g.freq==='Monthly').reduce((a,g)=>a+g.amt,0))+'/mo · '+confirmed.length+' gifts':'none yet', giversHtml)}
       </div>
       <div class="pp-side">
         <div class="pp-card pp-msg"><div class="pp-ch"><span>Message ${sel.first}</span>${tc?`<span class="pp-cs">${tc}</span>`:''}</div>${chatPanel(sel,"coach")}</div>
@@ -1569,7 +1623,7 @@ function coachPersonPage(sel){
   </div>`;
 }
 function viewCoach(){
-  const mine=S.filter(s=>s.coach===who).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]);
+  const mine=S.filter(s=>s.coach===who&&!isArchivedName(s.n)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]);
   const sel=chatWith && mine.find(s=>s.n===chatWith);
   if(personOpen && sel) return coachPersonPage(sel);
   const th=(coachThreads[who]||[]).length;
@@ -1590,7 +1644,7 @@ function viewCoach(){
 
 /* ===== UPLINK ===== */
 function viewUplink(){
-  const mine=S.filter(s=>s.uplink===who).sort((a,b)=>b.risk-a.risk);
+  const mine=S.filter(s=>s.uplink===who&&!isArchivedName(s.n)).sort((a,b)=>b.risk-a.risk);
   return `<div style="margin-bottom:4px"><div class="eyebrow">${who}'s people</div><h2 style="font-size:19px">Walking alongside ${mine.length} on the journey</h2></div>
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">Thriving</div><div class="v" style="color:var(--pine-deep)">${mine.filter(s=>s.lvl==="Healthy").length}<small>/${mine.length}</small></div><div class="f">funded & steady</div></div>
@@ -1609,7 +1663,7 @@ function viewUplink(){
 
 /* ===== COUNTRY LEADER ===== */
 function viewLeader(){
-  const mine=S.filter(s=>s.co===who).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]),lead=mine[0]?.lead||"—";
+  const mine=S.filter(s=>s.co===who&&!isArchivedName(s.n)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]),lead=mine[0]?.lead||"—";
   return `<div style="margin-bottom:4px"><div class="eyebrow">${who} · led by ${lead}</div><h2 style="font-size:19px">Our team's support raising</h2></div>
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">On the journey</div><div class="v">${mine.length}</div><div class="f">active in ${who}</div></div>
@@ -1665,7 +1719,7 @@ function sDx(s){ return diagnose(sFn(s)); }
 /* baked S -> the same {coach, staff:[person]} shape the live care endpoint returns */
 function bakedCare(){
   const g={};
-  S.forEach(s=>{ const p={n:s.n,co:s.co,coach:s.coach,mo:s.mo,wk:s.wk,pct:s.pct,ft:'Grant',ps:'',
+  S.forEach(s=>{ if(isArchivedName(s.n)) return; const p={n:s.n,co:s.co,coach:s.coach,mo:s.mo,wk:s.wk,pct:s.pct,ft:'Grant',ps:'',
     asks:s.fn.asks,mtgs:s.fn.mtgs,yes:s.fn.yes,monthly:s.fn.monthly,onetime:s.fn.onetime,
     hours:s.fn.hours,weeks:s.fn.weeks,coachMet:s.fn.coachMet,daysSince:s.fn.daysSince,note:s.fn.note};
     (g[s.coach]=g[s.coach]||[]).push(p); });
@@ -1853,29 +1907,45 @@ function wireFund(scope){
 
 /* ===== monthly payout worksheet (restricted) ===== */
 function m2(v){return "$"+v.toLocaleString(undefined,{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});}
-function payoutHeld(p){ return p.nosub||p.pend||payoutStat(p)==='paused'; }
+function payoutHeld(p){ return p.nosub||p.pend||p.withhold||p.stopAll||payoutStat(p)==='paused'; }
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
 function sMatch(name){ return S.find(s=>norm(s.n)===norm(name)); }
 function payoutView(){
   const active=PAYOUT.filter(p=>['active','paused'].includes(payoutStat(p)));
   const done=PAYOUT.filter(p=>['finished','ended'].includes(payoutStat(p))).sort((a,b)=>b.paid-a.paid);
   const support=PAYOUT.filter(p=>payoutStat(p)==='support');
+  const archived=PAYOUT.filter(p=>p.archived);
   let gT=0,mT=0,tT=0;
   active.forEach(p=>{if(!payoutHeld(p)){gT+=p.base;mT+=p.match;tT+=p.base+p.match;}});
   const cards=active.map(p=>{
-    const i=PAYOUT.indexOf(p), st=payoutStat(p), paused=st==='paused', total=p.base+p.match, open=payoutOpen[i];
+    const i=PAYOUT.indexOf(p), st=payoutStat(p), stopAll=!!p.stopAll, withheld=!!p.withhold && !stopAll, paused=st==='paused'&&!stopAll, total=p.base+p.match, open=payoutOpen[i];
     const rows=p.givers.length?p.givers.map(g=>`<div class="pg-row"><span class="pg-n">${g[0]}</span><span class="pg-a">${m2(g[1])}</span></div>`).join("")
       :`<div class="pg-row"><span class="pg-n" style="color:var(--muted)">No coach-confirmed monthly givers yet.</span></div>`;
-    const banner = paused
+    const banner = stopAll
+      ? `<div class="pay-hold paused">${ic('info',15)} Everything paused for this person — no payout, and all emails &amp; automations are off until resumed.</div>`
+      : withheld
+      ? `<div class="pay-hold nosub">${ic('info',15)} Not paid this month — requirements weren't met. This is a one-month hold; it clears next month unless set again.</div>`
+      : paused
       ? `<div class="pay-hold paused">${ic('info',15)} Paused by the MPD directors — no payout runs until resumed.</div>`
       : p.nosub ? `<div class="pay-hold nosub">${ic('info',15)} Not submitting weekly updates — payout on hold until they resume.</div>`
       : p.pend ? `<div class="pay-hold pend">${ic('clock',15)} Pending until this month's MPD update is in and the giver is coach-confirmed.</div>` : "";
-    const amt = paused?`<span class="pamt"><b style="color:var(--muted)">Paused</b><span>held</span></span>`
+    const amt = stopAll?`<span class="pamt"><b style="color:var(--muted)">Paused</b><span>all off</span></span>`
+      : withheld?`<span class="pamt"><b style="color:var(--flame)">Not paid</b><span>this month</span></span>`
+      : paused?`<span class="pamt"><b style="color:var(--muted)">Paused</b><span>held</span></span>`
       : `<span class="pamt"><b>${money(total)}</b><span>this month</span></span>`;
-    const controls = paused
-      ? `<div class="pctrl"><button class="pbtn resume" data-pstat="active" data-pn="${p.n}">${ic('check',14)} Resume payouts</button><button class="pbtn fin" data-pstat="finished" data-pn="${p.n}">Mark finished</button><button class="pbtn nog" data-pstat="support" data-pn="${p.n}">No grant</button></div>`
-      : `<div class="pctrl"><button class="pbtn pause" data-pstat="paused" data-pn="${p.n}">${ic('clock',14)} Pause</button><button class="pbtn fin" data-pstat="finished" data-pn="${p.n}">${ic('check',14)} Mark finished</button><button class="pbtn nog" data-pstat="support" data-pn="${p.n}">No grant (support-only)</button></div>`;
-    return `<div class="pcard ${open?'open':''} ${paused?'is-paused':''}">
+    const payCtrl = paused
+      ? `<button class="pbtn resume" data-pstat="active" data-pn="${p.n}">${ic('check',14)} Resume payouts</button><button class="pbtn fin" data-pstat="finished" data-pn="${p.n}">Mark finished</button><button class="pbtn nog" data-pstat="support" data-pn="${p.n}">No grant</button>`
+      : `<button class="pbtn pause" data-pstat="paused" data-pn="${p.n}">${ic('clock',14)} Pause payouts</button><button class="pbtn fin" data-pstat="finished" data-pn="${p.n}">${ic('check',14)} Mark finished</button><button class="pbtn nog" data-pstat="support" data-pn="${p.n}">No grant (support-only)</button>`;
+    const monthCtrl = withheld
+      ? `<button class="pbtn resume" data-pact="unwithhold" data-pn="${p.n}">${ic('check',14)} Undo — pay this month</button>`
+      : `<button class="pbtn warn" data-pact="withhold" data-pn="${p.n}">${ic('info',14)} No pay this month (requirements not met)</button>`;
+    const allCtrl = stopAll
+      ? `<button class="pbtn resume" data-pact="resumeall" data-pn="${p.n}">${ic('check',14)} Resume everything</button>`
+      : `<button class="pbtn danger" data-pact="pauseall" data-pn="${p.n}">${ic('info',14)} Pause everything (payout + emails)</button>`;
+    const controls = `<div class="pctrl">${payCtrl}</div>
+      <div class="pctrl pctrl-2"><span class="pctrl-lab">This month</span>${monthCtrl}</div>
+      <div class="pctrl pctrl-2"><span class="pctrl-lab">Whole account</span>${allCtrl}<button class="pbtn danger" data-pact="archive" data-pn="${p.n}">${ic('info',14)} Archive (they're done)</button></div>`;
+    return `<div class="pcard ${open?'open':''} ${(paused||stopAll)?'is-paused':''} ${withheld?'is-withheld':''}">
       <button class="phead" data-pay="${i}">
         <span class="av t-good">${initials(p.n)}</span>
         <span class="pwho"><b>${p.n}</b><span>${p.co} &middot; #${p.acct} &middot; month ${p.mo} of 12</span></span>
@@ -1929,6 +1999,11 @@ function payoutView(){
   <div class="pdone-wrap">${supportHtml}</div>`:''}
   <div class="sec-head" style="margin-top:20px"><div><div class="eyebrow">No payout — window ended, finished or complete</div><h2 style="font-size:17px">Off the active window</h2></div></div>
   <div class="pdone-wrap">${doneHtml||'<div class="empty-chat">No one here yet.</div>'}</div>
+  ${archived.length?`<div class="sec-head" style="margin-top:20px"><div><div class="eyebrow">Done and archived — out of every stat and roster</div><h2 style="font-size:17px">Archived staff</h2></div></div>
+  <div class="pdone-wrap">${archived.map(p=>`<div class="pdone archived"><span class="av t-mute">${initials(p.n)}</span>
+      <span class="pwho"><b>${p.n}</b><span>${p.co} &middot; #${p.acct} &middot; archived — not counted anywhere</span></span>
+      <span class="pdt nog">${ic('info',12)} Archived</span>
+      <button class="pbtn reactivate" data-pact="unarchive" data-pn="${p.n}">Unarchive</button></div>`).join("")}</div>`:''}
   <div class="pay-foot">Only monthly recurring gifts marked <b>Confirmed</b> by the coach count toward the match. Grant is salary &times; the month's declining share (100, 100, 90&hellip;0%). Anyone past <b>month 12</b> leaves the active window automatically. A <b>support-only</b> person raises their own support and receives <b>no grant money</b> — they still do their weekly updates and homework, but never appear in a payout or draw from the grant fund. Totals exclude anyone held, paused or support-only.</div>`;
 }
 function payoutPrint(active){
@@ -1957,6 +2032,21 @@ function wirePayout(scope){
     } else {
       if(s==='active' && payoutAuto(p)==='active') delete payoutStatus[n]; else payoutStatus[n]=s;
       render();
+    }
+  });
+  scope.querySelectorAll("[data-pact]").forEach(b=>b.onclick=(e)=>{e.stopPropagation();
+    const n=b.dataset.pn, act=b.dataset.pact, p=PAYOUT.find(x=>x.n===n); if(!p) return;
+    const body={id:p.id};
+    if(act==='withhold'){ p.withhold=true; body.withhold=true; }
+    else if(act==='unwithhold'){ p.withhold=false; body.withhold=false; }
+    else if(act==='pauseall'){ p.stopAll=true; body.stopAll=true; }
+    else if(act==='resumeall'){ p.stopAll=false; body.stopAll=false; }
+    else if(act==='archive'){ p.archived=true; body.archived=true; }
+    else if(act==='unarchive'){ p.archived=false; body.archived=false; }
+    render();
+    if(LIVE && p.id){
+      fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+        .then(r=>{if(!r.ok)throw 0;}).catch(()=>{alert('Saved locally, but couldn’t reach Airtable to persist that change. Try again.');});
     }
   });
   // (re)build the one-page print sheet at the body level so it prints alone
@@ -1989,12 +2079,12 @@ function dirCoachChat(coach){
     <div class="whoami">as Dave &amp; Geri · MPD directors</div></div>`;
 }
 function dirCoaches(){
-  const coaches={}; S.forEach(s=>(coaches[s.coach]=coaches[s.coach]||[]).push(s));
+  const coaches={}; S.forEach(s=>{ if(isArchivedName(s.n)) return; (coaches[s.coach]=coaches[s.coach]||[]).push(s); });
   const entries=Object.entries(coaches).map(([c,list])=>[c,list,coachRead(list)])
     .sort((a,b)=>({crit:0,warn:1,good:2}[a[2].tone]-{crit:0,warn:1,good:2}[b[2].tone]) || b[1].length-a[1].length);
   if(!coachChat||!coaches[coachChat]) coachChat=entries[0]?.[0];
   const support=entries.filter(e=>e[2].tone!=="good").length;
-  const totalStaff=S.length;
+  const totalStaff=entries.reduce((a,e)=>a+e[1].length,0);
   const cards=entries.map(([c,list,read],i)=>{
     const open=coachOpen[i];
     const segs=list.map(sDx).sort((a,b)=>DXO[a.tone]-DXO[b.tone]).map(d=>`<span style="width:${100/list.length}%;background:${dxCol[d.tone]}"></span>`).join("");
