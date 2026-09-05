@@ -229,6 +229,19 @@ async function buildCare(){
     const lastT=ups[0]?.t||0, daysSince = lastT? Math.floor((now-lastT)/864e5) : 999;
     let pct=Number(c[C.pct])||0; if(pct>1.5) pct=pct/100;
 
+    // ----- report stats: the single MOST RECENT week, and ALL-TIME overall totals -----
+    const iso = t => t ? new Date(t).toISOString().slice(0,10) : "";
+    const monCount = u => { let m=0; for(const f of FREQ){ const v=sel(u[f]); if(v && /month/i.test(v)) m++; } return m; };
+    const lu = ups[0] ? ups[0].c : null;
+    const last = lu ? { date:iso(ups[0].t), asks:Number(lu[U.asks])||0, mtgs:Number(lu[U.mtgs])||0,
+      yes:Number(lu[U.partners])||0, hours:Number(lu[U.hours])||0, monthly:monCount(lu) } : null;
+    let oA=0,oM=0,oY=0,oH=0,oMo=0;
+    for(const x of ups){ const u=x.c; oA+=Number(u[U.asks])||0; oM+=Number(u[U.mtgs])||0;
+      oY+=Number(u[U.partners])||0; oH+=Number(u[U.hours])||0; oMo+=monCount(u); }
+    const overall = { asks:oA, mtgs:oM, yes:oY, hours:Math.round(oH), monthly:oMo,
+      count:ups.length, since: ups.length ? iso(ups[ups.length-1].t) : "" };
+    const lastDate = last ? last.date : "";
+
     // ----- donor detail: monthly partners split into NEW-this-month / CONTINUING / PENDING -----
     const startMK = mkOf(c[F.start]);
     const mo = Number(c[F.month])||0;
@@ -254,6 +267,7 @@ async function buildCare(){
       mo, wk:Math.round(Number(c[C.weeks])||0), pct:Math.round(pct*100)/100,
       ft:sel(c[F.funding])||"Grant", ps:sel(c[F.status])||"",
       asks, mtgs, yes, monthly, onetime, hours:Math.round(hours), weeks:win.length, coachMet, daysSince, note,
+      last, overall, lastDate,
       moAmt, goal, series, newMonthly, contMonthly, pendMonthly, otherConfirmed };
   });
   const coaches={};

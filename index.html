@@ -296,6 +296,13 @@
   .cs-note svg{flex:none;margin-top:2px;color:var(--muted)}
   .cs-empty{font-size:12.5px;color:var(--muted);padding:6px 0}
   @media(max-width:560px){.cs-fn{grid-template-columns:repeat(3,1fr)}}
+  /* report stats: this-week block + overall block */
+  .rs-block{margin-top:14px}.rs-block:first-child{margin-top:2px}
+  .rs-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:7px}
+  .rs-h span:first-child{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--honey-deep)}
+  .rs-date{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .rs-fn{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  @media(max-width:560px){.rs-fn{grid-template-columns:repeat(3,1fr)}}
   /* confirmed support, grouped by frequency */
   .sup-grp{margin-top:12px}.sup-grp:first-child{margin-top:0}
   .sup-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
@@ -1662,15 +1669,44 @@ function monthlyPartners(sel,d){
   }
   return h;
 }
+/* report stats: the single most-recent week + all-time overall. Live rows carry sel.last/sel.overall;
+   baked/demo rows synthesize both from the ~6-week window so the preview still reads right. */
+function reportStats(sel){
+  const fn=sel.fn||{};
+  if(sel.last || sel.overall) return { last:sel.last, overall:sel.overall, lastDate:sel.lastDate||(sel.last&&sel.last.date)||"" };
+  const wk=Math.max(1,fn.weeks||1), per=k=>Math.round((fn[k]||0)/wk);
+  const last={ asks:per('asks'), mtgs:per('mtgs'), yes:per('yes'), monthly:Math.round((fn.monthly||0)/wk), hours:per('hours') };
+  const wProg=Math.max(wk, Math.round((sel.mo||1)*4.33)), scale=k=>Math.round((fn[k]||0)/wk*wProg);
+  const overall={ asks:scale('asks'), mtgs:scale('mtgs'), yes:scale('yes'), monthly:scale('monthly'), hours:scale('hours'), count:wProg, since:'' };
+  let lastDate=''; if(fn.daysSince!=null && fn.daysSince<900) lastDate=new Date(Date.now()-fn.daysSince*864e5).toISOString().slice(0,10);
+  return { last, overall, lastDate };
+}
+function statCells(o){ const c=[['Asks',o.asks],['Meetings',o.mtgs],['Yeses',o.yes],['Monthly',o.monthly],['Hours',o.hours]];
+  return `<div class="rs-fn">${c.map(([l,v])=>`<div class="cs-fc"><b>${v==null?'—':v}</b><span>${l}</span></div>`).join('')}</div>`; }
+function reportStatsBody(sel){
+  const rs=reportStats(sel), fn=sel.fn||{};
+  if(!rs.last && !fn.weeks) return `<div class="cs-empty">No weekly reports yet — reaching out is the first step.</div>`;
+  const l=rs.last||{asks:0,mtgs:0,yes:0,monthly:0,hours:0};
+  const o=rs.overall||{asks:0,mtgs:0,yes:0,monthly:0,hours:0,count:0,since:''};
+  return `<div class="rs-block">
+      <div class="rs-h"><span>${ic('send',13)} This last week</span>${rs.lastDate?`<span class="rs-date">${fmtEmailDate(rs.lastDate)}</span>`:''}</div>
+      ${statCells(l)}
+      ${fn.note?`<div class="cs-note">${ic('message',13)}<span>“${(fn.note||'').replace(/</g,'&lt;')}”</span></div>`:''}
+    </div>
+    <div class="rs-block">
+      <div class="rs-h"><span>${ic('scope',13)} Overall${o.count?` · ${o.count} report${o.count===1?'':'s'}`:''}</span>${o.since?`<span class="rs-date">since ${fmtEmailDate(o.since)}</span>`:''}</div>
+      ${statCells(o)}
+    </div>`;
+}
 /* full-page view of one staff person the coach is walking with */
 function coachPersonPage(sel){
   const dx=sDx(sel), fn=sel.fn, pace=Math.round(sel.tgt/11);
   const pd=partnersData(sel);
   const matchNew=pd.neu.reduce((a,g)=>a+(g.amt||0),0);
   const giversSum=(money(matchNew)+'/mo matched')+(pd.pend.length?` · ${pd.pend.length} to approve`:'');
-  const reports = fn.weeks
-    ? `<div class="cs-fn"><div class="cs-fc"><b>${fn.asks}</b><span>Asks</span></div><div class="cs-fc"><b>${fn.mtgs}</b><span>Meetings</span></div><div class="cs-fc"><b>${fn.yes}</b><span>Yeses</span></div><div class="cs-fc"><b>${fn.monthly}</b><span>Monthly</span></div><div class="cs-fc"><b>${fn.hours}</b><span>Hours</span></div><div class="cs-fc"><b>${fn.weeks}</b><span>weeks</span></div></div>${fn.note?`<div class="cs-note">${ic('message',13)}<span>“${(fn.note||'').replace(/</g,'&lt;')}”</span></div>`:''}`
-    : `<div class="cs-empty">No weekly reports in the last stretch — reaching out is the first step.</div>`;
+  const rs=reportStats(sel);
+  const reports = reportStatsBody(sel);
+  const reportsSum = rs.lastDate ? ('last report '+fmtEmailDate(rs.lastDate)) : (fn.weeks?fn.asks+' asks · '+fn.monthly+' monthly':'no reports yet');
   const vals=(sel.series||[]).slice(0,11), hit=vals.filter(v=>v>=pace).length;
   const mlog=Array.isArray(meetLog[sel.n])?meetLog[sel.n].length:0, tc=(threads[sel.n]||[]).length;
   return `<div class="pp">
@@ -1696,7 +1732,7 @@ function coachPersonPage(sel){
 
     <div class="pp-main" style="margin-top:16px">
       ${pAcc('meeting','Coaching meeting &amp; questions', mlog?mlog+' logged':'', coachMeetings(sel.n))}
-      ${pAcc('reports','Weekly report stats', fn.weeks?fn.asks+' asks · '+fn.monthly+' monthly':'no recent update', reports)}
+      ${pAcc('reports','Weekly reports', reportsSum, reports)}
       ${pAcc('givers',"Who's giving this month", giversSum, monthlyPartners(sel,pd))}
     </div>
 
@@ -1814,6 +1850,7 @@ function careToS(p){
     mo:p.mo||0, wk:p.wk||0, pct:p.pct||0, tgt:p.goal||0, moAmt:p.moAmt||0,
     ft:p.ft||"Grant", ps:p.ps||"", first:(p.n||"").split(/[ &]/)[0], series:p.series||[],
     newMonthly:p.newMonthly||[], contMonthly:p.contMonthly||[], pendMonthly:p.pendMonthly||[], otherConfirmed:p.otherConfirmed||[],
+    last:p.last||null, overall:p.overall||null, lastDate:p.lastDate||"",
     fn:{asks:p.asks||0,mtgs:p.mtgs||0,yes:p.yes||0,monthly:p.monthly||0,onetime:p.onetime||0,
         hours:p.hours||0,weeks:p.weeks||0,coachMet:p.coachMet||0,daysSince:(p.daysSince==null?999:p.daysSince),note:p.note||""} };
   const dx=diagnose({weeks:s.fn.weeks,asks:s.fn.asks,monthly:s.fn.monthly,onetime:s.fn.onetime,yes:s.fn.yes,hours:s.fn.hours,daysSince:s.fn.daysSince});
