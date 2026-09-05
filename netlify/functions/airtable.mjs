@@ -18,6 +18,7 @@ const F = {
   curPay:"fldovmz5RURLvS3wf", curSub:"fldjAH4OECgBQjgw9",
   funding:"fld3ZAimtplTJ9vIL", status:"fld0xauS1j40Pb74f",
   archived:"fldpY0BNnRumsAUaK", withhold:"fldsduAUEEkSrdo90", stopAll:"fld0glJQgD1jho55Z",
+  paused:"fldhlJEBkF37varA8",   // NEW: active hold (app's "Pause everything"), separate from the legacy Stop All kill switch
   verified:"fldfyaLwzSwqm4pM8", verifyLink:"fldfTObVibrzbokcD",
 };
 const D = { name:"fldO3kLf4ThXF2yMA", amt:"fldwUQJrh9QNIOr4L", freq:"fldnzW8Z3m8WtyyK8",
@@ -74,7 +75,7 @@ const sel = v => (v && typeof v==="object") ? v.name : v;
 
 async function buildPayout(){
   // staff in the current 2025-26 grant cycle, plus anyone flagged Support-only
-  const staff = await listAll(T_STAFF, [F.name,F.country,F.cycle,F.start,F.month,F.salary,F.max,F.acct,F.paid,F.curPay,F.curSub,F.funding,F.status,F.archived,F.withhold,F.stopAll]);
+  const staff = await listAll(T_STAFF, [F.name,F.country,F.cycle,F.start,F.month,F.salary,F.max,F.acct,F.paid,F.curPay,F.curSub,F.funding,F.status,F.archived,F.withhold,F.stopAll,F.paused]);
   const cohort = staff.filter(r=>{
     const c = r.fields||{}; const cy = sel(c[F.cycle]);
     return (cy==="2025-26" || sel(c[F.funding])==="Support-only");
@@ -112,7 +113,7 @@ async function buildPayout(){
       id:r.id, n:(c[F.name]||"").trim(), co:sel(c[F.country])||"", acct:(c[F.acct]||"").replace(/[^0-9]/g,""),
       mo, sal, fac, base, match, givers, confirmed, other, paid, max, capped,
       nosub: held && sub===0, pend: held && sub>0,
-      archived: !!c[F.archived], withhold: !!c[F.withhold], stopAll: !!c[F.stopAll],
+      archived: !!c[F.archived], withhold: !!c[F.withhold], paused: !!c[F.paused], stopAll: !!c[F.stopAll],
       ft: sel(c[F.funding])||"Grant", ps: sel(c[F.status])||""
     };
   }).sort((a,b)=>a.n.localeCompare(b.n));
@@ -197,7 +198,7 @@ async function buildCare(){
   const curMK = nowD.getUTCFullYear()*12 + nowD.getUTCMonth();          // this calendar month, as a key
   const mkOf = s => { const t=Date.parse(s); if(!t) return null; const d=new Date(t); return d.getUTCFullYear()*12+d.getUTCMonth(); };
   const [staff, updates, donors] = await Promise.all([
-    listAll(T_STAFF, [F.name,F.country,F.cycle,F.funding,F.status,F.month,F.max,F.paid,F.start,F.archived,F.stopAll,F.withhold,C.coach,C.weeks,C.pct,A.uplink,A.lead]),
+    listAll(T_STAFF, [F.name,F.country,F.cycle,F.funding,F.status,F.month,F.max,F.paid,F.start,F.archived,F.stopAll,F.paused,F.withhold,C.coach,C.weeks,C.pct,A.uplink,A.lead]),
     listAll(T_UPD, [U.name,U.asks,U.mtgs,U.partners,U.hours,U.coachMtg,U.comments,...FREQ]),
     listAll(T_DONORS, [D.name,D.amt,D.freq,D.dstatus,D.stafflink,D.date]),
   ]);
@@ -269,7 +270,7 @@ async function buildCare(){
       ft:sel(c[F.funding])||"Grant", ps:sel(c[F.status])||"",
       asks, mtgs, yes, monthly, onetime, hours:Math.round(hours), weeks:win.length, coachMet, daysSince, note,
       last, overall, lastDate,
-      archived: !!c[F.archived], paused: !!c[F.stopAll], withhold: !!c[F.withhold],
+      archived: !!c[F.archived], paused: !!c[F.paused], withhold: !!c[F.withhold],
       moAmt, goal, series, newMonthly, contMonthly, pendMonthly, otherConfirmed };
   });
   const coaches={};
@@ -279,12 +280,44 @@ async function buildCare(){
     .sort((a,b)=>a.coach.localeCompare(b.coach));
 }
 
+// Per-country track record for the MPD directors: of the grant people a country has brought in,
+// how many finished the grant, how many left before their time was done, how many are paused,
+// and how many were archived early. So a director can talk with a country leader before adding someone new.
+async function buildCountries(){
+  const staff = await listAll(T_STAFF, [F.name,F.country,F.month,F.max,F.paid,F.status,F.archived,F.paused,F.funding]);
+  const byC={};
+  for(const r of staff){ const c=r.fields||{};
+    if(sel(c[F.funding])==="Support-only") continue;             // grant people only
+    const country=sel(c[F.country]); if(!country) continue;       // must be attributable to a country
+    const mo=Number(c[F.month])||0, max=Number(c[F.max])||0, paid=Number(c[F.paid])||0;
+    const archived=!!c[F.archived], finished=sel(c[F.status])==="Finished", stopAll=!!c[F.paused];
+    if(mo<1 && !archived) continue;                               // not started yet
+    const completed  = max>0 && paid>=max-1;                      // drew the full grant = made it
+    const ended      = archived || finished || mo>18;            // an explicit / aged-out end
+    const leftEarly  = ended && !completed;                       // ended without finishing = didn't make it
+    const active     = !completed && !leftEarly;                  // still on the journey (<=18 mo)
+    const archivedEarly = archived && !completed;                 // archived before their time was done
+    const g = byC[country] || (byC[country]={country, started:0, completed:0, active:0, leftEarly:0, archivedEarly:0, paused:0});
+    g.started++;
+    if(completed) g.completed++;
+    if(active) g.active++;
+    if(leftEarly) g.leftEarly++;
+    if(archivedEarly) g.archivedEarly++;
+    if(stopAll && active) g.paused++;                             // paused while still in their window
+  }
+  const arr=Object.values(byC).map(g=>{ const done=g.completed+g.leftEarly; g.finishRate = done? Math.round(g.completed/done*100) : null; return g; });
+  // most concerning first: lowest finish rate, then most who left early
+  arr.sort((a,b)=>{ const fa=a.finishRate==null?101:a.finishRate, fb=b.finishRate==null?101:b.finishRate; return fa-fb || b.leftEarly-a.leftEarly || b.started-a.started; });
+  return arr;
+}
+
 export default async (req) => {
   try{
     if(!process.env.AIRTABLE_TOKEN) return json({error:"AIRTABLE_TOKEN not set on the site."},500);
     if(req.method==="GET"){
       const url=new URL(req.url), action=url.searchParams.get("action");
       if(action==="payout") return json({payout: await buildPayout()});
+      if(action==="countries") return json({countries: await buildCountries()});
       if(action==="approvals") return json({approvals: await buildApprovals()});
       if(action==="grantfund") return json(await buildGrantFund());
       if(action==="messages") return json({messages: await buildMessages()});
@@ -335,6 +368,8 @@ export default async (req) => {
       if(b.maxpay!==undefined)  fields[F.max]=Number(b.maxpay)||0;
       if(b.archived!==undefined) fields[F.archived]=!!b.archived;
       if(b.withhold!==undefined) fields[F.withhold]=!!b.withhold;
+      // active pause sets the new Paused field AND the legacy Stop All (so emails stop); resume clears both
+      if(b.paused!==undefined){ fields[F.paused]=!!b.paused; fields[F.stopAll]=!!b.paused; }
       if(b.stopAll!==undefined)  fields[F.stopAll]=!!b.stopAll;
       if(b.approve===true){ fields[A.melAppr]="Approved"; }
       if(!Object.keys(fields).length) return json({error:"nothing to update"},400);

@@ -651,6 +651,22 @@
   .cf-row .lvl{flex:none}
   .cf-msg{margin-top:12px}
   .cf-chat{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+  /* by-country track record */
+  .co-wrap{display:flex;flex-direction:column;gap:11px}
+  .co-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:15px 17px}
+  .co-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .co-id b{font-size:16px;font-weight:800}.co-id span{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+  .co-rate{text-align:right;line-height:1.05}.co-rate b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}.co-rate span{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .co-bar{display:flex;gap:2px;height:9px;border-radius:999px;overflow:hidden;background:var(--card-2);margin:12px 0}
+  .cob-seg{display:block;height:100%}
+  .cob-seg.done{background:var(--pine)}.cob-seg.active{background:var(--honey)}.cob-seg.left{background:var(--flame)}
+  .co-nums{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+  .con{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center}
+  .con b{display:block;font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+  .con span{font-size:9.5px;color:var(--muted)}
+  .con.bad b{color:var(--flame)}.con.warn b{color:var(--honey-deep)}
+  .co-read{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin-top:11px}
+  @media(max-width:560px){.co-nums{grid-template-columns:repeat(3,1fr)}}
   /* paused / archived / withheld status chip */
   .stchip{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;border-radius:999px;padding:1px 8px;vertical-align:middle;white-space:nowrap}
   .stchip.paused{color:#fff;background:var(--flame)}
@@ -1329,10 +1345,23 @@ PAYOUT.forEach(p=>{
   if(p.archived===undefined) p.archived=false;
   if(p.withhold===undefined) p.withhold=false;
   if(p.stopAll===undefined)  p.stopAll=false;
+  if(p.paused===undefined)   p.paused=false;
   // demo (offline preview only): show one paused and one archived so the status chips are visible
-  if(p.n==="Danail Ventsislavov") p.stopAll=true;
+  if(p.n==="Danail Ventsislavov") p.paused=true;
   if(p.n==="Ionuț & Nicoleta Lerca") p.archived=true;
 });
+/* per-country grant track record (MPD directors). Live site replaces this via the countries endpoint. */
+const COUNTRIES=[
+ {country:"Romania",started:6,completed:2,active:2,leftEarly:2,archivedEarly:0,paused:1,finishRate:50},
+ {country:"Czech Republic",started:3,completed:1,active:1,leftEarly:1,archivedEarly:0,paused:1,finishRate:50},
+ {country:"Poland",started:3,completed:2,active:0,leftEarly:1,archivedEarly:0,paused:0,finishRate:67},
+ {country:"Slovakia",started:6,completed:4,active:2,leftEarly:0,archivedEarly:0,paused:0,finishRate:100},
+ {country:"Slovenia",started:1,completed:1,active:0,leftEarly:0,archivedEarly:0,paused:0,finishRate:100},
+ {country:"Ukraine",started:3,completed:0,active:3,leftEarly:0,archivedEarly:0,paused:0,finishRate:null},
+ {country:"Bulgaria",started:1,completed:0,active:1,leftEarly:0,archivedEarly:0,paused:0,finishRate:null},
+ {country:"Latvia",started:1,completed:0,active:1,leftEarly:0,archivedEarly:0,paused:0,finishRate:null},
+ {country:"Hungary",started:1,completed:0,active:1,leftEarly:0,archivedEarly:0,paused:0,finishRate:null},
+];
 /* director controls: per-staff status override active|paused|finished; window rule = month>12 leaves active */
 let payoutOpen={}, payoutStatus={}, LIVE=false;
 /* Pull live payout data from the Netlify function (which reads Airtable server-side).
@@ -1340,14 +1369,16 @@ let payoutOpen={}, payoutStatus={}, LIVE=false;
 async function loadLive(){
   const api='/.netlify/functions/airtable?action=';
   try{
-    const [pR,gR,mR,aR,cR]=await Promise.all([
+    const [pR,gR,mR,aR,cR,coR]=await Promise.all([
       fetch(api+'payout').catch(()=>null),
       fetch(api+'grantfund').catch(()=>null),
       fetch(api+'messages').catch(()=>null),
       fetch(api+'approvals').catch(()=>null),
-      fetch(api+'care').catch(()=>null)
+      fetch(api+'care').catch(()=>null),
+      fetch(api+'countries').catch(()=>null)
     ]);
     let changed=false;
+    if(coR&&coR.ok){ const j=await coR.json(); if(Array.isArray(j.countries)&&j.countries.length){ COUNTRIES.length=0; j.countries.forEach(x=>COUNTRIES.push(x)); LIVE=true; changed=true; } }
     if(cR&&cR.ok){ const j=await cR.json(); if(Array.isArray(j.care)&&j.care.length){ careData=j.care; LIVE=true; changed=true; } }
     if(pR&&pR.ok){ const j=await pR.json(); if(Array.isArray(j.payout)&&j.payout.length){ PAYOUT.length=0; j.payout.forEach(p=>PAYOUT.push(p)); payoutStatus={}; LIVE=true; changed=true; } }
     if(gR&&gR.ok){ const j=await gR.json(); if(Array.isArray(j.cycles)&&j.cycles.length){ CYC.length=0; j.cycles.forEach(c=>CYC.push(c)); if(typeof j.spoken==='number'){ SPOKEN=j.spoken; FREE=Math.max(0,ACCOUNT-SPOKEN); } changed=true; } }
@@ -1361,7 +1392,7 @@ function payoutAuto(p){ if(p.mo>12) return 'ended'; if(p.capped) return 'finishe
    A director action this session (payoutStatus[name]) overrides until it's written back. */
 function payoutStat(p){
   if(p.archived) return 'archived';
-  if(p.stopAll) return 'paused';
+  if(p.paused) return 'paused';
   if(payoutStatus[p.n]) return payoutStatus[p.n];
   if(p.ft==='Support-only') return 'support';
   if(p.ps==='Paused') return 'paused';
@@ -1370,7 +1401,7 @@ function payoutStat(p){
 }
 /* Any staff who is archived — excluded from every stat and active roster. */
 function isArchivedName(n){ return PAYOUT.some(p=>p.archived && norm(p.n)===norm(n)); }
-function isPausedName(n){ return PAYOUT.some(p=>p.stopAll && norm(p.n)===norm(n)); }
+function isPausedName(n){ return PAYOUT.some(p=>p.paused && norm(p.n)===norm(n)); }
 function isWithheldName(n){ return PAYOUT.some(p=>p.withhold && norm(p.n)===norm(n)); }
 /* row-level status: prefer the person's own live flags, fall back to their payout record */
 function rowArchived(s){ return !!(s&&s.archived) || isArchivedName(s&&s.n); }
@@ -1850,8 +1881,48 @@ function viewLeader(){
 
 /* ===== DIRECTOR ===== */
 function viewDirector(){
-  const nav=`<div class="subnav"><button class="sn ${dirTab==='care'?'on':''}" data-d="care">${ic('users',16)} Who to reach</button><button class="sn ${dirTab==='coaches'?'on':''}" data-d="coaches">${ic('compass',16)} Coaches</button><button class="sn ${dirTab==='payout'?'on':''}" data-d="payout">${ic('coins',16)} Monthly payout</button><button class="sn ${dirTab==='emails'?'on':''}" data-d="emails">${ic('message',16)} Emails sent</button><button class="sn ${dirTab==='grants'?'on':''}" data-d="grants">${ic('scope',16)} Grant fund</button></div>`;
-  return nav + (dirTab==='care'?dirCare():dirTab==='coaches'?dirCoaches():dirTab==='payout'?payoutView():dirTab==='emails'?dirEmails():fundView());
+  const nav=`<div class="subnav"><button class="sn ${dirTab==='care'?'on':''}" data-d="care">${ic('users',16)} Who to reach</button><button class="sn ${dirTab==='coaches'?'on':''}" data-d="coaches">${ic('compass',16)} Coaches</button><button class="sn ${dirTab==='countries'?'on':''}" data-d="countries">${ic('home',16)} By country</button><button class="sn ${dirTab==='payout'?'on':''}" data-d="payout">${ic('coins',16)} Monthly payout</button><button class="sn ${dirTab==='emails'?'on':''}" data-d="emails">${ic('message',16)} Emails sent</button><button class="sn ${dirTab==='grants'?'on':''}" data-d="grants">${ic('scope',16)} Grant fund</button></div>`;
+  return nav + (dirTab==='care'?dirCare():dirTab==='coaches'?dirCoaches():dirTab==='countries'?dirCountries():dirTab==='payout'?payoutView():dirTab==='emails'?dirEmails():fundView());
+}
+/* ===== DIRECTOR · By country (grant track record) ===== */
+function dirCountries(){
+  const cs=COUNTRIES.slice();
+  const tot=cs.reduce((a,g)=>({started:a.started+g.started,completed:a.completed+g.completed,active:a.active+g.active,leftEarly:a.leftEarly+g.leftEarly,archivedEarly:a.archivedEarly+g.archivedEarly,paused:a.paused+g.paused}),{started:0,completed:0,active:0,leftEarly:0,archivedEarly:0,paused:0});
+  const doneTot=tot.completed+tot.leftEarly, overall=doneTot?Math.round(tot.completed/doneTot*100):null;
+  const rateCol=r=> r==null?'var(--muted)': r<50?'var(--flame)': r<75?'var(--honey-deep)':'var(--pine-deep)';
+  if(!cs.length) return `<section class="card pad" style="margin-top:16px"><div class="empty-chat">No country grant history yet.</div></section>`;
+  const cards=cs.map(g=>{
+    const total=g.started||1, done=g.completed+g.leftEarly;
+    const seg=(n,cls)=> n?`<span class="cob-seg ${cls}" style="width:${(n/total*100).toFixed(1)}%"></span>`:'';
+    const read = g.finishRate==null
+      ? `${g.active} still on the journey — no one from ${g.country} has reached the end of a grant yet.`
+      : `${g.completed} of ${done} who finished their window completed the grant${g.leftEarly?`; ${g.leftEarly} left before their time was done`:''}.`;
+    return `<div class="co-card">
+      <div class="co-top">
+        <div class="co-id"><b>${g.country}</b><span>${g.started} brought onto the grant</span></div>
+        <div class="co-rate" style="color:${rateCol(g.finishRate)}"><b>${g.finishRate==null?'—':g.finishRate+'%'}</b><span>finish rate</span></div>
+      </div>
+      <div class="co-bar">${seg(g.completed,'done')}${seg(g.active,'active')}${seg(g.leftEarly,'left')}</div>
+      <div class="co-nums">
+        <div class="con"><b>${g.completed}</b><span>Completed</span></div>
+        <div class="con"><b>${g.active}</b><span>On grant now</span></div>
+        <div class="con ${g.leftEarly?'bad':''}"><b>${g.leftEarly}</b><span>Didn't finish</span></div>
+        <div class="con ${g.archivedEarly?'bad':''}"><b>${g.archivedEarly}</b><span>Archived early</span></div>
+        <div class="con ${g.paused?'warn':''}"><b>${g.paused}</b><span>Paused now</span></div>
+      </div>
+      <div class="co-read">${read}</div>
+    </div>`;
+  }).join("");
+  return `<div style="margin-bottom:4px"><div class="eyebrow">Dave &amp; Geri · grant track record</div><h2 style="font-size:19px">By country</h2>
+    <div class="said" style="margin-top:6px;max-width:64ch">Of the people each country has brought onto the grant: how many finished, how many left before their time was done, how many are paused, and how many were archived early — so you can talk it through with a country leader before bringing someone new on.</div></div>
+  <section class="grid stats" style="margin-top:14px">
+    <div class="card stat-c"><div class="l">Countries</div><div class="v">${cs.length}</div><div class="f">${tot.started} on the grant all-time</div></div>
+    <div class="card stat-c"><div class="l">Finish rate</div><div class="v" style="color:${rateCol(overall)}">${overall==null?'—':overall+'%'}</div><div class="f">completed of those who finished</div></div>
+    <div class="card stat-c"><div class="l">Left before done</div><div class="v" style="color:${tot.leftEarly?'var(--flame)':'var(--pine-deep)'}">${tot.leftEarly}</div><div class="f">across all countries</div></div>
+    <div class="card stat-c"><div class="l">Paused now</div><div class="v" style="color:${tot.paused?'var(--honey-deep)':'var(--ink)'}">${tot.paused}</div><div class="f">in their window, on hold</div></div>
+  </section>
+  <div class="co-wrap" style="margin-top:16px">${cards}</div>
+  <div class="pay-foot" style="margin-top:14px"><b>Completed</b> = drew the full grant. <b>Didn't finish</b> = the grant window ended (archived, finished, or past 18 months) without completing. <b>Archived early</b> = archived before their time was done. <b>Paused now</b> = still in their window but on hold. Sorted by finish rate so the countries worth a conversation are at the top. Support-only staff and not-yet-started applicants aren't counted.</div>`;
 }
 /* ---- the diagnosis: what specific help does this person need, from their weekly-update funnel ---- */
 function diagnose(p){
@@ -2097,7 +2168,7 @@ function wireFund(scope){
 
 /* ===== monthly payout worksheet (restricted) ===== */
 function m2(v){return "$"+v.toLocaleString(undefined,{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});}
-function payoutHeld(p){ return p.nosub||p.pend||p.withhold||p.stopAll||payoutStat(p)==='paused'; }
+function payoutHeld(p){ return p.nosub||p.pend||p.withhold||p.paused||payoutStat(p)==='paused'; }
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
 function sMatch(name){ return S.find(s=>norm(s.n)===norm(name)); }
 function payoutView(){
@@ -2108,7 +2179,7 @@ function payoutView(){
   let gT=0,mT=0,tT=0;
   active.forEach(p=>{if(!payoutHeld(p)){gT+=p.base;mT+=p.match;tT+=p.base+p.match;}});
   const cards=active.map(p=>{
-    const i=PAYOUT.indexOf(p), st=payoutStat(p), stopAll=!!p.stopAll, withheld=!!p.withhold && !stopAll, paused=st==='paused'&&!stopAll, total=p.base+p.match, open=payoutOpen[i];
+    const i=PAYOUT.indexOf(p), st=payoutStat(p), stopAll=!!p.paused, withheld=!!p.withhold && !stopAll, paused=st==='paused'&&!stopAll, total=p.base+p.match, open=payoutOpen[i];
     const rows=p.givers.length?p.givers.map(g=>`<div class="pg-row"><span class="pg-n">${g[0]}</span><span class="pg-a">${m2(g[1])}</span></div>`).join("")
       :`<div class="pg-row"><span class="pg-n" style="color:var(--muted)">No coach-confirmed monthly givers yet.</span></div>`;
     const banner = stopAll
@@ -2229,8 +2300,8 @@ function wirePayout(scope){
     const body={id:p.id};
     if(act==='withhold'){ p.withhold=true; body.withhold=true; }
     else if(act==='unwithhold'){ p.withhold=false; body.withhold=false; }
-    else if(act==='pauseall'){ p.stopAll=true; body.stopAll=true; }
-    else if(act==='resumeall'){ p.stopAll=false; body.stopAll=false; }
+    else if(act==='pauseall'){ p.paused=true; body.paused=true; }
+    else if(act==='resumeall'){ p.paused=false; body.paused=false; }
     else if(act==='archive'){ p.archived=true; body.archived=true; }
     else if(act==='unarchive'){ p.archived=false; body.archived=false; }
     render();
