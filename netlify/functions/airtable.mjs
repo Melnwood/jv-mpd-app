@@ -81,11 +81,12 @@ async function buildPayout(){
     return (cy==="2025-26" || sel(c[F.funding])==="Support-only");
   });
   // all donors grouped by staff record id
-  const donors = await listAll(T_DONORS, [D.name,D.amt,D.freq,D.dstatus,D.stafflink]);
+  const donors = await listAll(T_DONORS, [D.name,D.amt,D.freq,D.dstatus,D.stafflink,D.date]);
   const byStaff = {};
   for(const d of donors){
     const c=d.fields||{}; const links=c[D.stafflink]||[];
-    for(const sid of links){ (byStaff[sid]=byStaff[sid]||[]).push(c); }
+    // keep the record's created time too — that's when the supporter's name was entered into a report
+    for(const sid of links){ (byStaff[sid]=byStaff[sid]||[]).push({...c, __t:d.createdTime}); }
   }
   return cohort.map(r=>{
     const c=r.fields||{};
@@ -96,8 +97,9 @@ async function buildPayout(){
     const max = Number(c[F.max])||0;
     const paid = Math.round((Number(c[F.paid])||0)*100)/100;
     const ds = byStaff[r.id]||[];
+    const gdate = x => x[D.date] || (x.__t ? String(x.__t).slice(0,10) : "");   // gift date, else when it was entered
     const givers = ds.filter(x=>sel(x[D.freq])==="Monthly" && sel(x[D.dstatus])==="Confirmed")
-                     .map(x=>[(x[D.name]||"").trim(), Number(x[D.amt])||0])
+                     .map(x=>[(x[D.name]||"").trim(), Number(x[D.amt])||0, gdate(x)])
                      .sort((a,b)=>b[1]-a[1]);
     const match = Math.round(givers.reduce((a,g)=>a+g[1],0)*100)/100;
     // every coach-confirmed gift, with its frequency (Monthly / One Time / Annual / Quarterly)
@@ -284,7 +286,7 @@ async function buildCare(){
 // how many finished the grant, how many left before their time was done, how many are paused,
 // and how many were archived early. So a director can talk with a country leader before adding someone new.
 async function buildCountries(){
-  const staff = await listAll(T_STAFF, [F.name,F.country,F.month,F.max,F.paid,F.status,F.archived,F.paused,F.funding]);
+  const staff = await listAll(T_STAFF, [F.name,F.country,F.month,F.max,F.paid,F.status,F.archived,F.paused,F.funding,C.pct]);
   const byC={};
   for(const r of staff){ const c=r.fields||{};
     if(sel(c[F.funding])==="Support-only") continue;             // grant people only
@@ -297,15 +299,19 @@ async function buildCountries(){
     const leftEarly  = ended && !completed;                       // ended without finishing = didn't make it
     const active     = !completed && !leftEarly;                  // still on the journey (<=18 mo)
     const archivedEarly = archived && !completed;                 // archived before their time was done
-    const g = byC[country] || (byC[country]={country, started:0, completed:0, active:0, leftEarly:0, archivedEarly:0, paused:0});
+    const g = byC[country] || (byC[country]={country, started:0, completed:0, active:0, leftEarly:0, archivedEarly:0, paused:0, _pctSum:0, _pctN:0});
     g.started++;
     if(completed) g.completed++;
     if(active) g.active++;
     if(leftEarly) g.leftEarly++;
     if(archivedEarly) g.archivedEarly++;
     if(stopAll && active) g.paused++;                             // paused while still in their window
+    if(mo>=12){ let pct=Number(c[C.pct])||0; if(pct>1.5) pct/=100; g._pctSum+=pct; g._pctN++; }  // funding reached by/after 12 months
   }
-  const arr=Object.values(byC).map(g=>{ const done=g.completed+g.leftEarly; g.finishRate = done? Math.round(g.completed/done*100) : null; return g; });
+  const arr=Object.values(byC).map(g=>{ const done=g.completed+g.leftEarly;
+    g.finishRate = done? Math.round(g.completed/done*100) : null;
+    g.avgEnd = g._pctN? Math.round(g._pctSum/g._pctN*100) : null;  // avg % of monthly goal their people reached at 12+ months
+    g.endN = g._pctN; delete g._pctSum; delete g._pctN; return g; });
   // most concerning first: lowest finish rate, then most who left early
   arr.sort((a,b)=>{ const fa=a.finishRate==null?101:a.finishRate, fb=b.finishRate==null?101:b.finishRate; return fa-fb || b.leftEarly-a.leftEarly || b.started-a.started; });
   return arr;

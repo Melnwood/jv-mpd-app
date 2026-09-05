@@ -623,6 +623,8 @@
   .pg-list{border-top:1px solid var(--line-soft)}
   .pg-row{display:flex;justify-content:space-between;gap:12px;padding:8px 2px;border-bottom:1px solid var(--line-soft);font-size:13px}
   .pg-n{font-weight:600;color:var(--ink)}.pg-a{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+  .pg-d{display:flex;align-items:center;gap:3px;font-style:normal;font-size:10.5px;font-weight:600;color:var(--pine-deep);margin-top:2px}
+  .pg-d svg{flex:none}
   .pg-row.sum{border-bottom:none;border-top:2px solid var(--line);margin-top:2px;padding-top:9px;color:var(--honey-deep)}.pg-row.sum .pg-a{color:var(--honey-deep)}
   .pg-ex{font-size:11.5px;color:var(--muted);margin-top:9px;font-style:italic}
   .pdone-wrap{margin-top:2px}
@@ -656,7 +658,16 @@
   .co-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:15px 17px}
   .co-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
   .co-id b{font-size:16px;font-weight:800}.co-id span{display:block;font-size:12px;color:var(--muted);margin-top:1px}
-  .co-rate{text-align:right;line-height:1.05}.co-rate b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}.co-rate span{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .co-badge{flex:none;font-size:11px;font-weight:800;border-radius:999px;padding:3px 11px;white-space:nowrap;letter-spacing:.01em}
+  .co-badge.good{color:#fff;background:var(--pine)}
+  .co-badge.ok{color:var(--pine-deep);background:var(--pine-soft)}
+  .co-badge.warn{color:var(--honey-deep);background:var(--honey-soft)}
+  .co-badge.bad{color:#fff;background:var(--flame)}
+  .co-badge.new{color:var(--muted);background:var(--card-2);border:1px solid var(--line)}
+  .co-heads{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}
+  .co-h{background:var(--card-2);border:1px solid var(--line);border-radius:11px;padding:9px 12px}
+  .co-h b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05}
+  .co-h span{display:block;font-size:10.5px;color:var(--muted);margin-top:2px}
   .co-bar{display:flex;gap:2px;height:9px;border-radius:999px;overflow:hidden;background:var(--card-2);margin:12px 0}
   .cob-seg{display:block;height:100%}
   .cob-seg.done{background:var(--pine)}.cob-seg.active{background:var(--honey)}.cob-seg.left{background:var(--flame)}
@@ -1337,6 +1348,9 @@ const DEMO_EXTRA={
  "Ben Polgui":[["A local business",300,"One Time"],["Lviv Church",480,"Annual"]],
 };
 PAYOUT.forEach(p=>{
+  // demo (offline preview only): stamp each baked giver with a plausible recent "date entered"
+  // so the supporter-date column is visible; the live site sends the real date as g[2].
+  (p.givers||[]).forEach((g,gi)=>{ if(g.length<3){ g[2]=new Date(Date.now()-((gi*4+2)%38)*864e5).toISOString().slice(0,10); } });
   if(!Array.isArray(p.confirmed)){
     const mo=(p.givers||[]).map(g=>({name:g[0],amt:g[1],freq:"Monthly"}));
     const ex=(DEMO_EXTRA[p.n]||[]).map(x=>({name:x[0],amt:x[1],freq:x[2]}));
@@ -1346,21 +1360,22 @@ PAYOUT.forEach(p=>{
   if(p.withhold===undefined) p.withhold=false;
   if(p.stopAll===undefined)  p.stopAll=false;
   if(p.paused===undefined)   p.paused=false;
-  // demo (offline preview only): show one paused and one archived so the status chips are visible
-  if(p.n==="Danail Ventsislavov") p.paused=true;
+  // Danail Ventsislavov dropped out — finished; emails off.
+  if(p.n==="Danail Ventsislavov"){ p.ps='Finished'; p.stopAll=true; p.pend=false; }
+  // demo (offline preview only): show one archived so the status chip is visible
   if(p.n==="Ionuț & Nicoleta Lerca") p.archived=true;
 });
 /* per-country grant track record (MPD directors). Live site replaces this via the countries endpoint. */
 const COUNTRIES=[
- {country:"Romania",started:6,completed:2,active:2,leftEarly:2,archivedEarly:0,paused:1,finishRate:50},
- {country:"Czech Republic",started:3,completed:1,active:1,leftEarly:1,archivedEarly:0,paused:1,finishRate:50},
- {country:"Poland",started:3,completed:2,active:0,leftEarly:1,archivedEarly:0,paused:0,finishRate:67},
- {country:"Slovakia",started:6,completed:4,active:2,leftEarly:0,archivedEarly:0,paused:0,finishRate:100},
- {country:"Slovenia",started:1,completed:1,active:0,leftEarly:0,archivedEarly:0,paused:0,finishRate:100},
- {country:"Ukraine",started:3,completed:0,active:3,leftEarly:0,archivedEarly:0,paused:0,finishRate:null},
- {country:"Bulgaria",started:1,completed:0,active:1,leftEarly:0,archivedEarly:0,paused:0,finishRate:null},
- {country:"Latvia",started:1,completed:0,active:1,leftEarly:0,archivedEarly:0,paused:0,finishRate:null},
- {country:"Hungary",started:1,completed:0,active:1,leftEarly:0,archivedEarly:0,paused:0,finishRate:null},
+ {country:"Romania",started:6,completed:2,active:2,leftEarly:2,archivedEarly:0,paused:0,finishRate:50,avgEnd:53,endN:4},
+ {country:"Czech Republic",started:3,completed:1,active:1,leftEarly:1,archivedEarly:0,paused:0,finishRate:50,avgEnd:59,endN:3},
+ {country:"Poland",started:3,completed:2,active:0,leftEarly:1,archivedEarly:0,paused:0,finishRate:67,avgEnd:22,endN:2},
+ {country:"Slovakia",started:6,completed:4,active:2,leftEarly:0,archivedEarly:0,paused:0,finishRate:100,avgEnd:54,endN:3},
+ {country:"Slovenia",started:1,completed:1,active:0,leftEarly:0,archivedEarly:0,paused:0,finishRate:100,avgEnd:78,endN:1},
+ {country:"Ukraine",started:3,completed:0,active:3,leftEarly:0,archivedEarly:0,paused:0,finishRate:null,avgEnd:84,endN:1},
+ {country:"Bulgaria",started:1,completed:0,active:0,leftEarly:1,archivedEarly:0,paused:0,finishRate:0,avgEnd:null,endN:0},
+ {country:"Latvia",started:1,completed:0,active:1,leftEarly:0,archivedEarly:0,paused:0,finishRate:null,avgEnd:64,endN:1},
+ {country:"Hungary",started:1,completed:0,active:1,leftEarly:0,archivedEarly:0,paused:0,finishRate:null,avgEnd:null,endN:0},
 ];
 /* director controls: per-staff status override active|paused|finished; window rule = month>12 leaves active */
 let payoutOpen={}, payoutStatus={}, LIVE=false;
@@ -1889,10 +1904,13 @@ function dirCountries(){
   const cs=COUNTRIES.slice();
   const tot=cs.reduce((a,g)=>({started:a.started+g.started,completed:a.completed+g.completed,active:a.active+g.active,leftEarly:a.leftEarly+g.leftEarly,archivedEarly:a.archivedEarly+g.archivedEarly,paused:a.paused+g.paused}),{started:0,completed:0,active:0,leftEarly:0,archivedEarly:0,paused:0});
   const doneTot=tot.completed+tot.leftEarly, overall=doneTot?Math.round(tot.completed/doneTot*100):null;
+  const endSum=cs.reduce((a,g)=>a+((g.avgEnd!=null&&g.endN)?g.avgEnd*g.endN:0),0), endN=cs.reduce((a,g)=>a+(g.endN||0),0);
+  const overallEnd=endN?Math.round(endSum/endN):null;
   const rateCol=r=> r==null?'var(--muted)': r<50?'var(--flame)': r<75?'var(--honey-deep)':'var(--pine-deep)';
+  const rating=g=>{ const r=g.finishRate; if(r==null) return {t:'New',c:'new'}; if(r>=85) return {t:'Strong',c:'good'}; if(r>=65) return {t:'Solid',c:'ok'}; if(r>=40) return {t:'Watch',c:'warn'}; return {t:'Needs a talk',c:'bad'}; };
   if(!cs.length) return `<section class="card pad" style="margin-top:16px"><div class="empty-chat">No country grant history yet.</div></section>`;
   const cards=cs.map(g=>{
-    const total=g.started||1, done=g.completed+g.leftEarly;
+    const total=g.started||1, done=g.completed+g.leftEarly, rt=rating(g);
     const seg=(n,cls)=> n?`<span class="cob-seg ${cls}" style="width:${(n/total*100).toFixed(1)}%"></span>`:'';
     const read = g.finishRate==null
       ? `${g.active} still on the journey — no one from ${g.country} has reached the end of a grant yet.`
@@ -1900,7 +1918,11 @@ function dirCountries(){
     return `<div class="co-card">
       <div class="co-top">
         <div class="co-id"><b>${g.country}</b><span>${g.started} brought onto the grant</span></div>
-        <div class="co-rate" style="color:${rateCol(g.finishRate)}"><b>${g.finishRate==null?'—':g.finishRate+'%'}</b><span>finish rate</span></div>
+        <span class="co-badge ${rt.c}">${rt.t}</span>
+      </div>
+      <div class="co-heads">
+        <div class="co-h"><b style="color:${rateCol(g.finishRate)}">${g.finishRate==null?'—':g.finishRate+'%'}</b><span>finished the grant</span></div>
+        <div class="co-h"><b style="color:${rateCol(g.avgEnd)}">${g.avgEnd==null?'—':g.avgEnd+'%'}</b><span>avg funded at 12 mo${g.endN?` · ${g.endN}`:''}</span></div>
       </div>
       <div class="co-bar">${seg(g.completed,'done')}${seg(g.active,'active')}${seg(g.leftEarly,'left')}</div>
       <div class="co-nums">
@@ -1918,6 +1940,7 @@ function dirCountries(){
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">Countries</div><div class="v">${cs.length}</div><div class="f">${tot.started} on the grant all-time</div></div>
     <div class="card stat-c"><div class="l">Finish rate</div><div class="v" style="color:${rateCol(overall)}">${overall==null?'—':overall+'%'}</div><div class="f">completed of those who finished</div></div>
+    <div class="card stat-c"><div class="l">Avg funded at 12 mo</div><div class="v" style="color:${rateCol(overallEnd)}">${overallEnd==null?'—':overallEnd+'%'}</div><div class="f">of monthly goal · people past 12 mo</div></div>
     <div class="card stat-c"><div class="l">Left before done</div><div class="v" style="color:${tot.leftEarly?'var(--flame)':'var(--pine-deep)'}">${tot.leftEarly}</div><div class="f">across all countries</div></div>
     <div class="card stat-c"><div class="l">Paused now</div><div class="v" style="color:${tot.paused?'var(--honey-deep)':'var(--ink)'}">${tot.paused}</div><div class="f">in their window, on hold</div></div>
   </section>
@@ -2168,6 +2191,9 @@ function wireFund(scope){
 
 /* ===== monthly payout worksheet (restricted) ===== */
 function m2(v){return "$"+v.toLocaleString(undefined,{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});}
+function gDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d)) return ""; const days=Math.round((Date.now()-d.getTime())/864e5);
+  const lab=d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
+  return days<=31?`${lab} · ${days<=0?'today':days===1?'1 day ago':days+' days ago'}`:lab; }
 function payoutHeld(p){ return p.nosub||p.pend||p.withhold||p.paused||payoutStat(p)==='paused'; }
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
 function sMatch(name){ return S.find(s=>norm(s.n)===norm(name)); }
@@ -2180,7 +2206,7 @@ function payoutView(){
   active.forEach(p=>{if(!payoutHeld(p)){gT+=p.base;mT+=p.match;tT+=p.base+p.match;}});
   const cards=active.map(p=>{
     const i=PAYOUT.indexOf(p), st=payoutStat(p), stopAll=!!p.paused, withheld=!!p.withhold && !stopAll, paused=st==='paused'&&!stopAll, total=p.base+p.match, open=payoutOpen[i];
-    const rows=p.givers.length?p.givers.map(g=>`<div class="pg-row"><span class="pg-n">${g[0]}</span><span class="pg-a">${m2(g[1])}</span></div>`).join("")
+    const rows=p.givers.length?p.givers.map(g=>`<div class="pg-row"><span class="pg-n">${g[0]}${g[2]?`<i class="pg-d">${ic('check',10)} confirmed ${gDate(g[2])}</i>`:''}</span><span class="pg-a">${m2(g[1])}</span></div>`).join("")
       :`<div class="pg-row"><span class="pg-n" style="color:var(--muted)">No coach-confirmed monthly givers yet.</span></div>`;
     const banner = stopAll
       ? `<div class="pay-hold paused">${ic('info',15)} Everything paused for this person — no payout, and all emails &amp; automations are off until resumed.</div>`
@@ -2265,7 +2291,7 @@ function payoutView(){
       <span class="pwho"><b>${p.n}</b><span>${p.co} &middot; #${p.acct} &middot; archived — not counted anywhere</span></span>
       <span class="pdt nog">${ic('info',12)} Archived</span>
       <button class="pbtn reactivate" data-pact="unarchive" data-pn="${p.n}">Unarchive</button></div>`).join("")}</div>`:''}
-  <div class="pay-foot">Only monthly recurring gifts marked <b>Confirmed</b> by the coach count toward the match. Grant is salary &times; the month's declining share (100, 100, 90&hellip;0%). Anyone past <b>month 12</b> leaves the active window automatically. A <b>support-only</b> person raises their own support and receives <b>no grant money</b> — they still do their weekly updates and homework, but never appear in a payout or draw from the grant fund. Totals exclude anyone held, paused or support-only.</div>`;
+  <div class="pay-foot">Each giver shows the date the coach confirmed them, so you can see the match is built on real, recent supporters. Only monthly recurring gifts marked <b>Confirmed</b> by the coach count toward the match. Grant is salary &times; the month's declining share (100, 100, 90&hellip;0%). Anyone past <b>month 12</b> leaves the active window automatically. A <b>support-only</b> person raises their own support and receives <b>no grant money</b> — they still do their weekly updates and homework, but never appear in a payout or draw from the grant fund. Totals exclude anyone held, paused or support-only.</div>`;
 }
 function payoutPrint(active){
   const rows=active.map(p=>{const held=payoutHeld(p),total=p.base+p.match;
