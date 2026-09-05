@@ -371,6 +371,11 @@
   .pp-pair .pp-graph .pcht{margin-top:auto;margin-bottom:auto}
   .pp-work-b{font-size:14px;line-height:1.55;color:var(--ink);margin:auto 0}
   .pp-work .pp-ch{margin-bottom:8px}
+  /* full-width thin "what to work on" bar */
+  .pp-workbar{display:flex;align-items:baseline;gap:14px;padding:12px 16px;flex-wrap:wrap}
+  .pp-work-l{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--honey-deep)}
+  .pp-work-t{flex:1;min-width:240px;font-size:14px;line-height:1.55;color:var(--ink)}
+  .pp-work-t b{color:var(--ink)}
   @media(max-width:820px){.pp-pair{grid-template-columns:1fr}}
   .pp-msg{padding:14px}
   .pp-msg .chat{margin:0}
@@ -1468,24 +1473,24 @@ function staffHome(s){
   else if(s.pct>=.2){line="You're on your way.";enc="The early stretch is the hardest and you're moving through it. Three clear asks this week is a full, faithful week.";}
   else {line="The beginning takes courage.";enc="Starting is the bravest part, and you've started. You're not doing this alone — your coach and your people are with you.";}
   const w=WORDS[wordIdx%WORDS.length];
-  const moTarget=Math.round(s.tgt/11); /* monthly goal ÷ 11 = new monthly support to add each month */
+  const gap=Math.max(0,s.tgt-s.moAmt);
   const circle=[["Coach",s.coach,"say"],["Uplink",s.uplink,"ghost"],["Country leader",s.lead,"ghost"]];
   return `<div class="greeting">
       <div><div class="hi">${greetTime()}, <b>${s.first}</b>.</div>
       <div class="said">${s.pct>=.75?"You're so close to fully funded — this is a season to celebrate.":s.sub===0?"When you have a few minutes, your coach would love to hear how your week went.":"Here's where your journey stands today."}</div></div>
     </div>
+  <section class="grid stats" style="margin-top:14px">
+    <div class="card stat-c"><div class="l">Monthly goal</div><div class="v">${money(s.tgt)}</div><div class="f">fully funded looks like this</div></div>
+    <div class="card stat-c"><div class="l">Funded</div><div class="v" style="color:var(--pine-deep)">${Math.round(s.pct*100)}<small>%</small></div><div class="f">of your monthly goal</div></div>
+    <div class="card stat-c"><div class="l">Raised monthly</div><div class="v">${money(s.moAmt)}</div><div class="f">confirmed recurring</div></div>
+    <div class="card stat-c"><div class="l">Gap to goal</div><div class="v" style="color:${gap>0?'var(--honey-deep)':'var(--pine-deep)'}">${money(gap)}</div><div class="f">${gap>0?'still to raise':'you’re fully funded'}</div></div>
+  </section>
   <section class="grid two" style="margin-top:16px">
     <div class="card pad">
       <div class="journey">${thermo(s.pct,t)}
         <div class="jmeta">
           <div class="line">${line}</div>
           <div class="encourage">${enc}</div>
-          <div class="facts">
-            <div class="fact"><b>${money(s.tgt)}</b>monthly goal</div>
-            <div class="fact"><b>${Math.round(s.pct*100)}%</b>funded</div>
-            <div class="fact"><b>${money(s.moAmt)}</b>raised monthly</div>
-            <div class="fact"><b>${money(Math.max(0,s.tgt-s.moAmt))}</b>gap to goal</div>
-          </div>
         </div>
       </div>
       <div class="invite ${s.sub===0?'':'done'}">
@@ -1674,26 +1679,25 @@ function coachPersonPage(sel){
       <span class="av t-${dx.tone}">${initials(sel.n)}</span>
       <div class="pp-id"><h2>${sel.n}</h2><div class="pp-sub">${sel.co} &middot; month ${sel.mo}${sel.wk>0?` &middot; ${sel.wk} weeks of grant left`:''}</div></div>
     </div>
-    <div class="pp-facts" style="margin-top:14px">
+    <div class="pp-pair" style="margin-top:14px">
+      <div class="pp-card pp-graph"><div class="pp-ch"><span>Monthly pace</span>${vals.length?`<span class="pp-cs">${hit} of ${vals.length} at pace</span>`:''}</div>${paceChartBody(sel, sel.first)}</div>
+      <div class="pp-card pp-msg"><div class="pp-ch"><span>Message ${sel.first}</span>${tc?`<span class="pp-cs">${tc}</span>`:''}</div>${chatPanel(sel,"coach")}</div>
+    </div>
+    <div class="pp-card pp-workbar" style="margin-top:12px;border-left:4px solid ${dxCol[dx.tone]}">
+      <span class="pp-work-l">${ic('compass',14)} What to work on</span>
+      <span class="pp-work-t"><b>${dx.label}.</b> ${dx.help}</span>
+    </div>
+    <div class="pp-facts" style="margin-top:12px">
       <div class="ppf"><span>Funded</span><b>${Math.round(sel.pct*100)}%</b></div>
       <div class="ppf"><span>Raised / mo</span><b>${money(sel.moAmt)}</b></div>
       <div class="ppf"><span>Monthly goal</span><b>${money(sel.tgt)}</b></div>
-      <div class="ppf"><span>Monthly pace</span><b>${money(pace)}</b></div>
-    </div>
-    <div class="pp-pair">
-      <div class="pp-card pp-graph"><div class="pp-ch"><span>Monthly pace</span>${vals.length?`<span class="pp-cs">${hit} of ${vals.length} at pace</span>`:''}</div>${paceChartBody(sel, sel.first)}</div>
-      <div class="pp-card pp-work" style="border-left:4px solid ${dxCol[dx.tone]}"><div class="pp-ch"><span>What to work on</span></div><div class="pp-work-b"><b>${dx.label}.</b> ${dx.help}</div></div>
+      <div class="ppf"><span>Gap to goal</span><b>${money(Math.max(0,sel.tgt-sel.moAmt))}</b></div>
     </div>
 
-    <div class="pp-cols">
-      <div class="pp-main">
-        ${pAcc('meeting','Coaching meeting &amp; questions', mlog?mlog+' logged':'', coachMeetings(sel.n))}
-        ${pAcc('reports','Weekly report stats', fn.weeks?fn.asks+' asks · '+fn.monthly+' monthly':'no recent update', reports)}
-        ${pAcc('givers',"Who's giving this month", giversSum, monthlyPartners(sel,pd))}
-      </div>
-      <div class="pp-side">
-        <div class="pp-card pp-msg"><div class="pp-ch"><span>Message ${sel.first}</span>${tc?`<span class="pp-cs">${tc}</span>`:''}</div>${chatPanel(sel,"coach")}</div>
-      </div>
+    <div class="pp-main" style="margin-top:16px">
+      ${pAcc('meeting','Coaching meeting &amp; questions', mlog?mlog+' logged':'', coachMeetings(sel.n))}
+      ${pAcc('reports','Weekly report stats', fn.weeks?fn.asks+' asks · '+fn.monthly+' monthly':'no recent update', reports)}
+      ${pAcc('givers',"Who's giving this month", giversSum, monthlyPartners(sel,pd))}
     </div>
 
     <div class="pp-foot"><button class="pp-close" data-close="1">${ic('chevron',15)} Back to my people</button></div>
