@@ -630,17 +630,36 @@
   .mc-cell i{display:block;font-size:10.5px;color:var(--muted);font-style:normal;margin-top:1px}
   .mc-note{font-size:11.5px;color:var(--honey-deep);margin-top:9px;line-height:1.4}
   .mc-note.ok{color:var(--pine-deep)}
+  .pg-sec{margin-top:14px}
   .pg-lab{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--pine-deep);margin:15px 0 6px}
+  .pg-sec .pg-lab{margin:0 0 7px}
+  .pg-sub{margin-left:auto;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+  .pg-lab.new{color:var(--pine-deep)}
+  .pg-lab.muted{color:var(--muted);font-weight:600}
+  .pg-sub.muted{color:var(--muted);font-weight:700}
+  .pg-note-i{font-weight:500;font-style:italic;color:var(--muted);text-transform:none;letter-spacing:0;margin-left:5px}
+  .pg-list.new{background:color-mix(in srgb,var(--pine) 5%,var(--card));border:1px solid color-mix(in srgb,var(--pine) 30%,transparent);border-radius:12px;padding:2px 12px}
+  .pg-list.new .pg-row:last-child{border-bottom:none}
+  .build{font-size:10px;color:var(--muted);opacity:.8;margin-top:6px;letter-spacing:.02em}
+  .pay-month{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+  .pm-lab{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--honey-deep)}
+  .pm-sel{font:inherit;font-size:15px;font-weight:700;color:var(--ink);background:var(--card-2);border:1.5px solid var(--line);border-radius:9px;padding:7px 12px;cursor:pointer}
+  .pm-hint{font-size:12px;color:var(--muted)}
+  .pg-toggle{width:100%;background:none;border:none;cursor:pointer;font:inherit;text-align:left;padding:2px 0}
+  .pg-toggle svg{transition:transform .15s}
+  .pg-toggle.open svg{transform:rotate(180deg)}
   .pg-list{border-top:1px solid var(--line-soft)}
   .pg-row{display:flex;justify-content:space-between;gap:12px;padding:8px 2px;border-bottom:1px solid var(--line-soft);font-size:13px}
   .pg-n{font-weight:600;color:var(--ink)}.pg-a{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
-  .pg-d{display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;font-style:normal;font-size:10.5px;font-weight:600;margin-top:3px}
+  .pg-d{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-style:normal;font-size:11px;font-weight:600;margin-top:5px}
   .pg-d svg{flex:none}
-  .pg-added{color:var(--muted)}
-  .pg-appr{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:100px}
-  .pg-appr.new{color:var(--pine-deep);background:var(--pine-soft)}
-  .pg-appr.old{color:var(--honey-deep);background:color-mix(in srgb,var(--honey) 26%,var(--card))}
-  .pg-noappr{display:inline-flex;align-items:center;gap:3px;color:var(--muted)}
+  .pg-dt{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:100px;background:var(--card-2);border:1px solid var(--line);color:var(--ink-2);white-space:nowrap}
+  .pg-k{font-weight:800;text-transform:uppercase;letter-spacing:.03em;font-size:9px;color:var(--muted)}
+  .pg-appr.new{background:var(--pine-soft);border-color:transparent;color:var(--pine-deep)}
+  .pg-appr.new .pg-k{color:var(--pine-deep)}
+  .pg-appr.old{background:color-mix(in srgb,var(--honey) 26%,var(--card));border-color:transparent;color:var(--honey-deep)}
+  .pg-appr.old .pg-k{color:var(--honey-deep)}
+  .pg-noappr{color:var(--muted)}
   .pg-row.sum{border-bottom:none;border-top:2px solid var(--line);margin-top:2px;padding-top:9px;color:var(--honey-deep)}.pg-row.sum .pg-a{color:var(--honey-deep)}
   .pg-ex{font-size:11.5px;color:var(--muted);margin-top:9px;font-style:italic}
   .pdone-wrap{margin-top:2px}
@@ -896,6 +915,7 @@
         <div class="sub">One place for the whole journey — staff, coaches, and leaders</div>
       </div>
     </div>
+    <div class="build" id="build-stamp"></div>
   </header>
 
   <nav class="roles" id="roles"></nav>
@@ -1415,7 +1435,9 @@ const COUNTRIES=[
  {country:"Hungary",started:1,completed:0,active:1,leftEarly:0,archivedEarly:0,paused:0,finishRate:null,avgEnd:null,endN:0},
 ];
 /* director controls: per-staff status override active|paused|finished; window rule = month>12 leaves active */
-let payoutOpen={}, payoutStatus={}, LIVE=false;
+let payoutOpen={}, payoutStatus={}, pastOpen={}, LIVE=false;
+// which month the payout is being run for — default to the LAST COMPLETED month (payouts run after a month closes)
+let payMonth=(()=>{const n=new Date(); const d=new Date(n.getFullYear(),n.getMonth()-1,1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;})();
 /* Pull live payout data from the Netlify function (which reads Airtable server-side).
    Falls back silently to the baked snapshot when opened as a local file / offline. */
 async function loadLive(){
@@ -2254,11 +2276,23 @@ function gDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d)) return ""
   return days<=31?`${lab} · ${days<=0?'today':days===1?'1 day ago':days+' days ago'}`:lab; }
 // "recent" = coach approved within the last ~month, i.e. genuinely a new partner this cycle
 function gRecent(s){ if(!s) return false; const d=new Date(s); if(isNaN(d)) return false; return (Date.now()-d.getTime())/864e5 <= 31; }
-// "this month" = coach approved in the current calendar month — the strict "new partner this month" rule
-function gThisMonth(s){ if(!s) return false; const d=new Date(s); if(isNaN(d)) return false; const n=new Date(); return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth(); }
+// is this approval date inside the selected payout month (payMonth, "YYYY-MM")?
+function gInMonth(s){ if(!s) return false; const d=new Date(s); if(isNaN(d)) return false; const ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; return ym===payMonth; }
+// compact date for the audit trail, e.g. "Jul 29, 2025"
+function gDay(s){ if(!s) return "—"; const d=new Date(s); if(isNaN(d)) return "—"; return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
+// label for the selected payout month, e.g. "September 2026"
+function payMonthLabel(){ const [y,m]=payMonth.split('-').map(Number); return new Date(y,m-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'}); }
+// list of {ym,label} for the picker — every month that has at least one approved giver, newest first, plus the current month
+function payMonthOptions(){
+  const set=new Set();
+  const n=new Date(); set.add(`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`);
+  set.add(payMonth);  // always include the currently-selected month
+  PAYOUT.forEach(p=>(p.givers||[]).forEach(g=>{ if(g[3]){ const d=new Date(g[3]); if(!isNaN(d)) set.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`); } }));
+  return [...set].sort().reverse().map(ym=>{ const [y,m]=ym.split('-').map(Number); return {ym,label:new Date(y,m-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'})}; });
+}
 // a person's match figured "new this month only" from their givers [name,amt,entered,approved]
-function matchNewOnly(p){ return Math.round((p.givers||[]).filter(g=>gThisMonth(g[3])).reduce((a,g)=>a+(Number(g[1])||0),0)*100)/100; }
-function newCount(p){ return (p.givers||[]).filter(g=>gThisMonth(g[3])).length; }
+function matchNewOnly(p){ return Math.round((p.givers||[]).filter(g=>gInMonth(g[3])).reduce((a,g)=>a+(Number(g[1])||0),0)*100)/100; }
+function newCount(p){ return (p.givers||[]).filter(g=>gInMonth(g[3])).length; }
 function payoutHeld(p){ return p.nosub||p.pend||p.withhold||p.paused||payoutStat(p)==='paused'; }
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
 function sMatch(name){ return S.find(s=>norm(s.n)===norm(name)); }
@@ -2267,20 +2301,32 @@ function payoutView(){
   const done=PAYOUT.filter(p=>['finished','ended'].includes(payoutStat(p))).sort((a,b)=>b.paid-a.paid);
   const support=PAYOUT.filter(p=>payoutStat(p)==='support');
   const archived=PAYOUT.filter(p=>p.archived);
-  let gT=0,mT=0,tT=0,mNewT=0;
-  active.forEach(p=>{if(!payoutHeld(p)){gT+=p.base;mT+=p.match;tT+=p.base+p.match;mNewT+=matchNewOnly(p);}});
-  mNewT=Math.round(mNewT*100)/100;
+  let gT=0,mAllT=0,mNewT=0;
+  active.forEach(p=>{if(!payoutHeld(p)){gT+=p.base;mAllT+=p.match;mNewT+=matchNewOnly(p);}});
+  gT=Math.round(gT*100)/100; mAllT=Math.round(mAllT*100)/100; mNewT=Math.round(mNewT*100)/100;
+  const tT=Math.round((gT+mNewT)*100)/100;  // total paid = grant + THIS MONTH's match (new partners only)
   const cards=active.map(p=>{
-    const i=PAYOUT.indexOf(p), st=payoutStat(p), stopAll=!!p.paused, withheld=!!p.withhold && !stopAll, paused=st==='paused'&&!stopAll, total=p.base+p.match, open=payoutOpen[i];
+    const i=PAYOUT.indexOf(p), st=payoutStat(p), stopAll=!!p.paused, withheld=!!p.withhold && !stopAll, paused=st==='paused'&&!stopAll, open=payoutOpen[i];
     const mNew=matchNewOnly(p), nc=newCount(p), mDiff=Math.round((p.match-mNew)*100)/100;
-    const rows=p.givers.length?p.givers.map(g=>{
-      const entered=g[2]?`entered ${gDate(g[2])}`:'';
+    const total=Math.round((p.base+mNew)*100)/100;  // paid this month = grant + new match only
+    const monthName=payMonthLabel();
+    const giverRow=g=>{
+      const added=`<span class="pg-dt"><span class="pg-k">Added</span> ${gDay(g[2])}</span>`;
       const appr=g[3]
-        ? `<span class="pg-appr ${gRecent(g[3])?'new':'old'}">${ic('check',10)} coach approved ${gDate(g[3])}</span>`
-        : `<span class="pg-noappr">${ic('clock',10)} approval date not recorded</span>`;
-      return `<div class="pg-row"><span class="pg-n">${g[0]}<i class="pg-d">${entered?`<span class="pg-added">${entered}</span>`:''}${appr}</i></span><span class="pg-a">${m2(g[1])}</span></div>`;
-    }).join("")
-      :`<div class="pg-row"><span class="pg-n" style="color:var(--muted)">No coach-confirmed monthly givers yet.</span></div>`;
+        ? `<span class="pg-dt pg-appr ${gInMonth(g[3])?'new':'old'}"><span class="pg-k">Coach approved</span> ${ic('check',10)} ${gDay(g[3])}</span>`
+        : `<span class="pg-dt pg-noappr"><span class="pg-k">Coach approved</span> ${ic('clock',10)} not recorded</span>`;
+      return `<div class="pg-row"><span class="pg-n">${g[0]}<i class="pg-d">${added}${appr}</i></span><span class="pg-a">${m2(g[1])}</span></div>`;
+    };
+    const newG=p.givers.filter(g=>gInMonth(g[3])).sort((a,b)=>b[1]-a[1]);
+    const oldG=p.givers.filter(g=>!gInMonth(g[3])).sort((a,b)=>b[1]-a[1]);
+    const newWin=`<div class="pg-sec">
+      <div class="pg-lab new">${ic('gift',13)} Matching for ${monthName} — approved that month<span class="pg-sub">${money(mNew)}</span></div>
+      <div class="pg-list new">${newG.length?newG.map(giverRow).join(""):`<div class="pg-row"><span class="pg-n" style="color:var(--muted)">No new givers approved this month yet.</span></div>`}</div>
+    </div>`;
+    const oldWin=oldG.length?`<div class="pg-sec">
+      <button class="pg-lab muted pg-toggle ${pastOpen[i]?'open':''}" data-past="${i}">${ic('chevron',13)} Already matched — earlier months <span class="pg-note-i">(for the record, not paid again)</span><span class="pg-sub muted">${money(mDiff)}</span></button>
+      ${pastOpen[i]?`<div class="pg-list">${oldG.map(giverRow).join("")}</div>`:''}
+    </div>`:'';
     const banner = stopAll
       ? `<div class="pay-hold paused">${ic('info',15)} Everything paused for this person — no payout, and all emails &amp; automations are off until resumed.</div>`
       : withheld
@@ -2317,21 +2363,13 @@ function payoutView(){
         <div class="peq">
           <div class="pe grant"><span class="pl">${ic('coins',13)} Grant this month</span><b>${money(p.base)}</b><i>${p.fac}% of ${money(p.sal)} salary</i></div>
           <div class="pop">+</div>
-          <div class="pe match"><span class="pl">${ic('gift',13)} Match this month</span><b>${money(p.match)}</b><i>${p.givers.length} coach-confirmed monthly giver${p.givers.length===1?'':'s'}</i></div>
+          <div class="pe match"><span class="pl">${ic('gift',13)} Match for ${monthName}</span><b>${money(mNew)}</b><i>${nc} new partner${nc===1?'':'s'} approved in ${monthName}</i></div>
           <div class="pop">=</div>
-          <div class="pe tot"><span class="pl">Total payout</span><b>${money(total)}</b><i>grant + match</i></div>
+          <div class="pe tot"><span class="pl">Total payout</span><b>${money(total)}</b><i>grant + this month's match</i></div>
         </div>
-        <div class="mcompare">
-          <div class="mc-h">${ic('info',13)} The match, figured two ways</div>
-          <div class="mc-grid">
-            <div class="mc-cell"><span class="mc-l">All confirmed monthly</span><b>${money(p.match)}</b><i>${p.givers.length} giver${p.givers.length===1?'':'s'}, any time</i></div>
-            <div class="mc-cell new"><span class="mc-l">New this month</span><b>${money(mNew)}</b><i>${nc} approved in ${new Date().toLocaleDateString(undefined,{month:'long'})}</i></div>
-          </div>
-          ${mDiff>0?`<div class="mc-note">${money(mDiff)} of the current match comes from givers approved in an earlier month.</div>`:`<div class="mc-note ok">Every giver in this match was approved this month.</div>`}
-        </div>
-        <div class="pg-lab">${ic('check',13)} Coach-confirmed monthly givers — this is the match</div>
-        <div class="pg-list">${rows}<div class="pg-row sum"><span class="pg-n">Match subtotal</span><span class="pg-a">${money(p.match)}</span></div></div>
-        ${p.other?`<div class="pg-ex">Not counted toward the match: ${p.other} one-time / annual / pending gift${p.other===1?'':'s'}.</div>`:''}
+        ${newWin}
+        ${oldWin}
+        <div class="pg-ex">The already-matched partners were matched in the month they came in — they're shown for the record, not paid again. Total lifetime monthly base: ${money(p.match)} from ${p.givers.length} partner${p.givers.length===1?'':'s'}.${p.other?` Not counted toward the match: ${p.other} one-time / annual / pending gift${p.other===1?'':'s'}.`:''}</div>
         ${controls}
       </div>
     </div>`;
@@ -2353,14 +2391,15 @@ function payoutView(){
         ${hwflag?`<span class="flags" style="margin-top:6px">${hwflag}</span>`:''}</span>
       <span class="pdt nog">${ic('info',12)} No grant &middot; $0 payout</span>
       <button class="pbtn reactivate" data-pstat="active" data-pn="${p.n}">Put on grant</button></div>`;}).join("");
+  const monthOpts=payMonthOptions().map(o=>`<option value="${o.ym}" ${o.ym===payMonth?'selected':''}>${o.label}</option>`).join("");
   return `<div class="pay-top"><div><div class="eyebrow">Restricted &middot; Mel &amp; MPD directors</div><h2 style="font-size:19px">Monthly payout worksheet</h2>
-    <div class="said" style="margin-top:6px;max-width:58ch">Grant this month + the match — each person's coach-confirmed monthly givers — = total payout. Directors can pause or finish anyone; staff past month 12 leave the active window automatically.</div></div>
+    <div class="said" style="margin-top:6px;max-width:62ch">For the month you select: each person's grant + the match for <b>new monthly partners a coach approved that month</b> = total payout. Partners matched in earlier months aren't paid again. This is the sheet to download for the accountant.</div></div>
     <button class="dl-btn" id="payout-pdf">${ic('external',15)} Download PDF</button></div>
-  <section class="grid stats" style="margin-top:6px">
-    <div class="card stat-c" style="border:1.5px solid color-mix(in srgb,var(--pine) 45%,transparent)"><div class="l">Grant this month</div><div class="v" style="color:var(--pine-deep)">${money(gT)}</div><div class="f">across ${active.filter(p=>!payoutHeld(p)).length} receiving</div></div>
-    <div class="card stat-c"><div class="l">Match — all confirmed</div><div class="v" style="color:var(--honey-deep)">${money(mT)}</div><div class="f">every confirmed monthly giver</div></div>
-    <div class="card stat-c" style="border:1.5px solid color-mix(in srgb,var(--pine) 40%,transparent)"><div class="l">Match — new this month</div><div class="v" style="color:var(--pine-deep)">${money(mNewT)}</div><div class="f">approved in ${new Date().toLocaleDateString(undefined,{month:'long'})} only</div></div>
-    <div class="card stat-c"><div class="l">Total payout</div><div class="v">${money(tT)}</div><div class="f">grant + match this month</div></div>
+  <div class="pay-month"><span class="pm-lab">${ic('coins',15)} Paying for</span><select id="pay-month" class="pm-sel">${monthOpts}</select><span class="pm-hint">Match counts only partners a coach approved in ${payMonthLabel()}.</span></div>
+  <section class="grid stats" style="margin-top:10px">
+    <div class="card stat-c"><div class="l">Grant &middot; ${payMonthLabel()}</div><div class="v" style="color:var(--pine-deep)">${money(gT)}</div><div class="f">across ${active.filter(p=>!payoutHeld(p)).length} receiving</div></div>
+    <div class="card stat-c"><div class="l">Match &middot; ${payMonthLabel()}</div><div class="v" style="color:var(--honey-deep)">${money(mNewT)}</div><div class="f">new partners approved that month</div></div>
+    <div class="card stat-c" style="border:1.5px solid color-mix(in srgb,var(--pine) 45%,transparent)"><div class="l">Total payout</div><div class="v" style="color:var(--pine-deep)">${money(tT)}</div><div class="f">grant + ${payMonthLabel()} match</div></div>
   </section>
   <div class="sec-head" style="margin-top:16px"><div><div class="eyebrow">In the 12-month window</div><h2 style="font-size:17px">Active staff</h2></div></div>
   ${cards||'<div class="empty-chat">No one is in an active payout window right now.</div>'}
@@ -2373,20 +2412,22 @@ function payoutView(){
       <span class="pwho"><b>${p.n}</b><span>${p.co} &middot; #${p.acct} &middot; archived — not counted anywhere</span></span>
       <span class="pdt nog">${ic('info',12)} Archived</span>
       <button class="pbtn reactivate" data-pact="unarchive" data-pn="${p.n}">Unarchive</button></div>`).join("")}</div>`:''}
-  <div class="pay-foot">Each giver shows two dates: when they were <b>entered</b> into a report, and when the <b>coach approved</b> them. A green "coach approved" means it happened in about the last month — a genuinely new partner; an amber one means the approval is older, so it's an ongoing giver rather than new this month. "Approval date not recorded" is a giver confirmed before we started stamping the date — it'll fill in the next time their coach re-confirms. Only monthly recurring gifts marked <b>Confirmed</b> by the coach count toward the match. Grant is salary &times; the month's declining share (100, 100, 90&hellip;0%). Anyone past <b>month 12</b> leaves the active window automatically. A <b>support-only</b> person raises their own support and receives <b>no grant money</b> — they still do their weekly updates and homework, but never appear in a payout or draw from the grant fund. Totals exclude anyone held, paused or support-only.</div>`;
+  <div class="pay-foot">Each giver shows two dates so the match is auditable: <b>Added</b> — when they were first entered into the system — and <b>Coach approved</b> — when a coach confirmed them as a monthly partner. A green "coach approved" means it happened this month (a genuinely new partner); an amber one means it was approved in an earlier month (an ongoing giver). Only monthly recurring gifts marked <b>Confirmed</b> by the coach count toward the match. Grant is salary &times; the month's declining share (100, 100, 90&hellip;0%). Anyone past <b>month 12</b> leaves the active window automatically. A <b>support-only</b> person raises their own support and receives <b>no grant money</b> — they still do their weekly updates and homework, but never appear in a payout or draw from the grant fund. Totals exclude anyone held, paused or support-only.</div>`;
 }
 function payoutPrint(active){
-  const rows=active.map(p=>{const held=payoutHeld(p),total=p.base+p.match;
-    return `<tr class="${held?'pp-held':''}"><td>${p.n}</td><td class="pp-ac">#${p.acct}</td><td>${p.co}</td><td class="pp-c">${p.mo}/12</td><td class="pp-n">${money(p.base)}</td><td class="pp-n">${money(p.match)}</td><td class="pp-n pp-tot">${held?'—':money(total)}</td></tr>`;}).join("");
-  const g=active.reduce((a,p)=>a+(payoutHeld(p)?0:p.base),0),m=active.reduce((a,p)=>a+(payoutHeld(p)?0:p.match),0),t=g+m;
+  const rows=active.map(p=>{const held=payoutHeld(p),mN=matchNewOnly(p),total=Math.round((p.base+mN)*100)/100;
+    return `<tr class="${held?'pp-held':''}"><td>${p.n}</td><td class="pp-ac">#${p.acct}</td><td>${p.co}</td><td class="pp-c">${p.mo}/12</td><td class="pp-n">${money(p.base)}</td><td class="pp-n">${money(mN)}</td><td class="pp-n pp-tot">${held?'—':money(total)}</td></tr>`;}).join("");
+  const g=active.reduce((a,p)=>a+(payoutHeld(p)?0:p.base),0),m=active.reduce((a,p)=>a+(payoutHeld(p)?0:matchNewOnly(p)),0),t=g+m;
   const d=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
-  return `<div id="payout-print"><div class="pp-head"><div><div class="pp-title">Ministry Partner Development &middot; Monthly Payout</div><div class="pp-sub">Josiah Venture &middot; New Staff Acceleration — Salary #510168 &middot; ${d}</div></div><div class="pp-tot-box"><span>Total this month</span><b>${money(t)}</b></div></div>
+  return `<div id="payout-print"><div class="pp-head"><div><div class="pp-title">Ministry Partner Development &middot; Payout for ${payMonthLabel()}</div><div class="pp-sub">Josiah Venture &middot; New Staff Acceleration — Salary #510168 &middot; prepared ${d}</div></div><div class="pp-tot-box"><span>Total for ${payMonthLabel()}</span><b>${money(t)}</b></div></div>
     <table class="pp-tab"><thead><tr><th>Staff</th><th>Account</th><th>Country</th><th>Mo</th><th class="pp-n">Grant</th><th class="pp-n">Match</th><th class="pp-n">Total payout</th></tr></thead>
     <tbody>${rows}<tr class="pp-sum"><td colspan="4">Total — ${active.filter(p=>!payoutHeld(p)).length} staff receiving</td><td class="pp-n">${money(g)}</td><td class="pp-n">${money(m)}</td><td class="pp-n">${money(t)}</td></tr></tbody></table>
-    <div class="pp-foot">Match = coach-confirmed monthly recurring support only. Held / paused staff shown for reference with no payout. Prepared for the MPD directors.</div></div>`;
+    <div class="pp-foot">Match = new monthly partners a coach approved this month; partners matched in earlier months aren't paid again. Held / paused staff shown for reference with no payout. Prepared for the MPD directors.</div></div>`;
 }
 function wirePayout(scope){
   scope.querySelectorAll("[data-pay]").forEach(b=>b.onclick=()=>{payoutOpen[b.dataset.pay]=!payoutOpen[b.dataset.pay];render();});
+  scope.querySelectorAll("[data-past]").forEach(b=>b.onclick=(e)=>{e.stopPropagation();pastOpen[b.dataset.past]=!pastOpen[b.dataset.past];render();});
+  const pm=scope.querySelector("#pay-month"); if(pm) pm.onchange=()=>{payMonth=pm.value;render();};
   scope.querySelectorAll("[data-pstat]").forEach(b=>b.onclick=(e)=>{e.stopPropagation();
     const n=b.dataset.pn, s=b.dataset.pstat, p=PAYOUT.find(x=>x.n===n);
     if(LIVE && p && p.id){
@@ -2591,8 +2632,10 @@ function wireChat(s,asRole){
   btn.onclick=send;inp.addEventListener("keydown",e=>{if(e.key==="Enter")send();});if(box)box.scrollTop=box.scrollHeight;
 }
 
+const APP_BUILD="Build 2026-09-06 · payout-by-month";
 function render(){
   document.getElementById("payout-print")?.remove();
+  { const bs=document.getElementById("build-stamp"); if(bs) bs.textContent=APP_BUILD; }
   document.getElementById("idnote").innerHTML={mel:"— your approvals &amp; what needs you",staff:"— a home, not a dashboard",coach:"— your people, warmly",uplink:"— the pastoral view",leader:"— our country team",director:"— the whole cohort"}[role];
   const v=document.getElementById("view");
   if(role==="mel"){
