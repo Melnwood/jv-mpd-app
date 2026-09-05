@@ -20,7 +20,7 @@ const F = {
   archived:"fldpY0BNnRumsAUaK", withhold:"fldsduAUEEkSrdo90", stopAll:"fld0glJQgD1jho55Z",
 };
 const D = { name:"fldO3kLf4ThXF2yMA", amt:"fldwUQJrh9QNIOr4L", freq:"fldnzW8Z3m8WtyyK8",
-  dstatus:"fldbFqZCHBSRZf02e", stafflink:"fldtMNFYggmi8IbnL" };
+  dstatus:"fldbFqZCHBSRZf02e", stafflink:"fldtMNFYggmi8IbnL", date:"fldzqt7BFCDtQBXZE" };
 const T_GRANT = "tblx9H88s1h73dYFo";
 const G = { name:"fldGo5dMQbEWl1qOQ", dep:"fldHiaTsly9kKS4vS", paid:"fldm3PndZVKK8EYpA",
   wa:"fldv5Kaik45nsU4o3", fees:"fldaDkQcCa67uPpoc", date:"fldrmE8b5OGNjwNBm", src:"fld4qITAJvCzEt0yV" };
@@ -192,9 +192,13 @@ async function buildApprovals(){
 async function buildCare(){
   const WINDOW_MS = 42*864e5;
   const now = Date.now();
-  const [staff, updates] = await Promise.all([
-    listAll(T_STAFF, [F.name,F.country,F.cycle,F.funding,F.status,F.month,F.max,F.paid,F.archived,C.coach,C.weeks,C.pct]),
+  const nowD = new Date();
+  const curMK = nowD.getUTCFullYear()*12 + nowD.getUTCMonth();          // this calendar month, as a key
+  const mkOf = s => { const t=Date.parse(s); if(!t) return null; const d=new Date(t); return d.getUTCFullYear()*12+d.getUTCMonth(); };
+  const [staff, updates, donors] = await Promise.all([
+    listAll(T_STAFF, [F.name,F.country,F.cycle,F.funding,F.status,F.month,F.max,F.paid,F.start,F.archived,C.coach,C.weeks,C.pct,A.uplink,A.lead]),
     listAll(T_UPD, [U.name,U.asks,U.mtgs,U.partners,U.hours,U.coachMtg,U.comments,...FREQ]),
+    listAll(T_DONORS, [D.name,D.amt,D.freq,D.dstatus,D.stafflink,D.date]),
   ]);
   const cohort = staff.filter(r=>{ const c=r.fields||{};
     // "Active" is defined by TENURE, not a hardcoded grant cycle: a person shows under
@@ -207,6 +211,9 @@ async function buildCare(){
   const byStaff={};
   for(const u of updates){ const c=u.fields||{}; const link=c[U.name]||[]; const sid=link[0]; if(!sid) continue;
     (byStaff[sid]=byStaff[sid]||[]).push({t:Date.parse(u.createdTime)||0, c}); }
+  const byDonor={};
+  for(const d of donors){ const c=d.fields||{}; const links=c[D.stafflink]||[];
+    for(const sid of links){ (byDonor[sid]=byDonor[sid]||[]).push({id:d.id, c}); } }
   const people = cohort.map(r=>{
     const c=r.fields||{};
     const ups=(byStaff[r.id]||[]).sort((a,b)=>b.t-a.t);
@@ -221,10 +228,33 @@ async function buildCare(){
     let note=""; for(const x of ups){ const t=(x.c[U.comments]||"").trim(); if(t){ note=t; break; } }
     const lastT=ups[0]?.t||0, daysSince = lastT? Math.floor((now-lastT)/864e5) : 999;
     let pct=Number(c[C.pct])||0; if(pct>1.5) pct=pct/100;
+
+    // ----- donor detail: monthly partners split into NEW-this-month / CONTINUING / PENDING -----
+    const startMK = mkOf(c[F.start]);
+    const mo = Number(c[F.month])||0;
+    const g = (byDonor[r.id]||[]).map(x=>{ const gc=x.c; const dmk=mkOf(gc[D.date]);
+      return { id:x.id, name:(gc[D.name]||"").trim(), amt:Math.round(Number(gc[D.amt])||0), date:gc[D.date]||"",
+        freq:sel(gc[D.freq])||"One Time", status:sel(gc[D.dstatus])||"",
+        progMo:(dmk!=null && startMK!=null) ? (dmk-startMK+1) : null, thisMonth:(dmk===curMK) }; });
+    const mon = g.filter(x=>x.freq==="Monthly");
+    const confMon = mon.filter(x=>x.status==="Confirmed");
+    const newMonthly  = confMon.filter(x=>x.thisMonth).sort((a,b)=>b.amt-a.amt);
+    const contMonthly = confMon.filter(x=>!x.thisMonth).sort((a,b)=>b.amt-a.amt);
+    const pendMonthly = mon.filter(x=>x.status==="Pending Confirmation").sort((a,b)=>b.amt-a.amt);
+    const otherConfirmed = g.filter(x=>x.status==="Confirmed" && x.freq!=="Monthly").sort((a,b)=>b.amt-a.amt);
+    const moAmt = confMon.reduce((a,x)=>a+x.amt,0);
+    const goal = pct>0 ? Math.round(moAmt/pct) : 0;
+    // pace series: new confirmed monthly $ added in each program-month (bars for the person page)
+    const N = Math.max(1, Math.min(18, mo));
+    const series = new Array(N).fill(0);
+    for(const x of confMon){ if(x.progMo>=1 && x.progMo<=N) series[x.progMo-1]+=x.amt; }
+
     return { id:r.id, n:(c[F.name]||"").trim(), co:sel(c[F.country])||"", coach:first1(c[C.coach])||"—",
-      mo:Number(c[F.month])||0, wk:Math.round(Number(c[C.weeks])||0), pct:Math.round(pct*100)/100,
+      uplink:first1(c[A.uplink])||"—", lead:first1(c[A.lead])||"—",
+      mo, wk:Math.round(Number(c[C.weeks])||0), pct:Math.round(pct*100)/100,
       ft:sel(c[F.funding])||"Grant", ps:sel(c[F.status])||"",
-      asks, mtgs, yes, monthly, onetime, hours:Math.round(hours), weeks:win.length, coachMet, daysSince, note };
+      asks, mtgs, yes, monthly, onetime, hours:Math.round(hours), weeks:win.length, coachMet, daysSince, note,
+      moAmt, goal, series, newMonthly, contMonthly, pendMonthly, otherConfirmed };
   });
   const coaches={};
   for(const p of people){ (coaches[p.coach]=coaches[p.coach]||[]).push(p); }
@@ -271,6 +301,14 @@ export default async (req) => {
         const r = await fetch(`https://api.airtable.com/v0/${BASE}/${T_MSG}`, { method:"POST", headers:H,
           body: JSON.stringify({records:[{fields:{[M.coach]:m.coach, [M.from]:(m.from==="dir"?"Director":"Coach"), [M.text]:m.text}}]}) });
         if(!r.ok) return json({error:`Airtable message ${r.status}: ${await r.text()}`},502);
+        return json({ok:true});
+      }
+      // coach confirms (approves) a donor — sets Donor Status to Confirmed so it counts toward the match
+      if(b.donorId){
+        const status = b.donorStatus || "Confirmed";
+        const r = await fetch(`https://api.airtable.com/v0/${BASE}/${T_DONORS}`, { method:"PATCH", headers:H,
+          body: JSON.stringify({records:[{id:b.donorId, fields:{[D.dstatus]:status}}]}) });
+        if(!r.ok) return json({error:`Airtable donor ${r.status}: ${await r.text()}`},502);
         return json({ok:true});
       }
       // update a staff record's Funding Type / Payout Status / grant cap / approval

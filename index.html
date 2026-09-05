@@ -304,6 +304,24 @@
   .sup-foot{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-2);line-height:1.6}
   .sup-foot b{color:var(--ink);font-variant-numeric:tabular-nums}
 
+  /* monthly partners: new-this-month (with Approve) vs continuing */
+  .mp-grp{margin-top:14px}.mp-grp:first-child{margin-top:2px}
+  .mp-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+  .mp-h span:first-child{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--honey-deep)}
+  .mp-ct{font-size:12px;font-weight:700;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line);border-radius:999px;padding:1px 9px}
+  .mp-plab{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--honey-deep);background:var(--honey-soft);border-radius:8px;padding:6px 10px;margin-bottom:6px}
+  .mp-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:5px}
+  .mp-n{flex:1;font-size:13px;font-weight:600}
+  .mp-a{font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+  .mp-tag.ok{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--pine);background:var(--pine-soft);border-radius:999px;padding:2px 9px}
+  .mp-appr{display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:12px;font-weight:700;color:#fff;background:var(--pine);border:none;border-radius:9px;padding:6px 12px;cursor:pointer}
+  .mp-appr:hover{background:var(--pine-deep)}
+  .mp-none{font-size:12.5px;color:var(--muted);padding:6px 2px}
+  .mp-sub{font-size:11.5px;color:var(--muted);margin:-2px 2px 6px;line-height:1.45}
+  .mp-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:10px;border-top:1.5px solid var(--line);font-size:13px;font-weight:600;color:var(--ink-2)}
+  .mp-foot b{font-size:15px;color:var(--pine-deep);font-variant-numeric:tabular-nums}
+  .mp-grp.other .mp-h span:first-child{color:var(--muted)}
+
   /* roster — just the names */
   .roster{display:flex;flex-direction:column;gap:2px;margin-top:4px}
   .rrow{display:flex;align-items:center;gap:12px;width:100%;background:none;border:none;border-radius:12px;padding:11px 10px;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:background .12s}
@@ -1125,6 +1143,23 @@ const WORDS=[
   {q:"And my God will meet all your needs according to the riches of his glory in Christ Jesus.",ref:"Philippians 4:19"},
   {q:"Commit to the Lord whatever you do, and he will establish your plans.",ref:"Proverbs 16:3"},
   {q:"Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up.",ref:"Galatians 6:9"},
+  {q:"Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.",ref:"Joshua 1:9"},
+  {q:"Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.",ref:"Philippians 4:6"},
+  {q:"So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you.",ref:"Isaiah 41:10"},
+  {q:"And God is able to bless you abundantly, so that in all things at all times, having all that you need, you will abound in every good work.",ref:"2 Corinthians 9:8"},
+  {q:"But seek first his kingdom and his righteousness, and all these things will be given to you as well.",ref:"Matthew 6:33"},
+  {q:"Commit your way to the Lord; trust in him, and he will act.",ref:"Psalm 37:5"},
+  {q:"“For I know the plans I have for you,” declares the Lord, “plans to prosper you and not to harm you, plans to give you hope and a future.”",ref:"Jeremiah 29:11"},
+  {q:"Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.",ref:"Proverbs 3:5-6"},
+  {q:"I can do all this through him who gives me strength.",ref:"Philippians 4:13"},
+  {q:"But he said to me, “My grace is sufficient for you, for my power is made perfect in weakness.”",ref:"2 Corinthians 12:9"},
+  {q:"The lions may grow weak and hungry, but those who seek the Lord lack no good thing.",ref:"Psalm 34:10"},
+  {q:"Keep your lives free from the love of money and be content with what you have, because God has said, “Never will I leave you; never will I forsake you.”",ref:"Hebrews 13:5"},
+  {q:"Look at the birds of the air; they do not sow or reap or store away in barns, and yet your heavenly Father feeds them. Are you not much more valuable than they?",ref:"Matthew 6:26"},
+  {q:"Give, and it will be given to you. A good measure, pressed down, shaken together and running over, will be poured into your lap.",ref:"Luke 6:38"},
+  {q:"Therefore, my dear brothers and sisters, stand firm. Let nothing move you. Always give yourselves fully to the work of the Lord, because you know that your labor in the Lord is not in vain.",ref:"1 Corinthians 15:58"},
+  {q:"“Not by might nor by power, but by my Spirit,” says the Lord Almighty.",ref:"Zechariah 4:6"},
+  {q:"I lift up my eyes to the mountains — where does my help come from? My help comes from the Lord, the Maker of heaven and earth.",ref:"Psalm 121:1-2"},
 ];
 const hwState={};
 function seedHw(name){ if(hwState[name])return hwState[name]; const s=S.find(x=>x.n===name),target=Math.round(s.hw/100*HW_TOTAL),done=new Set(); let i=0;
@@ -1312,10 +1347,10 @@ const uniq=a=>[...new Set(a)];
 function buildId(){
   const lab=document.getElementById("idlabel");let opts=[];
   if(role==="mel"){lab.textContent="Signed in as";opts=["Mel Ellenwood"];}
-  else if(role==="staff"){lab.textContent="I am";opts=S.filter(s=>!isArchivedName(s.n)).map(s=>s.n);}
-  else if(role==="coach"){lab.textContent="Coach";opts=uniq(S.map(s=>s.coach)).sort();}
-  else if(role==="uplink"){lab.textContent="Uplink";opts=uniq(S.map(s=>s.uplink)).sort();}
-  else if(role==="leader"){lab.textContent="Country";opts=uniq(S.map(s=>s.co)).sort();}
+  else if(role==="staff"){lab.textContent="I am";opts=roster().filter(s=>!isArchivedName(s.n)).map(s=>s.n);}
+  else if(role==="coach"){lab.textContent="Coach";opts=uniq(roster().map(s=>s.coach)).sort();}
+  else if(role==="uplink"){lab.textContent="Uplink";opts=uniq(roster().map(s=>s.uplink)).sort();}
+  else if(role==="leader"){lab.textContent="Country";opts=uniq(roster().map(s=>s.co)).sort();}
   else{lab.textContent="Team";opts=["Dave & Geri"];}
   idsel.innerHTML=opts.map(o=>`<option>${o}</option>`).join("");
   const def={mel:"Mel Ellenwood",staff:"Kayla Śnieżek",coach:"Yulia",uplink:"Benjamín",leader:"Slovakia",director:"Dave & Geri"}[role];
@@ -1446,11 +1481,11 @@ function staffHome(s){
           <div class="line">${line}</div>
           <div class="encourage">${enc}</div>
           <div class="facts">
-            <div class="fact"><b>${money(s.moAmt)}</b>raised / month</div>
             <div class="fact"><b>${money(s.tgt)}</b>monthly goal</div>
-            <div class="fact"><b>${s.wk}</b>weeks of grant</div>
+            <div class="fact"><b>${Math.round(s.pct*100)}%</b>funded</div>
+            <div class="fact"><b>${money(s.moAmt)}</b>raised monthly</div>
+            <div class="fact"><b>${money(Math.max(0,s.tgt-s.moAmt))}</b>gap to goal</div>
           </div>
-          <div class="pace">${ic('scope',15)}<div><b>${money(moTarget)} a month</b> is your pace — add about this much in new monthly support each month, and in 11 months you'll be at your ${money(s.tgt)} goal.</div></div>
         </div>
       </div>
       <div class="invite ${s.sub===0?'':'done'}">
@@ -1581,11 +1616,53 @@ function supportBreakdown(confirmed){
 /* a person-page accordion: shut by default, clear header, click to open/close */
 function pAcc(key,title,summary,body){ const open=csOpen[key];
   return `<div class="pa ${open?'open':''}"><button class="pa-h" data-cs="${key}"><span class="pa-title">${title}</span>${summary?`<span class="pa-sum">${summary}</span>`:''}<span class="pa-chev">${ic('chevron',16)}</span></button>${open?`<div class="pa-b">${body}</div>`:''}</div>`; }
+/* --- monthly partners, split into NEW-this-month (with an Approve button for pending) and CONTINUING --- */
+let approvedDemo={}; // preview-only: remembers demo "Approve" clicks so the preview feels live
+const DEMO_NEWMO={ "Ben Polgui":[{id:'dn-ben',name:'Kovalenko Family',amt:40}], "Khrystyna Trush":[{id:'dn-khr',name:'Hnatiuk O.',amt:25}] };
+const DEMO_PENDMO={ "Ben Polgui":[{id:'dp-ben',name:'Shevchenko M.',amt:30}], "Kayla Śnieżek":[{id:'dp-kay',name:'Nowak Rodzina',amt:35}], "Khrystyna Trush":[{id:'dp-khr',name:'Bondar V.',amt:20}] };
+function partnersData(sel){
+  // live/care rows carry the real donor split; baked rows synthesize a demo split for preview
+  if(Array.isArray(sel.newMonthly)||Array.isArray(sel.contMonthly)||Array.isArray(sel.pendMonthly)){
+    return { neu:sel.newMonthly||[], cont:sel.contMonthly||[], pend:sel.pendMonthly||[], other:sel.otherConfirmed||[] };
+  }
+  const p=findPayout(sel);
+  const confirmed = Array.isArray(p&&p.confirmed) ? p.confirmed : (p?p.givers.map(g=>({name:g[0],amt:g[1],freq:"Monthly"})):[]);
+  const cont=confirmed.filter(g=>g.freq==="Monthly").map(g=>({name:g.name,amt:g.amt}));
+  const other=confirmed.filter(g=>g.freq!=="Monthly");
+  const pend=(DEMO_PENDMO[sel.n]||[]).filter(g=>!approvedDemo[g.id]);
+  const neu=(DEMO_NEWMO[sel.n]||[]).concat((DEMO_PENDMO[sel.n]||[]).filter(g=>approvedDemo[g.id]));
+  return { neu, cont, pend, other };
+}
+function monthlyPartners(sel,d){
+  d=d||partnersData(sel);
+  const sum=a=>a.reduce((x,g)=>x+(g.amt||0),0), esc=n=>(n||"").replace(/</g,'&lt;');
+  const matchTot=sum(d.neu);   // the match is only NEW monthly confirmed this month — not the ongoing base
+  const gRow=(g,right)=>`<div class="mp-row"><span class="mp-n">${esc(g.name)}</span><span class="mp-a">${money(g.amt)}/mo</span>${right||''}</div>`;
+  let h='';
+  const newCount=d.neu.length+d.pend.length;
+  h+=`<div class="mp-grp"><div class="mp-h"><span>${ic('gift',13)} New monthly this month</span><span class="mp-ct">${newCount}</span></div>`;
+  if(d.pend.length){ h+=`<div class="mp-plab">${ic('clock',12)} Awaiting your confirmation — approve to count them in this month's match.</div>`;
+    h+=d.pend.map(g=>gRow(g,`<button class="mp-appr" data-adonor="${g.id}" data-apn="${esc(sel.n)}">${ic('check',13)} Approve</button>`)).join(''); }
+  if(d.neu.length){ h+=d.neu.map(g=>gRow(g,`<span class="mp-tag ok">${ic('check',12)} confirmed</span>`)).join(''); }
+  if(!newCount) h+=`<div class="mp-none">No new monthly partners logged this month yet.</div>`;
+  h+=`</div>`;
+  h+=`<div class="mp-foot"><span>${ic('gift',14)} Matched this month — new monthly confirmed</span><b>${money(matchTot)}/mo</b></div>`;
+  h+=`<div class="mp-grp"><div class="mp-h"><span>${ic('check',13)} Ongoing monthly — earlier months</span><span class="mp-ct">${money(sum(d.cont))}/mo</span></div>`;
+  h+=`<div class="mp-sub">Already established — counted in total support, but not part of this month's match.</div>`;
+  h+= d.cont.length ? d.cont.map(g=>gRow(g)).join('') : `<div class="mp-none">None yet.</div>`;
+  h+=`</div>`;
+  if(d.other&&d.other.length){ const ot=sum(d.other);
+    h+=`<div class="mp-grp other"><div class="mp-h"><span>One-time / annual — not the match</span><span class="mp-ct">${money(ot)}</span></div>`
+      + d.other.map(g=>`<div class="mp-row"><span class="mp-n">${esc(g.name)}</span><span class="mp-a">${money(g.amt)}${g.freq&&g.freq!=="Monthly"?' · '+g.freq:''}</span></div>`).join('') + `</div>`;
+  }
+  return h;
+}
 /* full-page view of one staff person the coach is walking with */
 function coachPersonPage(sel){
-  const dx=sDx(sel), p=findPayout(sel), givers=p?p.givers:[], match=p?p.match:0, fn=sel.fn, pace=Math.round(sel.tgt/11);
-  const confirmed = Array.isArray(p&&p.confirmed) ? p.confirmed : givers.map(g=>({name:g[0],amt:g[1],freq:"Monthly"}));
-  const giversHtml = supportBreakdown(confirmed);
+  const dx=sDx(sel), fn=sel.fn, pace=Math.round(sel.tgt/11);
+  const pd=partnersData(sel);
+  const matchNew=pd.neu.reduce((a,g)=>a+(g.amt||0),0);
+  const giversSum=(money(matchNew)+'/mo matched')+(pd.pend.length?` · ${pd.pend.length} to approve`:'');
   const reports = fn.weeks
     ? `<div class="cs-fn"><div class="cs-fc"><b>${fn.asks}</b><span>Asks</span></div><div class="cs-fc"><b>${fn.mtgs}</b><span>Meetings</span></div><div class="cs-fc"><b>${fn.yes}</b><span>Yeses</span></div><div class="cs-fc"><b>${fn.monthly}</b><span>Monthly</span></div><div class="cs-fc"><b>${fn.hours}</b><span>Hours</span></div><div class="cs-fc"><b>${fn.weeks}</b><span>weeks</span></div></div>${fn.note?`<div class="cs-note">${ic('message',13)}<span>“${(fn.note||'').replace(/</g,'&lt;')}”</span></div>`:''}`
     : `<div class="cs-empty">No weekly reports in the last stretch — reaching out is the first step.</div>`;
@@ -1595,7 +1672,7 @@ function coachPersonPage(sel){
     <div class="pp-bar"><button class="pp-back" data-close="1">${ic('chevron',15)} My people</button><button class="pp-close" data-close="1">Close</button></div>
     <div class="pp-hd">
       <span class="av t-${dx.tone}">${initials(sel.n)}</span>
-      <div class="pp-id"><h2>${sel.n}</h2><div class="pp-sub">${sel.co} &middot; month ${sel.mo}/12 &middot; ${sel.wk} weeks of grant left</div></div>
+      <div class="pp-id"><h2>${sel.n}</h2><div class="pp-sub">${sel.co} &middot; month ${sel.mo}${sel.wk>0?` &middot; ${sel.wk} weeks of grant left`:''}</div></div>
     </div>
     <div class="pp-facts" style="margin-top:14px">
       <div class="ppf"><span>Funded</span><b>${Math.round(sel.pct*100)}%</b></div>
@@ -1612,7 +1689,7 @@ function coachPersonPage(sel){
       <div class="pp-main">
         ${pAcc('meeting','Coaching meeting &amp; questions', mlog?mlog+' logged':'', coachMeetings(sel.n))}
         ${pAcc('reports','Weekly report stats', fn.weeks?fn.asks+' asks · '+fn.monthly+' monthly':'no recent update', reports)}
-        ${pAcc('givers','Confirmed support', confirmed.length?money(confirmed.filter(g=>g.freq==='Monthly').reduce((a,g)=>a+g.amt,0))+'/mo · '+confirmed.length+' gifts':'none yet', giversHtml)}
+        ${pAcc('givers',"Who's giving this month", giversSum, monthlyPartners(sel,pd))}
       </div>
       <div class="pp-side">
         <div class="pp-card pp-msg"><div class="pp-ch"><span>Message ${sel.first}</span>${tc?`<span class="pp-cs">${tc}</span>`:''}</div>${chatPanel(sel,"coach")}</div>
@@ -1623,7 +1700,7 @@ function coachPersonPage(sel){
   </div>`;
 }
 function viewCoach(){
-  const mine=S.filter(s=>s.coach===who&&!isArchivedName(s.n)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]);
+  const mine=roster().filter(s=>s.coach===who&&!isArchivedName(s.n)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]);
   const sel=chatWith && mine.find(s=>s.n===chatWith);
   if(personOpen && sel) return coachPersonPage(sel);
   const th=(coachThreads[who]||[]).length;
@@ -1636,7 +1713,7 @@ function viewCoach(){
     <div class="sec-head"><div><div class="eyebrow">Tap a name to open their page</div><h2>My people</h2></div></div>
     <div class="roster">${mine.map(s=>{const un=(threads[s.n]||[]).slice(-1)[0],unread=un&&un.from==="staff";const dx=sDx(s);
       return `<button class="rrow" data-open="${s.n}"><span class="face t-${dx.tone}">${initials(s.n)}${unread?`<span class="ping"></span>`:""}</span>
-        <span class="rin"><span class="rn">${s.n}</span><span class="rm">${s.co} &middot; ${Math.round(s.pct*100)}% funded &middot; month ${s.mo}/12</span></span>
+        <span class="rin"><span class="rn">${s.n}</span><span class="rm">${s.co} &middot; ${Math.round(s.pct*100)}% funded &middot; month ${s.mo}</span></span>
         <span class="rlvl lc-${dx.tone}">${dx.label}</span><span class="rchev">${ic('chevron',16)}</span></button>`;}).join("")}</div>
   </section>
   <div class="hint">${ic('info',16)} Tap anyone to open their full page — a graph of their monthly pace, their weekly-report stats, this month's givers, and your coaching notes. Close it to come back here.</div>`;
@@ -1644,7 +1721,7 @@ function viewCoach(){
 
 /* ===== UPLINK ===== */
 function viewUplink(){
-  const mine=S.filter(s=>s.uplink===who&&!isArchivedName(s.n)).sort((a,b)=>b.risk-a.risk);
+  const mine=roster().filter(s=>s.uplink===who&&!isArchivedName(s.n)).sort((a,b)=>b.risk-a.risk);
   return `<div style="margin-bottom:4px"><div class="eyebrow">${who}'s people</div><h2 style="font-size:19px">Walking alongside ${mine.length} on the journey</h2></div>
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">Thriving</div><div class="v" style="color:var(--pine-deep)">${mine.filter(s=>s.lvl==="Healthy").length}<small>/${mine.length}</small></div><div class="f">funded & steady</div></div>
@@ -1663,7 +1740,7 @@ function viewUplink(){
 
 /* ===== COUNTRY LEADER ===== */
 function viewLeader(){
-  const mine=S.filter(s=>s.co===who&&!isArchivedName(s.n)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]),lead=mine[0]?.lead||"—";
+  const mine=roster().filter(s=>s.co===who&&!isArchivedName(s.n)).sort((a,b)=>DXO[sDx(a).tone]-DXO[sDx(b).tone]),lead=mine[0]?.lead||"—";
   return `<div style="margin-bottom:4px"><div class="eyebrow">${who} · led by ${lead}</div><h2 style="font-size:19px">Our team's support raising</h2></div>
   <section class="grid stats" style="margin-top:14px">
     <div class="card stat-c"><div class="l">On the journey</div><div class="v">${mine.length}</div><div class="f">active in ${who}</div></div>
@@ -1727,6 +1804,24 @@ function bakedCare(){
     .sort((a,b)=>a.coach.localeCompare(b.coach));
 }
 function careGroups(){ return (careData&&careData.length)?careData:bakedCare(); }
+/* one live "care" person -> the S-row shape the coach / leader / uplink views expect */
+function careToS(p){
+  const s={ n:p.n, co:p.co, coach:p.coach, uplink:p.uplink||"—", lead:p.lead||"—",
+    mo:p.mo||0, wk:p.wk||0, pct:p.pct||0, tgt:p.goal||0, moAmt:p.moAmt||0,
+    ft:p.ft||"Grant", ps:p.ps||"", first:(p.n||"").split(/[ &]/)[0], series:p.series||[],
+    newMonthly:p.newMonthly||[], contMonthly:p.contMonthly||[], pendMonthly:p.pendMonthly||[], otherConfirmed:p.otherConfirmed||[],
+    fn:{asks:p.asks||0,mtgs:p.mtgs||0,yes:p.yes||0,monthly:p.monthly||0,onetime:p.onetime||0,
+        hours:p.hours||0,weeks:p.weeks||0,coachMet:p.coachMet||0,daysSince:(p.daysSince==null?999:p.daysSince),note:p.note||""} };
+  const dx=diagnose({weeks:s.fn.weeks,asks:s.fn.asks,monthly:s.fn.monthly,onetime:s.fn.onetime,yes:s.fn.yes,hours:s.fn.hours,daysSince:s.fn.daysSince});
+  s.risk = dx.tone==='crit'?85:dx.tone==='warn'?55:20;
+  s.lvl  = dx.tone==='crit'?'High':dx.tone==='warn'?'Watch':'Healthy';
+  s.sub  = s.fn.weeks>0?1:0;   // "in rhythm" proxy: has shared a recent weekly update
+  s.hw   = 100;                 // homework % isn't in the care feed; neutral
+  return s;
+}
+/* the roster the coach-facing views read: LIVE care people when available, else the baked demo */
+function roster(){ return (careData&&careData.length) ? careData.flatMap(g=>g.staff).filter(p=>!isArchivedName(p.n)).map(careToS) : S; }
+function rosterFind(name){ return roster().find(s=>s.n===name); }
 function fnStat(p){
   const cells=[['Asks',p.asks],['Meetings',p.mtgs],['Yeses',p.yes],['Monthly',p.monthly],['Hours',p.hours]];
   return `<div class="fn-strip">${cells.map(([l,v])=>`<div class="fn-c"><b>${p.weeks?v:'—'}</b><span>${l}</span></div>`).join("")}<div class="fn-c wk"><b>${p.weeks||0}</b><span>weeks in</span></div></div>`;
@@ -2079,7 +2174,7 @@ function dirCoachChat(coach){
     <div class="whoami">as Dave &amp; Geri · MPD directors</div></div>`;
 }
 function dirCoaches(){
-  const coaches={}; S.forEach(s=>{ if(isArchivedName(s.n)) return; (coaches[s.coach]=coaches[s.coach]||[]).push(s); });
+  const coaches={}; roster().forEach(s=>{ if(isArchivedName(s.n)) return; (coaches[s.coach]=coaches[s.coach]||[]).push(s); });
   const entries=Object.entries(coaches).map(([c,list])=>[c,list,coachRead(list)])
     .sort((a,b)=>({crit:0,warn:1,good:2}[a[2].tone]-{crit:0,warn:1,good:2}[b[2].tone]) || b[1].length-a[1].length);
   if(!coachChat||!coaches[coachChat]) coachChat=entries[0]?.[0];
@@ -2274,7 +2369,7 @@ function render(){
     v.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>{personOpen=false;render();});
     v.querySelectorAll("[data-cs]").forEach(b=>b.onclick=()=>{csOpen[b.dataset.cs]=!csOpen[b.dataset.cs];render();});
     const lb=v.querySelector("[data-lead]"); if(lb) lb.onclick=()=>{leadOpen=!leadOpen;render();};
-    const sel=S.find(s=>s.n===chatWith);if(personOpen&&sel)wireChat(sel,"coach");
+    const sel=rosterFind(chatWith);if(personOpen&&sel)wireChat(sel,"coach");
     const cdi=v.querySelector("#cdmi"),cds=v.querySelector("#cdsend"),cdbox=v.querySelector("#cdmsgs");
     if(cdi){
       const send=()=>{const val=cdi.value.trim();if(!val)return;const coach=who;
@@ -2297,6 +2392,18 @@ function render(){
       if(LIVE){ fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meeting:{staff,coach,date:d,notes:n}})}).catch(()=>{}); }
       render();
     };
+    // coach approves (confirms) a pending monthly partner -> it starts counting toward the match
+    v.querySelectorAll("[data-adonor]").forEach(b=>b.onclick=()=>{
+      const id=b.dataset.adonor, nm=b.dataset.apn;
+      if(careData&&careData.length){ careData.forEach(gp=>gp.staff.forEach(pp=>{ if(pp.n===nm && Array.isArray(pp.pendMonthly)){
+        const i=pp.pendMonthly.findIndex(x=>x.id===id);
+        if(i>=0){ const gv=pp.pendMonthly.splice(i,1)[0]; gv.status='Confirmed'; gv.thisMonth=true;
+          (pp.newMonthly=pp.newMonthly||[]).unshift(gv); pp.moAmt=(pp.moAmt||0)+(gv.amt||0); } } })); }
+      else { approvedDemo[id]=true; } // preview
+      if(LIVE && !/^dp-/.test(id)){ fetch('/.netlify/functions/airtable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({donorId:id})})
+        .then(r=>{if(!r.ok)throw 0;}).catch(()=>alert('Approved here, but couldn’t reach Airtable to save it. Try again.')); }
+      render();
+    });
   }
   else if(role==="uplink")v.innerHTML=viewUplink();
   else if(role==="leader")v.innerHTML=viewLeader();
@@ -2309,7 +2416,8 @@ function render(){
     if(dirTab==='care') v.querySelectorAll("[data-care-coach]").forEach(b=>b.onclick=()=>{const c=b.dataset.careCoach;careCoach=(c&&careCoach!==c)?c:null;render();});
   }
 }
-wordIdx=new Date().getDay();
+/* rotate through all 20 scriptures — a different one each day, stable within the day */
+wordIdx=Math.floor((Date.now()-Date.UTC(new Date().getUTCFullYear(),0,0))/864e5);
 syncRoles();buildId();render();loadLive();
 
 /* ---- Sandbox: name every view so no note files as "Somewhere" ---- */
