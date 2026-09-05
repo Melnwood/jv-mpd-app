@@ -610,6 +610,7 @@
   .pbody{display:none;padding:2px 16px 16px;border-top:1px solid var(--line-soft)}.pcard.open .pbody{display:block}
   .pay-hold{display:flex;gap:8px;align-items:center;font-size:12.5px;padding:10px 12px;border-radius:12px;margin:13px 0 2px;line-height:1.35}.pay-hold svg{flex:none}
   .pay-hold.pend{background:var(--honey-soft);color:var(--honey-deep)}.pay-hold.nosub{background:var(--flame-soft);color:var(--flame)}
+  .pay-hold.flag{background:var(--honey-soft);color:var(--honey-deep)}
   .peq{display:flex;align-items:stretch;gap:8px;margin:14px 0 6px;flex-wrap:wrap}
   .pe{flex:1;min-width:130px;border-radius:13px;padding:11px 13px;border:1px solid var(--line);background:var(--card-2)}
   .pe .pl{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-2)}
@@ -2293,7 +2294,9 @@ function payMonthOptions(){
 // a person's match figured "new this month only" from their givers [name,amt,entered,approved]
 function matchNewOnly(p){ return Math.round((p.givers||[]).filter(g=>gInMonth(g[3])).reduce((a,g)=>a+(Number(g[1])||0),0)*100)/100; }
 function newCount(p){ return (p.givers||[]).filter(g=>gInMonth(g[3])).length; }
-function payoutHeld(p){ return p.nosub||p.pend||p.withhold||p.paused||payoutStat(p)==='paused'; }
+// A payout is HELD only by an MPD-director action — Pause everything, Pause payouts, or No-pay-this-month.
+// "Not submitting updates" / "update not in yet" are FLAGS the director sees, not automatic holds.
+function payoutHeld(p){ return p.withhold||p.paused||payoutStat(p)==='paused'; }
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
 function sMatch(name){ return S.find(s=>norm(s.n)===norm(name)); }
 function payoutView(){
@@ -2333,11 +2336,12 @@ function payoutView(){
       ? `<div class="pay-hold nosub">${ic('info',15)} Not paid this month — requirements weren't met. This is a one-month hold; it clears next month unless set again.</div>`
       : paused
       ? `<div class="pay-hold paused">${ic('info',15)} Paused by the MPD directors — no payout runs until resumed.</div>`
-      : p.nosub ? `<div class="pay-hold nosub">${ic('info',15)} Not submitting weekly updates — payout on hold until they resume.</div>`
-      : p.pend ? `<div class="pay-hold pend">${ic('clock',15)} Pending until this month's MPD update is in and the giver is coach-confirmed.</div>` : "";
+      : p.nosub ? `<div class="pay-hold flag">${ic('info',15)} Heads up — not submitting weekly updates. Still set to pay; hold it with “No pay this month” if you want. Your call.</div>`
+      : p.pend ? `<div class="pay-hold flag">${ic('clock',15)} Heads up — this month's MPD update isn't in yet. Still set to pay; hold it if you'd rather wait. Your call.</div>` : "";
     const amt = stopAll?`<span class="pamt"><b style="color:var(--muted)">Paused</b><span>all off</span></span>`
       : withheld?`<span class="pamt"><b style="color:var(--flame)">Not paid</b><span>this month</span></span>`
       : paused?`<span class="pamt"><b style="color:var(--muted)">Paused</b><span>held</span></span>`
+      : (p.nosub||p.pend)?`<span class="pamt"><b>${money(total)}</b><span style="color:var(--honey-deep)">${ic('info',11)} needs a look</span></span>`
       : `<span class="pamt"><b>${money(total)}</b><span>this month</span></span>`;
     const payCtrl = paused
       ? `<button class="pbtn resume" data-pstat="active" data-pn="${p.n}">${ic('check',14)} Resume payouts</button><button class="pbtn fin" data-pstat="finished" data-pn="${p.n}">Mark finished</button><button class="pbtn nog" data-pstat="support" data-pn="${p.n}">No grant</button>`
@@ -2632,7 +2636,7 @@ function wireChat(s,asRole){
   btn.onclick=send;inp.addEventListener("keydown",e=>{if(e.key==="Enter")send();});if(box)box.scrollTop=box.scrollHeight;
 }
 
-const APP_BUILD="Build 2026-09-06 · payout-by-month";
+const APP_BUILD="Build 2026-09-06b · holds-are-director-choice";
 function render(){
   document.getElementById("payout-print")?.remove();
   { const bs=document.getElementById("build-stamp"); if(bs) bs.textContent=APP_BUILD; }
