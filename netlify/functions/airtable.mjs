@@ -22,7 +22,8 @@ const F = {
   verified:"fldfyaLwzSwqm4pM8", verifyLink:"fldfTObVibrzbokcD",
 };
 const D = { name:"fldO3kLf4ThXF2yMA", amt:"fldwUQJrh9QNIOr4L", freq:"fldnzW8Z3m8WtyyK8",
-  dstatus:"fldbFqZCHBSRZf02e", stafflink:"fldtMNFYggmi8IbnL", date:"fldzqt7BFCDtQBXZE" };
+  dstatus:"fldbFqZCHBSRZf02e", stafflink:"fldtMNFYggmi8IbnL", date:"fldzqt7BFCDtQBXZE",
+  confAt:"fldGtFwUbfQXjcQhi" };  // when the coach approved (status -> Confirmed); decides the match
 const T_GRANT = "tblx9H88s1h73dYFo";
 const G = { name:"fldGo5dMQbEWl1qOQ", dep:"fldHiaTsly9kKS4vS", paid:"fldm3PndZVKK8EYpA",
   wa:"fldv5Kaik45nsU4o3", fees:"fldaDkQcCa67uPpoc", date:"fldrmE8b5OGNjwNBm", src:"fld4qITAJvCzEt0yV" };
@@ -81,7 +82,7 @@ async function buildPayout(){
     return (cy==="2025-26" || sel(c[F.funding])==="Support-only");
   });
   // all donors grouped by staff record id
-  const donors = await listAll(T_DONORS, [D.name,D.amt,D.freq,D.dstatus,D.stafflink,D.date]);
+  const donors = await listAll(T_DONORS, [D.name,D.amt,D.freq,D.dstatus,D.stafflink,D.date,D.confAt]);
   const byStaff = {};
   for(const d of donors){
     const c=d.fields||{}; const links=c[D.stafflink]||[];
@@ -98,8 +99,9 @@ async function buildPayout(){
     const paid = Math.round((Number(c[F.paid])||0)*100)/100;
     const ds = byStaff[r.id]||[];
     const gdate = x => x[D.date] || (x.__t ? String(x.__t).slice(0,10) : "");   // gift date, else when it was entered
+    const cdate = x => x[D.confAt] ? String(x[D.confAt]).slice(0,10) : "";      // when the coach approved
     const givers = ds.filter(x=>sel(x[D.freq])==="Monthly" && sel(x[D.dstatus])==="Confirmed")
-                     .map(x=>[(x[D.name]||"").trim(), Number(x[D.amt])||0, gdate(x)])
+                     .map(x=>[(x[D.name]||"").trim(), Number(x[D.amt])||0, gdate(x), cdate(x)])
                      .sort((a,b)=>b[1]-a[1]);
     const match = Math.round(givers.reduce((a,g)=>a+g[1],0)*100)/100;
     // every coach-confirmed gift, with its frequency (Monthly / One Time / Annual / Quarterly)
@@ -358,11 +360,23 @@ export default async (req) => {
         if(!r.ok) return json({error:`Airtable message ${r.status}: ${await r.text()}`},502);
         return json({ok:true});
       }
-      // coach confirms (approves) a donor — sets Donor Status to Confirmed so it counts toward the match
+      // coach confirms (approves) a donor — sets Donor Status to Confirmed so it counts toward the match.
+      // Stamp "Coach Confirmed On" the moment it becomes Confirmed (and only if not already set),
+      // so the match can tell a NEW monthly partner from an ongoing one. Clear it if un-confirmed.
       if(b.donorId){
         const status = b.donorStatus || "Confirmed";
+        const fields = {[D.dstatus]:status};
+        if(status==="Confirmed"){
+          // read the current row so we don't overwrite an existing approval date
+          let already="";
+          try{ const g=await fetch(`https://api.airtable.com/v0/${BASE}/${T_DONORS}/${b.donorId}?returnFieldsByFieldId=true`,{headers:H});
+               if(g.ok){ already=((await g.json()).fields||{})[D.confAt]||""; } }catch(e){}
+          if(!already) fields[D.confAt]=new Date().toISOString();
+        } else {
+          fields[D.confAt]=null;  // no longer confirmed — drop the approval date
+        }
         const r = await fetch(`https://api.airtable.com/v0/${BASE}/${T_DONORS}`, { method:"PATCH", headers:H,
-          body: JSON.stringify({records:[{id:b.donorId, fields:{[D.dstatus]:status}}]}) });
+          body: JSON.stringify({records:[{id:b.donorId, fields}]}) });
         if(!r.ok) return json({error:`Airtable donor ${r.status}: ${await r.text()}`},502);
         return json({ok:true});
       }
